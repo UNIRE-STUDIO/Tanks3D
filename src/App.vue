@@ -1,47 +1,39 @@
-<script setup>
-import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
+<script>
+import Game from "./scripts/game.js";
+import Config from "./scripts/config.js";
+import UIFields from "./scripts/uiFields.js";
+
+export default {
+	components: {
+
+	},
+	data() {
+		return {
+			canvasWidth: '',
+			canvasHeight: '',
+			config: null,
+			uiFields: new UIFields(),
+			game: new Game(),
+		}
+	},
+	mounted() {
+		this.config = new Config(this.$refs.myCanvas);
+		this.game.init(this.config, this.uiFields);
+	},
+	methods: {
+	}
+}
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-    </div>
-  </header>
-
-  <main>
-    <TheWelcome />
-  </main>
+	<canvas ref="myCanvas" id="myCanvas"></canvas>
 </template>
 
 <style scoped>
-header {
-  line-height: 1.5;
-}
-
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
+#myCanvas {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	background-color: #2d2d2d;
 }
 </style>
