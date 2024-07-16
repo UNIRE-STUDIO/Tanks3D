@@ -9,15 +9,13 @@ export default {
 	},
 	data() {
 		return {
-			canvasWidth: '',
-			canvasHeight: '',
 			config: null,
 			uiFields: new UIFields(),
 			game: new Game(),
 		}
 	},
 	mounted() {
-		this.config = new Config(this.$refs.myCanvas);
+		this.config = new Config();
 		this.game.init(this.config, this.uiFields);
 	},
 	methods: {
@@ -26,14 +24,14 @@ export default {
 </script>
 
 <template>
-	<canvas ref="myCanvas" id="myCanvas"></canvas>
+	<!-- <canvas ref="myCanvas" id="myCanvas"></canvas> -->
 </template>
 
 <style scoped>
-#myCanvas {
+/* #myCanvas {
 	position: absolute;
 	width: 100%;
 	height: 100%;
 	background-color: #2d2d2d;
-}
+} */
 </style>
