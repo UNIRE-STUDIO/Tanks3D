@@ -3,9 +3,9 @@ import Timer from "./timer.js";
 
 export default class PlayerTank extends Tank 
 {
-    constructor(config, spawnBullet, deadEvent, playerId)
+    constructor(config, deadEvent, playerId)
     {
-        super(config, spawnBullet);
+        super(config);
 
         this.speed = 0.005 * config.grid;
 
@@ -77,7 +77,10 @@ export default class PlayerTank extends Tank
 
     update(lag)
     {
+        this.cube.rotation.x += 0.01;
+        this.cube.rotation.y += 0.01;
         if (!this.isUse) return;
+
         this.move(lag);
     }
 }

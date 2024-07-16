@@ -1,8 +1,9 @@
 import { drawImage } from "./general.js";
+import * as THREE from 'three';
 
 export default class Tank
 {
-    constructor(config, spawnBullet)
+    constructor(config)
     {
         this.config = config;
         this.position = {
@@ -13,7 +14,7 @@ export default class Tank
         this.moveX = 0;
         this.dirY = -1;
         this.dirX = 0;
-        this.spawnBullet = spawnBullet;
+        //this.spawnBullet = spawnBullet;
         this.isPause = false;
         this.currentMap;
         this.isUse = false;
@@ -28,6 +29,10 @@ export default class Tank
 
         this.otherTanks = []; // Присваивает Level Manager или npcPool
         this.otherCollisionObject = [];
+
+        this.geometry = new THREE.BoxGeometry( 1, 1, 1 );
+        this.material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+        this.cube = new THREE.Mesh( this.geometry, this.material );
     }
 
     create(currentMap, pos)
@@ -144,14 +149,16 @@ export default class Tank
         if (!this.isUse) return;
 
         let pos = {x: this.position.x, y: this.position.y};
-        if (this.dirX == 1)
-            drawImage(this.config.ctx, this.image_right, pos, {x:this.config.grid2, y:this.config.grid2});
-        else if (this.dirX == -1)
-            drawImage(this.config.ctx, this.image_left, pos, {x:this.config.grid2, y:this.config.grid2});
-        else if (this.dirY == 1)
-            drawImage(this.config.ctx, this.image_down, pos, {x:this.config.grid2, y:this.config.grid2});
-        else if (this.dirY == -1)
-            drawImage(this.config.ctx, this.image_up, pos, {x:this.config.grid2, y:this.config.grid2});
+
+
+        // if (this.dirX == 1)
+        //     drawImage(this.config.ctx, this.image_right, pos, {x:this.config.grid2, y:this.config.grid2});
+        // else if (this.dirX == -1)
+        //     drawImage(this.config.ctx, this.image_left, pos, {x:this.config.grid2, y:this.config.grid2});
+        // else if (this.dirY == 1)
+        //     drawImage(this.config.ctx, this.image_down, pos, {x:this.config.grid2, y:this.config.grid2});
+        // else if (this.dirY == -1)
+        //     drawImage(this.config.ctx, this.image_up, pos, {x:this.config.grid2, y:this.config.grid2});
 
         //   pos = {x: Math.ceil((this.position.x + this.config.grid) / this.config.grid) * this.config.grid,
         //          y: Math.ceil((this.position.y + this.config.grid * this.moveY) / this.config.grid) * this.config.grid};

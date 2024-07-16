@@ -3,7 +3,7 @@
 //import SaveManager from "./saveManager.js";
 import levels from "./levels.json";
 //import NpcPool from "./npcPool.js";
-//import PlayerTank from "./playerTank.js";
+import PlayerTank from "./playerTank.js";
 //import BangPool from "./bangPool.js";
 import { Scene, PerspectiveCamera, WebGLRenderer } from 'three';
 
@@ -28,11 +28,12 @@ export default class LevelManager
         this.currentMap = null;
         this.config = config;
 
-        const scene = new Scene();
-        const camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
-        const renderer = new WebGLRenderer();
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        document.body.appendChild(renderer.domElement);
+        this.scene = new Scene();
+        this.camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
+        this.camera.position.z = 5;
+        this.renderer = new WebGLRenderer();
+        this.renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(this.renderer.domElement);
 
 
         // this.tilesBackground = [new Image(), new Image(), new Image(),new Image()];
@@ -49,10 +50,11 @@ export default class LevelManager
         
 
 
-        // this.bangPool = new BangPool(this.config);
-        // this.bulletPool = new BulletPool(this.config, this.removeTile.bind(this), this.destructionOfTheBase.bind(this), this.bangPool.create.bind(this.bangPool), this.uiFields);
-        // this.players = [];
-        // this.players[0] = new PlayerTank(this.config, this.bulletPool.create.bind(this.bulletPool), this.playerDead.bind(this), 0);
+        //this.bangPool = new BangPool(this.config);
+        //this.bulletPool = new BulletPool(this.config, this.removeTile.bind(this), this.destructionOfTheBase.bind(this), this.bangPool.create.bind(this.bangPool), this.uiFields);
+        this.players = [];
+        this.players[0] = new PlayerTank(this.config, this.playerDead.bind(this), 0);
+        this.scene.add(this.players[0].cube);
         // this.players[1] = new PlayerTank(this.config, this.bulletPool.create.bind(this.bulletPool), this.playerDead.bind(this), 1);
         // this.npcPool = new NpcPool(this.config, this.bulletPool.create.bind(this.bulletPool), this.players, this.win.bind(this), uiFields);
 
@@ -198,7 +200,7 @@ export default class LevelManager
     update(lag)
     {
         if (this.isPause) return;
-        // this.players[0].update(lag);
+        this.players[0].update(lag);
         // if (this.uiFields.playersMode === 1) this.players[1].update(lag);
         // this.bulletPool.update(lag);
         // this.npcPool.update(lag);
@@ -209,20 +211,20 @@ export default class LevelManager
     {
         let tile;
         let coversPos = [];
-        for (let i = 0; i < this.config.viewSize.y; i++) {
-            for (let j = 0; j < this.config.viewSize.x; j++) 
-            {
-                if (this.currentMap[i][j] === 0 || this.currentMap[i][j] === 9) tile = this.tilesBackground[j%2+(i%2 * 2)];
-                else if (this.currentMap[i][j] === 4)
-                {
-                    tile = this.tilesBackground[j%2+(i%2 * 2)];
-                    coversPos.push({x: j * this.config.grid, y: i * this.config.grid});
-                }
-                else tile = this.tiles[this.currentMap[i][j]-1];
-                drawImage(this.config.ctx, tile, {x:j * this.config.grid, y:i * this.config.grid}, {x:this.config.grid, y:this.config.grid});
-            }
-        }
-        drawImage(this.config.ctx, this.tiles[4], {x: levels[this.uiFields.currentLevel].basePos.x * this.config.grid, y:levels[this.uiFields.currentLevel].basePos.y * this.config.grid}, {x:this.config.grid2, y:this.config.grid2});
+        // for (let i = 0; i < this.config.viewSize.y; i++) {
+        //     for (let j = 0; j < this.config.viewSize.x; j++) 
+        //     {
+        //         if (this.currentMap[i][j] === 0 || this.currentMap[i][j] === 9) tile = this.tilesBackground[j%2+(i%2 * 2)];
+        //         else if (this.currentMap[i][j] === 4)
+        //         {
+        //             tile = this.tilesBackground[j%2+(i%2 * 2)];
+        //             coversPos.push({x: j * this.config.grid, y: i * this.config.grid});
+        //         }
+        //         else tile = this.tiles[this.currentMap[i][j]-1];
+        //         drawImage(this.config.ctx, tile, {x:j * this.config.grid, y:i * this.config.grid}, {x:this.config.grid, y:this.config.grid});
+        //     }
+        // }
+        // drawImage(this.config.ctx, this.tiles[4], {x: levels[this.uiFields.currentLevel].basePos.x * this.config.grid, y:levels[this.uiFields.currentLevel].basePos.y * this.config.grid}, {x:this.config.grid2, y:this.config.grid2});
         // this.players[0].render();
         // if (this.uiFields.playersMode === 1) this.players[1].render();
 
@@ -234,5 +236,8 @@ export default class LevelManager
         // {
         //     drawImage(this.config.ctx, this.tiles[3], {x:coversPos[i].x, y:coversPos[i].y}, {x:this.config.grid, y:this.config.grid});
         // }
+        this.renderer.render( this.scene, this.camera );
+        console.log(777);
+
     }
 }
