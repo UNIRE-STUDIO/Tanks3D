@@ -3,6 +3,8 @@ import Game from "./scripts/game.js";
 import Config from "./scripts/config.js";
 import UIFields from "./scripts/uiFields.js";
 
+let game;
+
 export default {
 	components: {
 
@@ -11,12 +13,12 @@ export default {
 		return {
 			config: null,
 			uiFields: new UIFields(),
-			game: new Game(),
 		}
 	},
 	mounted() {
 		this.config = new Config();
-		this.game.init(this.config, this.uiFields);
+		game = new Game();
+		game.init(this.config, this.uiFields);
 	},
 	methods: {
 	}
