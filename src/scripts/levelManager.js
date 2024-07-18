@@ -27,17 +27,24 @@ export default class LevelManager {
         this.config = config
 
         this.scene = new THREE.Scene()
-        this.camera = new THREE.PerspectiveCamera(
-            75,
-            window.innerWidth / window.innerHeight,
-            0.1,
-            100
-        )
-        this.camera.position.set(16, 17, 22)
-        this.camera.rotateX((-55 * Math.PI) / 180)
+        //this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100)
+        const left = -10
+        const right = 10
+        const top = 10
+        const bottom = -10
+        const near = 5
+        const far = 50
+        this.camera = new THREE.OrthographicCamera(left, right, top, bottom, near, far)
+        this.camera.position.set(this.config.viewSize.x / 2, 17, 22)
+        this.camera.zoom = 10
+        this.camera.lookAt(new THREE.Vector3(this.config.viewSize.x / 2, 0, this.config.viewSize.y / 2))
+        //this.camera.rotateX((-55 * Math.PI) / 180)
         this.renderer = new THREE.WebGLRenderer()
         this.renderer.setSize(window.innerWidth, window.innerHeight)
         document.body.appendChild(this.renderer.domElement)
+
+        let axesHelper = new THREE.AxesHelper(10)
+        this.scene.add(axesHelper)
 
         let ambient = new THREE.AmbientLight(0xffffff, 1)
         this.scene.add(ambient)
@@ -114,12 +121,7 @@ export default class LevelManager {
         let coversPos = []
         for (let i = 0; i < this.config.viewSize.y; i++) {
             for (let j = 0; j < this.config.viewSize.x; j++) {
-                if (
-                    this.currentMap[i][j] === 0 ||
-                    this.currentMap[i][j] === 9 ||
-                    this.currentMap[i][j] === 4
-                )
-                    continue
+                if (this.currentMap[i][j] === 0 || this.currentMap[i][j] === 9 || this.currentMap[i][j] === 4) continue
                 let cube = new THREE.Mesh(this.geometry, this.materials[this.currentMap[i][j] - 1])
                 cube.position.set(j * this.config.grid + 0.5, 0.5, i * this.config.grid + 0.5)
                 group.add(cube)
@@ -135,10 +137,7 @@ export default class LevelManager {
         // let base = {x: levels[this.uiFields.currentLevel].basePos.x * this.config.grid, y: levels[this.uiFields.currentLevel].basePos.y * this.config.grid};
         // this.bulletPool.init(this.currentMap, base);
         this.isPause = false
-        this.players[0].create(
-            this.currentMap,
-            levels[this.uiFields.currentLevel].playerSpawnsPos[0]
-        )
+        this.players[0].create(this.currentMap, levels[this.uiFields.currentLevel].playerSpawnsPos[0])
         // //this.players[0].setOtherCollisionObject(base);
         this.players[0].isPause = false
         // if (this.uiFields.playersMode === 1)
@@ -220,9 +219,7 @@ export default class LevelManager {
 
     nextLevel() {
         this.uiFields.currentLevel =
-            this.uiFields.currentLevel >= levels.length - 1
-                ? (this.uiFields.currentLevel = 0)
-                : this.uiFields.currentLevel + 1
+            this.uiFields.currentLevel >= levels.length - 1 ? (this.uiFields.currentLevel = 0) : this.uiFields.currentLevel + 1
     }
 
     destructionOfTheBase() {

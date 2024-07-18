@@ -24,6 +24,7 @@ export default class Tank {
         this.image_left = new Image()
 
         this.speed = 0
+        this.speedRotation = 0.03
         this.health = 1
 
         this.otherTanks = [] // Присваивает Level Manager или npcPool
@@ -65,8 +66,6 @@ export default class Tank {
         if (dirX == 0 && dirY == 0) return // Если input пытается сбросить направления, то this.dir? должны его сохранить даже если кнопка не нажата
         this.dirY = dirY
         this.dirX = dirX
-        if (this.dirY != 0) this.model.rotation.y = ((this.dirY > 0 ? 180 : 0) * Math.PI) / 180
-        else if (this.dirX != 0) this.model.rotation.y = (-this.dirX * 90 * Math.PI) / 180
     }
 
     checkCollisionWithObstacle() {
@@ -75,8 +74,7 @@ export default class Tank {
         let extraX = tileX
         let extraY = tileY
 
-        if (this.currentMap[tileY] === undefined || this.currentMap[tileY][tileX] === undefined)
-            return true
+        if (this.currentMap[tileY] === undefined || this.currentMap[tileY][tileX] === undefined) return true
 
         if (this.moveY != 0) extraX += 1
         else if (this.moveX != 0) extraY += 1
@@ -99,21 +97,15 @@ export default class Tank {
         let check = 0
         for (let i = 0; i < this.otherTanks.length; i++) {
             if (this.otherTanks[i].isUse) {
-                check = this.checkCollisionWithObject(this.otherTanks[i].position)
-                    ? check + 1
-                    : check
+                check = this.checkCollisionWithObject(this.otherTanks[i].position) ? check + 1 : check
             }
         }
         return check > 0
     }
 
     checkCollisionWithObject(objPos) {
-        let tX = Math.round(
-            (this.position.x + (this.config.grid / 2) * this.moveX) / this.config.grid
-        )
-        let tY = Math.round(
-            (this.position.y + (this.config.grid / 2) * this.moveY) / this.config.grid
-        )
+        let tX = Math.round((this.position.x + (this.config.grid / 2) * this.moveX) / this.config.grid)
+        let tY = Math.round((this.position.y + (this.config.grid / 2) * this.moveY) / this.config.grid)
 
         let oX = Math.round(objPos.x / this.config.grid)
         let oY = Math.round(objPos.y / this.config.grid)
@@ -153,6 +145,15 @@ export default class Tank {
         }
 
         return false
+    }
+
+    update(lag) {
+        let halfAngle
+        if (this.dirY != 0)
+            halfAngle = this.dirY > 0 ? Math.PI / 2 : 0 // Вниз или вверх
+        else if (this.dirX != 0) halfAngle = this.dirX > 0 ? (3 * Math.PI) / 2 / 2 : Math.PI / 2 / 2 // Вправо или влево
+        let q = new THREE.Quaternion(0, 1 * Math.sin(halfAngle), 0, Math.cos(halfAngle))
+        this.model.quaternion.slerp(q, lag * this.speedRotation)
     }
 
     render() {

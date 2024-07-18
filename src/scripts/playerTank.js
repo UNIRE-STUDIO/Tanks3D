@@ -1,5 +1,7 @@
 import Tank from './tank.js'
 import Timer from './timer.js'
+import { moveTo } from './general.js'
+import * as THREE from 'three'
 
 export default class PlayerTank extends Tank {
     constructor(config, deadEvent, playerId, scene) {
@@ -65,12 +67,7 @@ export default class PlayerTank extends Tank {
     move(lag) {
         let incrementX = this.moveX * lag * this.speed
         let incrementY = this.moveY * lag * this.speed
-        if (
-            (this.moveX == 0 && this.moveY == 0) ||
-            this.checkCollisionWithObstacle() ||
-            this.sortOtherTanks() ||
-            this.sortOtherObjects()
-        )
+        if ((this.moveX == 0 && this.moveY == 0) || this.checkCollisionWithObstacle() || this.sortOtherTanks() || this.sortOtherObjects())
             return // Если выходим за границы карты
 
         this.position.x += incrementX
@@ -79,13 +76,13 @@ export default class PlayerTank extends Tank {
 
     update(lag) {
         if (!this.isUse) return
+        super.update(lag)
 
         this.move(lag)
         let pos = {
             x: this.position.x + this.config.grid,
             y: this.position.y + this.config.grid
         }
-        console.log(this.model)
         this.model.position.x = pos.x
         this.model.position.z = pos.y
     }
