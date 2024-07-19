@@ -27,21 +27,22 @@ export default class LevelManager {
         this.config = config
 
         this.scene = new THREE.Scene()
-        //this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100)
-        const left = -10
-        const right = 10
-        const top = 10
-        const bottom = -10
-        const near = 5
-        const far = 50
-        this.camera = new THREE.OrthographicCamera(left, right, top, bottom, near, far)
-        this.camera.position.set(this.config.viewSize.x / 2, 17, 22)
-        this.camera.zoom = 10
+        this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 10, 40)
+        this.camera.position.set(this.config.viewSize.x / 2, 17, 25)
         this.camera.lookAt(new THREE.Vector3(this.config.viewSize.x / 2, 0, this.config.viewSize.y / 2))
-        //this.camera.rotateX((-55 * Math.PI) / 180)
-        this.renderer = new THREE.WebGLRenderer()
+
+        const canvas = document.querySelector('.canvas')
+        this.renderer = new THREE.WebGLRenderer({ canvas })
         this.renderer.setSize(window.innerWidth, window.innerHeight)
         document.body.appendChild(this.renderer.domElement)
+
+        window.addEventListener('resize', () => {
+            this.camera.aspect = window.innerWidth / window.innerHeight
+            this.camera.updateProjectionMatrix()
+
+            this.renderer.setSize(window.innerWidth, window.innerHeight)
+            this.renderer(this.scene, this.camera)
+        })
 
         let axesHelper = new THREE.AxesHelper(10)
         this.scene.add(axesHelper)

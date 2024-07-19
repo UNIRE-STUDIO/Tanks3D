@@ -1,6 +1,12 @@
+@import url('https://fonts.googleapis.com/css2?family=Russo+One&display=swap');
 .app {
-  font-family: Helvetica, sans-serif;
-  text-align: center;
+    font-family: 'Russo One', sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    text-align: center;
 }
 
-body { margin: 0; }
+body {
+    margin: 0;
+    overflow: hidden;
+}

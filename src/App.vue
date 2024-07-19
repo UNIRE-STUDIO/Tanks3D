@@ -2,22 +2,25 @@
 import Game from "./scripts/game.js";
 import Config from "./scripts/config.js";
 import UIFields from "./scripts/uiFields.js";
+import MainScreen from "./components/MainScreen.vue";
+import PlayScreen from "./components/PlayScreen.vue";
 
-let game;
+let game = new Game();
 
 export default {
 	components: {
-
+		MainScreen,
+		PlayScreen
 	},
 	data() {
 		return {
 			config: null,
 			uiFields: new UIFields(),
+			gameLink: game
 		}
 	},
 	mounted() {
 		this.config = new Config();
-		game = new Game();
 		game.init(this.config, this.uiFields);
 	},
 	methods: {
@@ -26,14 +29,17 @@ export default {
 </script>
 
 <template>
-	<!-- <canvas ref="myCanvas" id="myCanvas"></canvas> -->
+	<canvas class="canvas"></canvas>
+	<div class="app">
+		<MainScreen v-if="uiFields.currentScreen === 0" :game="gameLink" />
+		<PlayScreen v-if="uiFields.currentScreen === 1" :game="gameLink" />
+	</div>
 </template>
 
 <style scoped>
-/* #myCanvas {
+.app {
 	position: absolute;
-	width: 100%;
 	height: 100%;
-	background-color: #2d2d2d;
-} */
+	width: 100%;
+}
 </style>
