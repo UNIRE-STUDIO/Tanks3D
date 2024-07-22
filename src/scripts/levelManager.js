@@ -39,9 +39,10 @@ export default class LevelManager {
         window.addEventListener('resize', () => {
             this.camera.aspect = window.innerWidth / window.innerHeight
             this.camera.updateProjectionMatrix()
-
+            let distance = (34 / 2) / Math.tan(this.camera.fov / 2)
+            this.camera.position.z = distance + 25;
             this.renderer.setSize(window.innerWidth, window.innerHeight)
-            this.renderer(this.scene, this.camera)
+            this.renderer.render(this.scene, this.camera)
         })
 
         let axesHelper = new THREE.AxesHelper(10)
