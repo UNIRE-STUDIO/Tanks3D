@@ -37,10 +37,12 @@ export default class LevelManager {
         document.body.appendChild(this.renderer.domElement)
 
         window.addEventListener('resize', () => {
-            this.camera.aspect = window.innerWidth / window.innerHeight
+            let wh = window.innerWidth / window.innerHeight
+            this.camera.aspect = wh
             this.camera.updateProjectionMatrix()
-            let distance = (34 / 2) / Math.tan(this.camera.fov / 2)
-            this.camera.position.z = distance + 25;
+            if (wh < 1) {
+                this.renderer.setSize(window.innerWidth, window.innerHeight * wh)
+            }
             this.renderer.setSize(window.innerWidth, window.innerHeight)
             this.renderer.render(this.scene, this.camera)
         })
