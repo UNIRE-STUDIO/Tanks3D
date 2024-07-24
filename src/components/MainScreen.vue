@@ -36,18 +36,12 @@ export default {
 .btn {
     margin: 10px;
     padding: 15px 5px;
-    font-family: "Russo One", sans-serif;
-    font-weight: 400;
-    font-style: normal;
-    border-style: none;
-    background-color: rgb(171, 179, 184);
     box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14),
         0 3px 1px -2px rgba(0, 0, 0, 0.12), 0 1px 5px 0 rgba(0, 0, 0, 0.2);
     transition: all 0.2s;
 }
 
 .btn:hover {
-    cursor: pointer;
     box-shadow: none;
 }
 

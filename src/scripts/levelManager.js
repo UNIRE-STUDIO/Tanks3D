@@ -34,17 +34,31 @@ export default class LevelManager {
         const canvas = document.querySelector('.canvas')
         this.renderer = new THREE.WebGLRenderer({ canvas })
         this.renderer.setSize(window.innerWidth, window.innerHeight)
+        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
         document.body.appendChild(this.renderer.domElement)
 
         window.addEventListener('resize', () => {
+            let hw = window.innerHeight / window.innerWidth
             let wh = window.innerWidth / window.innerHeight
             this.camera.aspect = wh
-            this.camera.updateProjectionMatrix()
-            if (wh < 1) {
-                this.renderer.setSize(window.innerWidth, window.innerHeight * wh)
+            if (wh < 1.2) {
+                this.camera.fov = 75 * hw * 1.1
+            } else {
+                this.camera.fov = 75
             }
+            this.camera.updateProjectionMatrix()
             this.renderer.setSize(window.innerWidth, window.innerHeight)
+            this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+            if (this.uiFields.currentScreen === 0) return
             this.renderer.render(this.scene, this.camera)
+        })
+
+        window.addEventListener('dblclick', () => {
+            if (document.fullscreenElement) {
+                document.exitFullscreen()
+            } else {
+                document.body.requestFullscreen()
+            }
         })
 
         let axesHelper = new THREE.AxesHelper(10)

@@ -30,14 +30,14 @@ export default {
 
 <template>
 	<canvas class="canvas"></canvas>
-	<div class="app">
+	<div class="ui">
 		<MainScreen v-if="uiFields.currentScreen === 0" :game="gameLink" />
 		<PlayScreen v-if="uiFields.currentScreen === 1" :game="gameLink" />
 	</div>
 </template>
 
 <style scoped>
-.app {
+.ui {
 	position: absolute;
 	height: 100%;
 	width: 100%;

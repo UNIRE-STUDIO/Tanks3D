@@ -1,5 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Russo+One&display=swap');
-.app {
+.ui {
     font-family: 'Russo One', sans-serif;
     font-weight: 400;
     font-style: normal;
@@ -9,4 +9,16 @@
 body {
     margin: 0;
     overflow: hidden;
+}
+
+button {
+    font-family: 'Russo One', sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    border-style: none;
+    background-color: rgb(171, 179, 184);
+}
+
+button:hover {
+    cursor: pointer;
 }
