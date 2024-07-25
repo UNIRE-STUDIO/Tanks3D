@@ -31,8 +31,8 @@ export default class LevelManager {
         this.camera.position.set(this.config.viewSize.x / 2, 17, 25)
         this.camera.lookAt(new THREE.Vector3(this.config.viewSize.x / 2, 0, this.config.viewSize.y / 2))
 
-        const canvas = document.querySelector('.canvas')
-        this.renderer = new THREE.WebGLRenderer({ canvas })
+        let canvas = document.querySelector('.canvas')
+        this.renderer = new THREE.WebGLRenderer({ antialias: true, canvas, alpha: true })
         this.renderer.setSize(window.innerWidth, window.innerHeight)
         this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
         document.body.appendChild(this.renderer.domElement)

@@ -5,6 +5,7 @@ import * as THREE from 'three'
 export default class Tank {
     constructor(config, scene) {
         this.config = config
+        this.scene = scene
         this.position = {
             x: 0,
             y: 0
@@ -36,7 +37,6 @@ export default class Tank {
         this.model
         this.gltfLoader.load('/models/tank1.glb', (gltf) => {
             this.model = gltf.scene.children[0]
-            scene.add(this.model)
         })
     }
 
@@ -46,6 +46,7 @@ export default class Tank {
         this.position.y = pos.y * this.config.grid
         this.otherCollisionObject = []
         this.isUse = true
+        this.scene.add(this.model)
     }
 
     setOtherCollisionObject(obj) {

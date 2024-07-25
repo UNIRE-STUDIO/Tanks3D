@@ -7,16 +7,21 @@ export default {
         }
     },
 
-
+    methods: {
+        goToPage() {
+            window.location.href = "https://unire.su";
+        }
+    }
 }
 </script>
 
 <template>
     <div id="container">
-        <p id="header">— ТАНКИ 3D —</p>
+        <h1>— ТАНКИ 3D —</h1>
         <div class="panel">
             <button class="btn" @click="game.changeScreen(1, 1, 0)">ОДИН ИГРОК</button>
             <button class="btn" @click="game.changeScreen(1, 1, 1)">ДВА ИГРОКА</button>
+            <button class="btn" @click="goToPage()">— НАШ САЙТ —</button>
         </div>
     </div>
 
@@ -29,16 +34,13 @@ export default {
     align-items: center;
 }
 
-#header {
+h1 {
     font-size: 40px;
 }
 
 .btn {
     margin: 10px;
     padding: 15px 5px;
-    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14),
-        0 3px 1px -2px rgba(0, 0, 0, 0.12), 0 1px 5px 0 rgba(0, 0, 0, 0.2);
-    transition: all 0.2s;
 }
 
 .btn:hover {

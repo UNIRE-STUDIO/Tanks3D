@@ -33,11 +33,10 @@ export default class Game {
         switch (screen) {
             case GameScreens.MENU:
                 this.uiFields.currentScreen = GameScreens.MENU
-                if (this.levelManager !== undefined) this.levelManager.uiFields.currentLevel = 0
                 break
             case GameScreens.PLAY:
-                if (parameter == 1) this.levelManager.start(secondParam)
-                else if (parameter == 2) this.levelManager.setResume()
+                if (parameter === 1) this.levelManager.start(secondParam)
+                else if (parameter === 2) this.levelManager.setResume()
                 this.uiFields.currentScreen = GameScreens.PLAY
                 break
             case GameScreens.PAUSE:
@@ -52,8 +51,8 @@ export default class Game {
                 this.uiFields.currentScreen = GameScreens.WIN
                 break
             case -1: // Если нажата кнопка назад
-                if (this.uiFields.currentScreen == GameScreens.PAUSE) this.changeScreen(GameScreens.MENU)
-                if (this.uiFields.currentScreen == GameScreens.GAMEOVER) this.changeScreen(GameScreens.MENU)
+                if (this.uiFields.currentScreen === GameScreens.PAUSE) this.changeScreen(GameScreens.MENU)
+                if (this.uiFields.currentScreen === GameScreens.GAMEOVER) this.changeScreen(GameScreens.MENU)
                 break
         }
     }
@@ -64,19 +63,12 @@ export default class Game {
     }
 
     update(lag) {
-        if (this.uiFields.currentScreen != GameScreens.PLAY) return
+        if (this.uiFields.currentScreen !== GameScreens.PLAY) return
         this.levelManager.update(lag)
     }
 
     render() {
-        // this.config.ctx.clearRect(0, 0, this.config.canvas.width, this.config.canvas.height)
-        if (this.uiFields.currentScreen == GameScreens.MENU) {
-            return
-        }
-        // this.config.ctx.imageSmoothingEnabled = false // Отключить размытие
-        // this.config.ctx.mozImageSmoothingEnabled = false
-        // this.config.ctx.webkitImageSmoothingEnabled = false
-        // this.config.ctx.msImageSmoothingEnabled = false
+        if (this.uiFields.currentScreen === GameScreens.MENU) return
         this.levelManager.render()
     }
 }
