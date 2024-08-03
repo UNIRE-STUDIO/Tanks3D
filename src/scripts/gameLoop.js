@@ -9,6 +9,8 @@ export let requestAnimFrame = (function () {
         };
 })();
 
+import Stats from "stats.js";
+
 export default class GameLoop 
 {
     constructor(update, render)
@@ -21,6 +23,10 @@ export default class GameLoop
         this.update = update;
         this.render = render;
 
+        this.stats = new Stats();
+        this.stats.showPanel(0)
+        document.body.appendChild(this.stats.dom)
+
         this.gameLoop();
     }
     
@@ -28,6 +34,7 @@ export default class GameLoop
     gameLoop() {
 
         // Текущее вермя
+        this.stats.begin()
         this.currentTime = Date.now();
         this.elapsed = this.currentTime - this.pervious; // Время между предыдущим и текущим кадром
         this.pervious = this.currentTime;             // Сохраняем время текущего кадра
@@ -46,7 +53,7 @@ export default class GameLoop
 
         // Рендерим кадр с нужны интервалом (this.ms_per_update)
         this.render();
-
+        this.stats.end()
         requestAnimFrame(this.gameLoop.bind(this));
     }
 }

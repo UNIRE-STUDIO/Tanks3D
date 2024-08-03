@@ -61,20 +61,16 @@ export default class LevelManager {
             }
         })
 
-        let axesHelper = new THREE.AxesHelper(10)
-        this.scene.add(axesHelper)
+        this.axesHelper = new THREE.AxesHelper(10)
 
-        let ambient = new THREE.AmbientLight(0xffffff, 1)
-        this.scene.add(ambient)
+        this.ambient = new THREE.AmbientLight(0xffffff, 1)
 
-        let directionalLight = new THREE.DirectionalLight(0xffffff, 0.5)
-        this.scene.add(directionalLight)
+        this.directionalLight = new THREE.DirectionalLight(0xffffff, 0.5)
 
         let planeG = new THREE.PlaneGeometry(34, 20)
-        let plane = new THREE.Mesh(planeG, new THREE.MeshBasicMaterial({ color: 0x181818 }))
-        plane.rotation.x = (-90 * Math.PI) / 180
-        plane.position.set(17, 0, 10)
-        this.scene.add(plane)
+        this.plane = new THREE.Mesh(planeG, new THREE.MeshBasicMaterial({ color: 0x181818 }))
+        this.plane.rotation.x = (-90 * Math.PI) / 180
+        this.plane.position.set(17, 0, 10)
 
         this.geometry = new THREE.BoxGeometry(1, 1.5, 1)
         this.materials = [
@@ -128,12 +124,15 @@ export default class LevelManager {
         this.uiFields.numDestroyedType1[1] = 0
         this.reset()
         this.currentMap = []
-
+        
         // Поскольку Object.assign делает только поверхностную копию мы присваиваем каждую полосу отдельно
         for (let i = 0; i < levels[this.uiFields.currentLevel].map.length; i++) {
             this.currentMap.push(levels[this.uiFields.currentLevel].map[i].slice())
         }
-
+        this.scene.add(this.plane)
+        this.scene.add(this.directionalLight)
+        this.scene.add(this.ambient)
+        this.scene.add(this.axesHelper)
         let group = new THREE.Object3D()
         let tile
         let coversPos = []
@@ -217,6 +216,7 @@ export default class LevelManager {
         // this.bulletPool.setReset();
         // this.bangPool.setReset();
         // this.uiFields.playersHealth[0] = 3;
+        this.scene.clear()
     }
 
     // Принимаем от танка игрока
