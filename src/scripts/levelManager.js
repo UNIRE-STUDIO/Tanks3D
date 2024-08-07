@@ -31,7 +31,7 @@ export default class LevelManager {
         this.camera.position.set(this.config.viewSize.x / 2, 17, 25)
         this.camera.lookAt(new THREE.Vector3(this.config.viewSize.x / 2, 0, this.config.viewSize.y / 2))
 
-        let canvas = document.querySelector('.canvas')
+        const canvas = document.querySelector('.canvas')
         this.renderer = new THREE.WebGLRenderer({ antialias: true, canvas, alpha: true })
         this.renderer.setSize(window.innerWidth, window.innerHeight)
         this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
@@ -65,18 +65,17 @@ export default class LevelManager {
 
         this.ambient = new THREE.AmbientLight(0xffffff, 1)
 
-        this.directionalLight = new THREE.DirectionalLight(0xffffff, 0.5)
+        this.directionalLight = new THREE.DirectionalLight(0xffffff, 0.6)
 
-        let planeG = new THREE.PlaneGeometry(34, 20)
-        this.plane = new THREE.Mesh(planeG, new THREE.MeshBasicMaterial({ color: 0x181818 }))
-        this.plane.rotation.x = (-90 * Math.PI) / 180
-        this.plane.position.set(17, 0, 10)
+        this.plane = new THREE.PlaneGeometry(1, 1, 1, 1)
+        this.planes = new THREE.Object3D()
 
         this.geometry = new THREE.BoxGeometry(1, 1.5, 1)
         this.materials = [
-            new THREE.MeshBasicMaterial({ color: 0x5a7671 }),
-            new THREE.MeshBasicMaterial({ color: 0xb5c3c1 }),
-            new THREE.MeshBasicMaterial({ color: 0x4bc8e4 })
+            new THREE.MeshBasicMaterial({ color: 0x242424 }), // пол
+            new THREE.MeshBasicMaterial({ color: 0x5a7671 }), // кирпичная стена
+            new THREE.MeshBasicMaterial({ color: 0xb5c3c1 }), // бетонная стена
+            new THREE.MeshBasicMaterial({ color: 0x4bc8e4 }) // вода
         ]
 
         // this.tilesBackground = [new Image(), new Image(), new Image(),new Image()];
@@ -124,12 +123,11 @@ export default class LevelManager {
         this.uiFields.numDestroyedType1[1] = 0
         this.reset()
         this.currentMap = []
-        
+
         // Поскольку Object.assign делает только поверхностную копию мы присваиваем каждую полосу отдельно
         for (let i = 0; i < levels[this.uiFields.currentLevel].map.length; i++) {
             this.currentMap.push(levels[this.uiFields.currentLevel].map[i].slice())
         }
-        this.scene.add(this.plane)
         this.scene.add(this.directionalLight)
         this.scene.add(this.ambient)
         this.scene.add(this.axesHelper)
@@ -138,8 +136,19 @@ export default class LevelManager {
         let coversPos = []
         for (let i = 0; i < this.config.viewSize.y; i++) {
             for (let j = 0; j < this.config.viewSize.x; j++) {
-                if (this.currentMap[i][j] === 0 || this.currentMap[i][j] === 9 || this.currentMap[i][j] === 4) continue
-                let cube = new THREE.Mesh(this.geometry, this.materials[this.currentMap[i][j] - 1])
+                if (
+                    this.currentMap[i][j] === 0 ||
+                    this.currentMap[i][j] === 9 ||
+                    this.currentMap[i][j] === 4 ||
+                    this.currentMap[i][j] === 3
+                ) {
+                    let p = new THREE.Mesh(this.plane, this.materials[this.currentMap[i][j]])
+                    p.position.set(j * this.config.grid + 0.5, 0, i * this.config.grid + 0.5)
+                    p.rotation.x = (-90 * Math.PI) / 180
+                    group.add(p)
+                    continue
+                }
+                let cube = new THREE.Mesh(this.geometry, this.materials[this.currentMap[i][j]])
                 cube.position.set(j * this.config.grid + 0.5, 0.5, i * this.config.grid + 0.5)
                 group.add(cube)
             }
@@ -207,7 +216,7 @@ export default class LevelManager {
 
     reset() {
         // this.uiFields.npc = levels[this.uiFields.currentLevel].npc.slice();
-        // this.players[0].setReset();
+        this.players[0].setReset()
         // if (this.uiFields.playersMode === 1){
         //     this.players[1].setReset();
         //     this.uiFields.playersHealth[1] = 3;
