@@ -1,4 +1,4 @@
-//import BulletPool from "./bulletPool.js";
+import BulletPool from './bulletPool.js'
 //import { drawImage } from "./general.js";
 //import SaveManager from "./saveManager.js";
 import levels from './levels.json'
@@ -61,8 +61,6 @@ export default class LevelManager {
             }
         })
 
-        this.axesHelper = new THREE.AxesHelper(10)
-
         this.ambient = new THREE.AmbientLight(0xffffff, 1)
 
         this.directionalLight = new THREE.DirectionalLight(0xffffff, 0.6)
@@ -90,10 +88,23 @@ export default class LevelManager {
         // this.tiles[3].src = "/Tanks2D/sprites/cover0.png";
         // this.tiles[4].src = "/Tanks2D/sprites/base.png";
 
-        //this.bangPool = new BangPool(this.config);
-        //this.bulletPool = new BulletPool(this.config, this.removeTile.bind(this), this.destructionOfTheBase.bind(this), this.bangPool.create.bind(this.bangPool), this.uiFields);
+        //this.bangPool = new BangPool(this.config)
+        // this.bulletPool = new BulletPool(
+        //     this.config,
+        //     this.removeTile.bind(this),
+        //     this.destructionOfTheBase.bind(this),
+        //     this.bangPool.create.bind(this.bangPool), <--------
+        //     this.uiFields
+        // )
+        this.bulletPool = new BulletPool(this.config, this.removeTile.bind(this), this.destructionOfTheBase.bind(this), this.uiFields)
         this.players = []
-        this.players[0] = new PlayerTank(this.config, this.playerDead.bind(this), 0, this.scene)
+        this.players[0] = new PlayerTank(
+            this.config,
+            this.bulletPool.create.bind(this.bulletPool),
+            this.playerDead.bind(this),
+            0,
+            this.scene
+        )
         // this.players[1] = new PlayerTank(this.config, this.bulletPool.create.bind(this.bulletPool), this.playerDead.bind(this), 1);
         // this.npcPool = new NpcPool(this.config, this.bulletPool.create.bind(this.bulletPool), this.players, this.win.bind(this), uiFields);
 
@@ -130,26 +141,31 @@ export default class LevelManager {
         }
         this.scene.add(this.directionalLight)
         this.scene.add(this.ambient)
-        this.scene.add(this.axesHelper)
         let group = new THREE.Object3D()
         let tile
         let coversPos = []
         for (let i = 0; i < this.config.viewSize.y; i++) {
             for (let j = 0; j < this.config.viewSize.x; j++) {
-                if (
-                    this.currentMap[i][j] === 0 ||
-                    this.currentMap[i][j] === 9 ||
-                    this.currentMap[i][j] === 4 ||
-                    this.currentMap[i][j] === 3
-                ) {
+                if (this.currentMap[i][j] === 0 || this.currentMap[i][j] === 9 || this.currentMap[i][j] === 3) {
                     let p = new THREE.Mesh(this.plane, this.materials[this.currentMap[i][j]])
                     p.position.set(j * this.config.grid + 0.5, 0, i * this.config.grid + 0.5)
                     p.rotation.x = (-90 * Math.PI) / 180
                     group.add(p)
                     continue
+                } else if (this.currentMap[i][j] === 4) {
+                    let p = new THREE.Mesh(this.plane, this.materials[0])
+                    p.position.set(j * this.config.grid + 0.5, 0, i * this.config.grid + 0.5)
+                    p.rotation.x = (-90 * Math.PI) / 180
+                    group.add(p)
+
+                    p = new THREE.Mesh(this.plane, this.materials[this.currentMap[i][j]])
+                    p.position.set(j * this.config.grid + 0.5, 1.5, i * this.config.grid + 0.5)
+                    p.rotation.x = (-90 * Math.PI) / 180
+                    group.add(p)
+                    continue
                 }
                 let cube = new THREE.Mesh(this.geometry, this.materials[this.currentMap[i][j]])
-                cube.position.set(j * this.config.grid + 0.5, 0.5, i * this.config.grid + 0.5)
+                cube.position.set(j * this.config.grid + 0.5, 0.75, i * this.config.grid + 0.5)
                 group.add(cube)
             }
         }
