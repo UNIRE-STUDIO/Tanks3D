@@ -4,8 +4,8 @@ import { moveTo } from './general.js'
 import * as THREE from 'three'
 
 export default class PlayerTank extends Tank {
-    constructor(config, deadEvent, playerId, scene) {
-        super(config, scene)
+    constructor(config, spawnBullet, deadEvent, playerId, scene) {
+        super(config, spawnBullet, scene)
 
         this.speed = 0.005 * config.grid
 

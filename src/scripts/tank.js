@@ -3,9 +3,11 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import * as THREE from 'three'
 
 export default class Tank {
-    constructor(config, scene) {
+    constructor(config, spawnBullet, scene) {
         this.config = config
         this.scene = scene
+        this.spawnBullet = spawnBullet
+
         this.position = {
             x: 0,
             y: 0
@@ -14,7 +16,7 @@ export default class Tank {
         this.moveX = 0
         this.dirY = -1
         this.dirX = 0
-        //this.spawnBullet = spawnBullet;
+
         this.isPause = false
         this.currentMap
         this.isUse = false
@@ -31,11 +33,10 @@ export default class Tank {
         this.otherTanks = [] // Присваивает Level Manager или npcPool
         this.otherCollisionObject = []
 
-        this.geometry = new THREE.BoxGeometry(1, 1, 1)
-        this.material = new THREE.MeshBasicMaterial({ color: 0x00ff00 })
-        this.gltfLoader = new GLTFLoader()
+        // 3d
         this.model
-        this.gltfLoader.load('/models/tank1.glb', (gltf) => {
+        const gltfLoader = new GLTFLoader()
+        gltfLoader.load('/models/tank1.glb', (gltf) => {
             this.model = gltf.scene.children[0]
         })
     }

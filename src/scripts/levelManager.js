@@ -66,7 +66,6 @@ export default class LevelManager {
         this.directionalLight = new THREE.DirectionalLight(0xffffff, 0.6)
 
         this.plane = new THREE.PlaneGeometry(1, 1, 1, 1)
-        this.planes = new THREE.Object3D()
 
         this.geometry = new THREE.BoxGeometry(1, 1.5, 1)
         this.materials = [
@@ -96,7 +95,14 @@ export default class LevelManager {
         //     this.bangPool.create.bind(this.bangPool), <--------
         //     this.uiFields
         // )
-        this.bulletPool = new BulletPool(this.config, this.removeTile.bind(this), this.destructionOfTheBase.bind(this), this.uiFields)
+        this.bulletPool = new BulletPool(
+            this.config,
+            this.removeTile.bind(this),
+            this.destructionOfTheBase.bind(this),
+            this.uiFields,
+            this.scene
+        )
+        console.log(this.bulletPool)
         this.players = []
         this.players[0] = new PlayerTank(
             this.config,
