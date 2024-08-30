@@ -42,3 +42,8 @@ button:hover {
     user-select: none;
     transition: 0.3s;
 }
+
+/* Статистика */
+#stats {
+    left: 1vw;
+}
