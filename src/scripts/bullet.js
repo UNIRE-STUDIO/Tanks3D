@@ -150,21 +150,28 @@ export default class Bullet {
         }
     }
 
-    checkCollisionWithBorders() {
-        let pX = Math.round((this.posX + this.size * 2 * this.dirX) / this.config.grid)
-        let pY = Math.round((this.posY + this.size * 2 * this.dirY) / this.config.grid)
+    // checkCollisionWithBorders() {
+    //     let pX = Math.round((this.posX + this.size * 2 * this.dirX) / this.config.grid)
+    //     let pY = Math.round((this.posY + this.size * 2 * this.dirY) / this.config.grid)
 
-        if (pX < 0 || pX > this.config.canvas.width || pY < 0 || pY > this.config.canvas.height) return true
-        return false
+    //     if (pX < 0 || pX > this.config.canvas.width || pY < 0 || pY > this.config.canvas.height) return true
+    //     return false
+    // }
+
+    destroy() {
+        this.isUse = false
+        this.scene.remove(this.mesh)
     }
 
     update(lag) {
-        if (this.checkCollisionWithObstacle() || this.sortTanks() || this.checkCollisionWithBullets() || this.checkCollisionWithBorders()) {
-            this.isUse = false // Спауним на середине пули // Смещаем по направлению
-            this.bangCreateEvent({
-                x: this.posX + this.size / 2 + this.size * this.dirX,
-                y: this.posY + this.size / 2 + this.size * this.dirY
-            })
+        if (this.checkCollisionWithObstacle() || this.sortTanks() || this.checkCollisionWithBullets()) {
+            this.destroy()
+
+            // Спауним на середине пули // Смещаем по направлению
+            // this.bangCreateEvent({
+            //     x: this.posX + this.size / 2 + this.size * this.dirX,
+            //     y: this.posY + this.size / 2 + this.size * this.dirY                 <----------------------------
+            // })
             return
         }
         // Левый верхний угол пули и правый нижний угл
@@ -177,13 +184,13 @@ export default class Bullet {
                 this.config.grid2
             )
         ) {
-            this.isUse = false
+            this.destroy()
             this.destructionOfTheBaseEvent()
             return
         }
 
         this.posX += this.dirX * lag * this.speed
         this.posY += this.dirY * lag * this.speed
-        this.mesh.position.set(this.posX, this.posY, 1)
+        this.mesh.position.set(this.posX, 1, this.posY)
     }
 }

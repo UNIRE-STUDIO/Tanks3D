@@ -1,5 +1,5 @@
 import BulletPool from './bulletPool.js'
-//import { drawImage } from "./general.js";
+import { idToCoordinates, coordinatesToId } from './general.js'
 //import SaveManager from "./saveManager.js";
 import levels from './levels.json'
 //import NpcPool from "./npcPool.js";
@@ -27,6 +27,8 @@ export default class LevelManager {
         this.config = config
 
         this.scene = new THREE.Scene()
+        this.tileGroup = new THREE.Object3D()
+
         this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 10, 40)
         this.camera.position.set(this.config.viewSize.x / 2, 17, 25)
         this.camera.lookAt(new THREE.Vector3(this.config.viewSize.x / 2, 0, this.config.viewSize.y / 2))
@@ -99,10 +101,10 @@ export default class LevelManager {
             this.config,
             this.removeTile.bind(this),
             this.destructionOfTheBase.bind(this),
+            undefined, // <--------
             this.uiFields,
             this.scene
         )
-        console.log(this.bulletPool)
         this.players = []
         this.players[0] = new PlayerTank(
             this.config,
@@ -147,43 +149,48 @@ export default class LevelManager {
         }
         this.scene.add(this.directionalLight)
         this.scene.add(this.ambient)
-        let group = new THREE.Object3D()
+        this.scene.remove(this.tileGroup)
+        this.scene.add(this.tileGroup)
         let tile
         let coversPos = []
         for (let i = 0; i < this.config.viewSize.y; i++) {
             for (let j = 0; j < this.config.viewSize.x; j++) {
                 if (this.currentMap[i][j] === 0 || this.currentMap[i][j] === 9 || this.currentMap[i][j] === 3) {
                     let p = new THREE.Mesh(this.plane, this.materials[this.currentMap[i][j]])
+                    p.name = coordinatesToId(j, i, this.currentMap[0].length)
                     p.position.set(j * this.config.grid + 0.5, 0, i * this.config.grid + 0.5)
                     p.rotation.x = (-90 * Math.PI) / 180
-                    group.add(p)
+                    this.tileGroup.add(p)
                     continue
                 } else if (this.currentMap[i][j] === 4) {
                     let p = new THREE.Mesh(this.plane, this.materials[0])
                     p.position.set(j * this.config.grid + 0.5, 0, i * this.config.grid + 0.5)
                     p.rotation.x = (-90 * Math.PI) / 180
-                    group.add(p)
+                    this.tileGroup.add(p)
 
                     p = new THREE.Mesh(this.plane, this.materials[this.currentMap[i][j]])
                     p.position.set(j * this.config.grid + 0.5, 1.5, i * this.config.grid + 0.5)
                     p.rotation.x = (-90 * Math.PI) / 180
-                    group.add(p)
+                    this.tileGroup.add(p)
                     continue
                 }
                 let cube = new THREE.Mesh(this.geometry, this.materials[this.currentMap[i][j]])
                 cube.position.set(j * this.config.grid + 0.5, 0.75, i * this.config.grid + 0.5)
-                group.add(cube)
+                this.tileGroup.add(cube)
             }
         }
-        this.scene.add(group)
         this.timerStart = setTimeout(() => {
             this.delayedSpawn()
         }, 1000)
+        console.log(this.tileGroup)
     }
 
     delayedSpawn() {
-        // let base = {x: levels[this.uiFields.currentLevel].basePos.x * this.config.grid, y: levels[this.uiFields.currentLevel].basePos.y * this.config.grid};
-        // this.bulletPool.init(this.currentMap, base);
+        let base = {
+            x: levels[this.uiFields.currentLevel].basePos.x * this.config.grid,
+            y: levels[this.uiFields.currentLevel].basePos.y * this.config.grid
+        }
+        this.bulletPool.init(this.currentMap, base)
         this.isPause = false
         this.players[0].create(this.currentMap, levels[this.uiFields.currentLevel].playerSpawnsPos[0])
         // //this.players[0].setOtherCollisionObject(base);
@@ -200,6 +207,8 @@ export default class LevelManager {
 
     removeTile(posX, posY) {
         this.currentMap[posY][posX] = 0
+        let nameObj = this.scene.getObjectByName(coordinatesToId(posX, posY, this.currentMap[0].length))
+        console.log(nameObj)
     }
 
     setPause() {
@@ -279,7 +288,7 @@ export default class LevelManager {
         if (this.isPause) return
         this.players[0].update(lag)
         // if (this.uiFields.playersMode === 1) this.players[1].update(lag);
-        // this.bulletPool.update(lag);
+        this.bulletPool.update(lag)
         // this.npcPool.update(lag);
         // this.bangPool.update(lag);
     }
