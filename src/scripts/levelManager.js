@@ -156,8 +156,7 @@ export default class LevelManager {
         for (let i = 0; i < this.config.viewSize.y; i++) {
             for (let j = 0; j < this.config.viewSize.x; j++) {
                 if (this.currentMap[i][j] === 0 || this.currentMap[i][j] === 9 || this.currentMap[i][j] === 3) {
-                    let p = new THREE.Mesh(this.plane, this.materials[this.currentMap[i][j]])
-                    p.name = coordinatesToId(j, i, this.currentMap[0].length)
+                    let p = new THREE.Mesh(this.plane, this.materials[this.currentMap[i][j]]) // Плоскости
                     p.position.set(j * this.config.grid + 0.5, 0, i * this.config.grid + 0.5)
                     p.rotation.x = (-90 * Math.PI) / 180
                     this.tileGroup.add(p)
@@ -175,6 +174,7 @@ export default class LevelManager {
                     continue
                 }
                 let cube = new THREE.Mesh(this.geometry, this.materials[this.currentMap[i][j]])
+                cube.name = coordinatesToId(j, i, this.currentMap[0].length)
                 cube.position.set(j * this.config.grid + 0.5, 0.75, i * this.config.grid + 0.5)
                 this.tileGroup.add(cube)
             }
@@ -208,6 +208,8 @@ export default class LevelManager {
     removeTile(posX, posY) {
         this.currentMap[posY][posX] = 0
         let nameObj = this.scene.getObjectByName(coordinatesToId(posX, posY, this.currentMap[0].length))
+        this.tileGroup.remove(nameObj)
+        console.log(coordinatesToId(posX, posY, this.currentMap[0].length))
         console.log(nameObj)
     }
 
