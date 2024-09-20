@@ -69,7 +69,7 @@ export default class LevelManager {
 
         this.plane = new THREE.PlaneGeometry(1, 1, 1, 1)
 
-        this.geometry = new THREE.BoxGeometry(1, 1.5, 1)
+        this.boxGeometry = new THREE.BoxGeometry(1, 1.5, 1)
         this.materials = [
             new THREE.MeshBasicMaterial({ color: 0x242424 }), // пол
             new THREE.MeshBasicMaterial({ color: 0x5a7671 }), // кирпичная стена
@@ -155,28 +155,30 @@ export default class LevelManager {
         let coversPos = []
         for (let i = 0; i < this.config.viewSize.y; i++) {
             for (let j = 0; j < this.config.viewSize.x; j++) {
-                if (this.currentMap[i][j] === 0 || this.currentMap[i][j] === 9 || this.currentMap[i][j] === 3) {
-                    let p = new THREE.Mesh(this.plane, this.materials[this.currentMap[i][j]]) // Плоскости
+                if (this.currentMap[i][j] === 3) {
+                    let p = new THREE.Mesh(this.plane, this.materials[this.currentMap[i][j]])
                     p.position.set(j * this.config.grid + 0.5, 0, i * this.config.grid + 0.5)
                     p.rotation.x = (-90 * Math.PI) / 180
                     this.tileGroup.add(p)
                     continue
-                } else if (this.currentMap[i][j] === 4) {
-                    let p = new THREE.Mesh(this.plane, this.materials[0])
-                    p.position.set(j * this.config.grid + 0.5, 0, i * this.config.grid + 0.5)
-                    p.rotation.x = (-90 * Math.PI) / 180
-                    this.tileGroup.add(p)
-
-                    p = new THREE.Mesh(this.plane, this.materials[this.currentMap[i][j]])
+                }
+                let p = new THREE.Mesh(this.plane, this.materials[0]) // Плоскости
+                p.position.set(j * this.config.grid + 0.5, 0, i * this.config.grid + 0.5)
+                p.rotation.x = (-90 * Math.PI) / 180
+                this.tileGroup.add(p)
+                if (this.currentMap[i][j] === 4) {
+                    let p = new THREE.Mesh(this.plane, this.materials[this.currentMap[i][j]])
                     p.position.set(j * this.config.grid + 0.5, 1.5, i * this.config.grid + 0.5)
                     p.rotation.x = (-90 * Math.PI) / 180
                     this.tileGroup.add(p)
                     continue
                 }
-                let cube = new THREE.Mesh(this.geometry, this.materials[this.currentMap[i][j]])
-                cube.name = coordinatesToId(j, i, this.currentMap[0].length)
-                cube.position.set(j * this.config.grid + 0.5, 0.75, i * this.config.grid + 0.5)
-                this.tileGroup.add(cube)
+                if (this.currentMap[i][j] === 1 || this.currentMap[i][j] === 2) {
+                    let cube = new THREE.Mesh(this.boxGeometry, this.materials[this.currentMap[i][j]])
+                    cube.name = coordinatesToId(j, i, this.currentMap[0].length)
+                    cube.position.set(j * this.config.grid + 0.5, 0.75, i * this.config.grid + 0.5)
+                    this.tileGroup.add(cube)
+                }
             }
         }
         this.timerStart = setTimeout(() => {

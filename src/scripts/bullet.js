@@ -37,8 +37,8 @@ export default class Bullet {
     }
 
     create(pos, dir, bulletsPlayer, tankId) {
-        this.posX = pos.x - this.size / 2
-        this.posY = pos.y - this.size / 2
+        this.posX = pos.x
+        this.posY = pos.y
         this.dirY = dir.y
         this.dirX = dir.x
         this.isUse = true
