@@ -65,11 +65,11 @@ export default class LevelManager {
 
         this.ambient = new THREE.AmbientLight(0xffffff, 1)
 
-        this.directionalLight = new THREE.DirectionalLight(0xffffff, 0.6)
+        this.directionalLight = new THREE.DirectionalLight(0xffffff, 1)
 
         this.plane = new THREE.PlaneGeometry(1, 1, 1, 1)
 
-        this.boxGeometry = new THREE.BoxGeometry(1, 1.5, 1)
+        this.boxGeometry = new THREE.BoxGeometry(1, 1, 1)
         this.materials = [
             new THREE.MeshBasicMaterial({ color: 0x242424 }), // пол
             new THREE.MeshBasicMaterial({ color: 0x5a7671 }), // кирпичная стена
