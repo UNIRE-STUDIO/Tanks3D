@@ -38,6 +38,8 @@ export default class Tank {
         const gltfLoader = new GLTFLoader()
         gltfLoader.load('/models/tank1.glb', (gltf) => {
             this.model = gltf.scene.children[0]
+            this.model.material.map.minFilter = THREE.LinearFilter
+            this.model.material.map.magFilter = THREE.LinearFilter
         })
     }
 

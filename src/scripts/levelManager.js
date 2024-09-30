@@ -1,5 +1,6 @@
 import BulletPool from './bulletPool.js'
 import { idToCoordinates, coordinatesToId } from './general.js'
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 //import SaveManager from "./saveManager.js";
 import levels from './levels.json'
 //import NpcPool from "./npcPool.js";
@@ -69,12 +70,21 @@ export default class LevelManager {
 
         this.plane = new THREE.PlaneGeometry(1, 1, 1, 1)
 
+        // block1
+        this.block1
+        const gltfLoader = new GLTFLoader()
+        gltfLoader.load('/models/block1.glb', (gltf) => {
+            this.block1 = gltf.scene.children[0]
+            this.block1.material.map.minFilter = THREE.LinearMipMapLinearFilter
+            this.block1.material.map.magFilter = THREE.LinearFilter
+        })
+
         this.boxGeometry = new THREE.BoxGeometry(1, 1, 1)
         this.materials = [
             new THREE.MeshBasicMaterial({ color: 0x242424 }), // пол
-            new THREE.MeshBasicMaterial({ color: 0x5a7671 }), // кирпичная стена
             new THREE.MeshBasicMaterial({ color: 0xb5c3c1 }), // бетонная стена
-            new THREE.MeshBasicMaterial({ color: 0x4bc8e4 }) // вода
+            new THREE.MeshBasicMaterial({ color: 0x4bc8e4 }), // вода
+            new THREE.MeshBasicMaterial({ color: 0x1fad6d }) // тент
         ]
 
         // this.tilesBackground = [new Image(), new Image(), new Image(),new Image()];
@@ -156,7 +166,7 @@ export default class LevelManager {
         for (let i = 0; i < this.config.viewSize.y; i++) {
             for (let j = 0; j < this.config.viewSize.x; j++) {
                 if (this.currentMap[i][j] === 3) {
-                    let p = new THREE.Mesh(this.plane, this.materials[this.currentMap[i][j]])
+                    let p = new THREE.Mesh(this.plane, this.materials[2])
                     p.position.set(j * this.config.grid + 0.5, 0, i * this.config.grid + 0.5)
                     p.rotation.x = (-90 * Math.PI) / 180
                     this.tileGroup.add(p)
@@ -167,16 +177,21 @@ export default class LevelManager {
                 p.rotation.x = (-90 * Math.PI) / 180
                 this.tileGroup.add(p)
                 if (this.currentMap[i][j] === 4) {
-                    let p = new THREE.Mesh(this.plane, this.materials[this.currentMap[i][j]])
-                    p.position.set(j * this.config.grid + 0.5, 1.5, i * this.config.grid + 0.5)
+                    let p = new THREE.Mesh(this.plane, this.materials[3])
+                    p.position.set(j * this.config.grid + 0.5, 1.4, i * this.config.grid + 0.5)
                     p.rotation.x = (-90 * Math.PI) / 180
                     this.tileGroup.add(p)
                     continue
                 }
-                if (this.currentMap[i][j] === 1 || this.currentMap[i][j] === 2) {
-                    let cube = new THREE.Mesh(this.boxGeometry, this.materials[this.currentMap[i][j]])
+                if (this.currentMap[i][j] === 1) {
+                    let b1 = this.block1.clone()
+                    b1.name = coordinatesToId(j, i, this.currentMap[0].length)
+                    b1.position.set(j * this.config.grid + 0.5, 0.5, i * this.config.grid + 0.5)
+                    this.tileGroup.add(b1)
+                } else if (this.currentMap[i][j] === 2) {
+                    let cube = new THREE.Mesh(this.boxGeometry, this.materials[1])
                     cube.name = coordinatesToId(j, i, this.currentMap[0].length)
-                    cube.position.set(j * this.config.grid + 0.5, 0.75, i * this.config.grid + 0.5)
+                    cube.position.set(j * this.config.grid + 0.5, 0.5, i * this.config.grid + 0.5)
                     this.tileGroup.add(cube)
                 }
             }
