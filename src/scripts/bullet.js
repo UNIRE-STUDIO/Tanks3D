@@ -41,12 +41,12 @@ export default class Bullet {
         this.posY = pos.y
         this.dirY = dir.y
         this.dirX = dir.x
-        this.isUse = true
         this.bulletsPlayer = bulletsPlayer
         this.otherCollisionObject = []
         this.tankId = tankId
         this.mesh.position.set(this.posX, this.posY, 1)
         this.scene.add(this.mesh)
+        this.isUse = true
     }
 
     setOtherCollisionObject(obj) {
@@ -54,8 +54,8 @@ export default class Bullet {
     }
 
     checkCollisionWithObstacle() {
-        let tileX = Math.round((this.posX + this.size * this.dirX) / this.config.grid)
-        let tileY = Math.round((this.posY + this.size * this.dirY) / this.config.grid)
+        let tileX = Math.round((this.posX + this.size/2 * this.dirX) / this.config.grid)
+        let tileY = Math.round((this.posY + this.size/2 * this.dirY) / this.config.grid)
 
         if (this.currentMap[tileY] === undefined || this.currentMap[tileY][tileX] === undefined) {
             return true
@@ -149,14 +149,6 @@ export default class Bullet {
             )
         }
     }
-
-    // checkCollisionWithBorders() {
-    //     let pX = Math.round((this.posX + this.size * 2 * this.dirX) / this.config.grid)
-    //     let pY = Math.round((this.posY + this.size * 2 * this.dirY) / this.config.grid)
-
-    //     if (pX < 0 || pX > this.config.canvas.width || pY < 0 || pY > this.config.canvas.height) return true
-    //     return false
-    // }
 
     destroy() {
         this.isUse = false
