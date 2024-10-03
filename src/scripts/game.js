@@ -32,6 +32,7 @@ export default class Game {
         // Если нажата НЕ кнопка назад
         switch (screen) {
             case GameScreens.MENU:
+                this.levelManager.reset()
                 this.uiFields.currentScreen = GameScreens.MENU
                 break
             case GameScreens.PLAY:

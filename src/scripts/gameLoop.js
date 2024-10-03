@@ -23,12 +23,16 @@ export default class GameLoop {
         this.update = update
         this.render = render
 
+        let wrapper = document.createElement('div')
+        wrapper.style.width = '100%'
+        wrapper.style.position = 'absolute'
+        wrapper.style.display = 'flex'
+        wrapper.style.justifyContent = 'end'
         this.stats = new Stats()
         this.stats.showPanel(0)
-        this.stats.dom.style.width = '100%'
-        this.stats.dom.style.display = 'flex'
-        this.stats.dom.style.justifyContent = 'end'
-        document.body.appendChild(this.stats.dom)
+        this.stats.dom.style.position = 'static'
+        wrapper.appendChild(this.stats.dom)
+        document.body.prepend(wrapper)
 
         this.gameLoop()
     }
