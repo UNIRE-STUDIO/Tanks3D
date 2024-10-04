@@ -1,6 +1,7 @@
 import BulletPool from "./bulletPool.js";
 import { idToCoordinates, coordinatesToId } from "./general.js";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+import * as BufferGeometryUtils from "three/examples/jsm/utils/BufferGeometryUtils.js";
 //import SaveManager from "./saveManager.js";
 import levels from "./levels.json";
 //import NpcPool from "./npcPool.js";
@@ -95,7 +96,7 @@ export default class LevelManager {
       this.block1.scale.set(1, 1.4, 1);
     });
 
-    this.boxGeometry = new THREE.BoxGeometry(1, 1, 1);
+    this.boxGeometry = new THREE.BoxGeometry(1, 1.4, 1);
     this.materials = [
       new THREE.MeshBasicMaterial({ color: 0x242424 }), // пол
       new THREE.MeshBasicMaterial({ color: 0xb5c3c1 }), // бетонная стена
@@ -199,7 +200,8 @@ export default class LevelManager {
           continue;
         }
         if (this.currentMap[i][j] === 1) {
-          let b1 = this.block1.clone();
+          let b1 = new THREE.Mesh(this.block1.geometry, this.block1.material);
+          b1.scale.set(1, 1.4, 1);
           b1.name = coordinatesToId(j, i, this.currentMap[0].length);
           b1.position.set(
             j * this.config.grid + 0.5,
@@ -219,7 +221,13 @@ export default class LevelManager {
         }
       }
     }
-    this.scene.add(this.tileGroup);
+    this.tileGroup;
+
+    let geom = new THREE.BufferGeometry();
+    for (let i = 0; i < this.tileGroup.children.length; i++) {
+      geom.merge(this.tileGroup.children[i].geometry);
+    }
+    this.scene.add(this.tileGroup); // <----------------------
     this.timerStart = setTimeout(() => {
       this.delayedSpawn();
     }, 1000);
