@@ -222,14 +222,14 @@ export default class LevelManager {
       }
     }
     this.tileGroup;
-
-    let geom = new THREE.BufferGeometry();
+    let geometries = [];
     for (let i = 0; i < this.tileGroup.children.length; i++) {
-      geom.merge(this.tileGroup.children[i].geometry);
+      	geometries.push(this.tileGroup.children[i].geometry);
     }
-    this.scene.add(this.tileGroup); // <----------------------
+    let mergedGeometry = BufferGeometryUtils.mergeGeometries(geometries, true);
+	this.scene.add(new THREE.Mesh(mergedGeometry, this.tileGroup.children[0].material)); // <----------------------
     this.timerStart = setTimeout(() => {
-      this.delayedSpawn();
+    	this.delayedSpawn();
     }, 1000);
   }
 
