@@ -29,7 +29,6 @@ export default class LevelManager {
     this.config = config;
 
     this.scene = new THREE.Scene();
-    this.tileGroup = new THREE.Object3D();
 
     this.camera = new THREE.PerspectiveCamera(
       75,
@@ -164,39 +163,30 @@ export default class LevelManager {
     }
     this.scene.add(this.directionalLight);
     this.scene.add(this.ambient);
-    this.scene.remove(this.tileGroup);
-    let tile;
-    let coversPos = [];
+    let floor1 = [];
+    let water = new THREE.Object3D();
+    let covers = new THREE.Object3D();
+    let blocks = new THREE.Object3D();
+    let bricks = new THREE.Object3D();
+    bricks.name = 'bricks';
     for (let i = 0; i < this.config.viewSize.y; i++) {
-      for (let j = 0; j < this.config.viewSize.x; j++) {
+      for (let j = 0; j < this.config.viewSize.x; j++) { // Вода
         if (this.currentMap[i][j] === 3) {
           let p = new THREE.Mesh(this.plane, this.materials[2]);
-          p.position.set(
-            j * this.config.grid + 0.5,
-            0,
-            i * this.config.grid + 0.5
-          );
+          p.position.set(j * this.config.grid + 0.5, 0,i * this.config.grid + 0.5);
           p.rotation.x = (-90 * Math.PI) / 180;
-          this.tileGroup.add(p);
+          water.add(p);
           continue;
         }
-        let p = new THREE.Mesh(this.plane, this.materials[0]); // Плоскости
-        p.position.set(
-          j * this.config.grid + 0.5,
-          0,
-          i * this.config.grid + 0.5
-        );
-        p.rotation.x = (-90 * Math.PI) / 180;
-        this.tileGroup.add(p);
-        if (this.currentMap[i][j] === 4) {
+        let p = this.plane.clone() // Плоскости
+        p.rotateX((-90 * Math.PI) / 180);
+        p.translate(j * this.config.grid + 0.5, 0,i * this.config.grid + 0.5);
+        floor1.push(p);
+        if (this.currentMap[i][j] === 4) { // Маскировка
           let p = new THREE.Mesh(this.plane, this.materials[3]);
-          p.position.set(
-            j * this.config.grid + 0.5,
-            1.4,
-            i * this.config.grid + 0.5
-          );
+          p.position.set(j * this.config.grid + 0.5, 1.4, i * this.config.grid + 0.5);
           p.rotation.x = (-90 * Math.PI) / 180;
-          this.tileGroup.add(p);
+          covers.add(p);
           continue;
         }
         if (this.currentMap[i][j] === 1) {
@@ -208,7 +198,7 @@ export default class LevelManager {
             0.7,
             i * this.config.grid + 0.5
           );
-          this.tileGroup.add(b1);
+          bricks.add(b1);
         } else if (this.currentMap[i][j] === 2) {
           let cube = new THREE.Mesh(this.boxGeometry, this.materials[1]);
           cube.name = coordinatesToId(j, i, this.currentMap[0].length);
@@ -217,19 +207,19 @@ export default class LevelManager {
             0.7,
             i * this.config.grid + 0.5
           );
-          this.tileGroup.add(cube);
+          blocks.add(cube);
         }
       }
     }
-    this.tileGroup;
-    let geometries = [];
-    for (let i = 0; i < this.tileGroup.children.length; i++) {
-      	geometries.push(this.tileGroup.children[i].geometry);
-    }
-    let mergedGeometry = BufferGeometryUtils.mergeGeometries(geometries, true);
-	this.scene.add(new THREE.Mesh(mergedGeometry, this.tileGroup.children[0].material)); // <----------------------
+    let floorMerge = BufferGeometryUtils.mergeGeometries([...floor1]);
+    this.scene.add(new THREE.Mesh(floorMerge, this.materials[0]));
+    
+    this.scene.add(water);
+    this.scene.add(covers);
+    this.scene.add(blocks);
+    this.scene.add(bricks);
     this.timerStart = setTimeout(() => {
-    	this.delayedSpawn();
+      this.delayedSpawn();
     }, 1000);
   }
 
@@ -261,7 +251,7 @@ export default class LevelManager {
     let nameObj = this.scene.getObjectByName(
       coordinatesToId(posX, posY, this.currentMap[0].length)
     );
-    this.tileGroup.remove(nameObj);
+    this.scene.getObjectByName('bricks').remove(nameObj);
   }
 
   setPause() {
@@ -310,7 +300,6 @@ export default class LevelManager {
     // this.bangPool.setReset();
     // this.uiFields.playersHealth[0] = 3;
     this.scene.clear();
-    this.tileGroup.clear();
   }
 
   // Принимаем от танка игрока
