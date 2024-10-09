@@ -147,8 +147,8 @@ export default class LevelManager {
         input.movePlayer1Event = this.players[0].setDirection.bind(this.players[0]);
         input.shootPlayer1Event = this.players[0].shoot.bind(this.players[0]);
 
-        // input.movePlayer2Event = this.players[1].setDirection.bind(this.players[1]);
-        // input.shootPlayer2Event = this.players[1].shoot.bind(this.players[1]);
+        input.movePlayer2Event = this.players[1].setDirection.bind(this.players[1]);
+        input.shootPlayer2Event = this.players[1].shoot.bind(this.players[1]);
 
         this.timerStart;
     }
@@ -340,7 +340,7 @@ export default class LevelManager {
     update(lag) {
         if (this.isPause) return;
         this.players[0].update(lag);
-        // if (this.uiFields.playersMode === 1) this.players[1].update(lag);
+        if (this.uiFields.playersMode === 1) this.players[1].update(lag);
         this.bulletPool.update(lag);
         // this.npcPool.update(lag);
         // this.bangPool.update(lag);
