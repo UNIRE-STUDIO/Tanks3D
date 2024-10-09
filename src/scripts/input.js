@@ -90,7 +90,7 @@ export default class Input {
             this.isDown2 = true
         }
 
-        //this.movePlayer2Event(this.dirX2, this.dirY2);
+        this.movePlayer2Event(this.dirX2, this.dirY2);
         this.movePlayer1Event(this.dirX1, this.dirY1)
     }
 
@@ -143,6 +143,6 @@ export default class Input {
         if (this.dirY2 != 0 && this.dirX2 != 0) this.dirY2 = 0
 
         this.movePlayer1Event(this.dirX1, this.dirY1)
-        //this.movePlayer2Event(this.dirX2, this.dirY2);
+        this.movePlayer2Event(this.dirX2, this.dirY2);
     }
 }
