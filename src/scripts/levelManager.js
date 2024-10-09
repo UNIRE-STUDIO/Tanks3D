@@ -31,7 +31,7 @@ export default class LevelManager {
         this.scene = new THREE.Scene();
 
         this.camera = new THREE.PerspectiveCamera(
-            75,
+            60,
             window.innerWidth / window.innerHeight,
             10,
             40
@@ -56,17 +56,7 @@ export default class LevelManager {
         document.body.appendChild(this.renderer.domElement);
 
         window.addEventListener("resize", () => {
-            let hw = window.innerHeight / window.innerWidth;
-            let wh = window.innerWidth / window.innerHeight;
-            this.camera.aspect = wh;
-            if (wh < 1.2) {
-                this.camera.fov = 75 * hw * 1.1;
-            } else {
-                this.camera.fov = 75;
-            }
-            this.camera.updateProjectionMatrix();
-            this.renderer.setSize(window.innerWidth, window.innerHeight);
-            this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            this.updateCameraFov();
             if (this.uiFields.currentScreen === 0) return;
             this.renderer.render(this.scene, this.camera);
         });
@@ -128,21 +118,20 @@ export default class LevelManager {
             this.scene
         );
         this.players[1] = new PlayerTank(
-            this.config, 
-            this.bulletPool.create.bind(this.bulletPool), 
-            this.playerDead.bind(this), 
+            this.config,
+            this.bulletPool.create.bind(this.bulletPool),
+            this.playerDead.bind(this),
             1,
             this.scene);
         // this.npcPool = new NpcPool(this.config, this.bulletPool.create.bind(this.bulletPool), this.players, this.win.bind(this), uiFields);
 
         // this.players[0].otherTanks.push(...this.npcPool.tanks);
         // this.players[1].otherTanks.push(...this.npcPool.tanks);
-        // this.players[0].otherTanks.push(this.players[1]);
-        // this.players[1].otherTanks.push(this.players[0]);
+        this.players[0].otherTanks.push(this.players[1]);
+        this.players[1].otherTanks.push(this.players[0]);
 
         // this.bulletPool.setListNpcTanks(this.npcPool.tanks);
-        // this.bulletPool.setListPlayers([this.players[0]]);
-        // this.bulletPool.setListPlayers([this.players[1]]);
+        this.bulletPool.setListPlayers(this.players);
 
         input.movePlayer1Event = this.players[0].setDirection.bind(this.players[0]);
         input.shootPlayer1Event = this.players[0].shoot.bind(this.players[0]);
@@ -151,6 +140,7 @@ export default class LevelManager {
         input.shootPlayer2Event = this.players[1].shoot.bind(this.players[1]);
 
         this.timerStart;
+        this.updateCameraFov();
     }
 
     start(playersMode = 0) {
@@ -228,6 +218,29 @@ export default class LevelManager {
         }, 1000);
     }
 
+    updateCameraFov() {
+        let hw = window.innerHeight / window.innerWidth;
+        let wh = window.innerWidth / window.innerHeight;
+        this.camera.aspect = wh;
+        this.camera.fov = 60;
+        if (wh < 1.8) {
+            this.camera.fov = 60 * hw * 1.9;
+        }
+        if (wh < 1.4) {
+            this.camera.fov = 60 * hw * 1.7;
+        }
+        if (wh < 1.1) {
+            this.camera.fov = 60 * hw * 1.6;
+        }
+        if (wh < 0.9) {
+            this.camera.fov = 60 * hw * 1.5;
+        }
+        console.log(wh);
+        this.camera.updateProjectionMatrix();
+        this.renderer.setSize(window.innerWidth, window.innerHeight);
+        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    }
+
     delayedSpawn() {
         let base = {
             x: levels[this.uiFields.currentLevel].basePos.x * this.config.grid,
@@ -242,10 +255,9 @@ export default class LevelManager {
 
         // //this.players[0].setOtherCollisionObject(base);
         this.players[0].isPause = false;
-        if (this.uiFields.playersMode === 1)
-        {
+        if (this.uiFields.playersMode === 1) {
             this.players[1].create(
-                this.currentMap, 
+                this.currentMap,
                 levels[this.uiFields.currentLevel].playerSpawnsPos[1]);
             //this.players[1].setOtherCollisionObject(base);
             this.players[1].isPause = false;
@@ -299,7 +311,7 @@ export default class LevelManager {
     reset() {
         // this.uiFields.npc = levels[this.uiFields.currentLevel].npc.slice();
         this.players[0].setReset();
-        if (this.uiFields.playersMode === 1){
+        if (this.uiFields.playersMode === 1) {
             this.players[1].setReset();
             this.uiFields.playersHealth[1] = 3;
         }

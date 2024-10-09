@@ -5,7 +5,7 @@ import * as THREE from 'three'
 
 export default class PlayerTank extends Tank {
     constructor(config, spawnBullet, deadEvent, playerId, scene) {
-        super(config, spawnBullet, scene)
+        super(config, spawnBullet, scene, playerId)
 
         this.speed = 0.005 * config.grid
 

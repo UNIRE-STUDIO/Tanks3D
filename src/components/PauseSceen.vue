@@ -33,6 +33,10 @@ h2 {
     color: aliceblue;
     margin-top: 0;
     font-size: 38px;
+    text-shadow: 2px 0 0 rgb(10, 10, 10),
+        0 2px 0 rgb(10, 10, 10),
+        -2px 0 0 rgb(10, 10, 10),
+        0 -2px 0 rgb(10, 10, 10);
 }
 
 #pause-panel {
