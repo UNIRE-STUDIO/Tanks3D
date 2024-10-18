@@ -61,12 +61,4 @@ export default class BulletPool {
             }
         }
     }
-
-    // render() {
-    //     for (let i = 0; i < this.bullets.length; i++) {
-    //         if (this.bullets[i].isUse) {
-    //             this.bullets[i].render()
-    //         }
-    //     }
-    // }
 }

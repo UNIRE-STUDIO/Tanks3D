@@ -28,8 +28,9 @@ export default class Tank {
         this.otherCollisionObject = []
 
         let urlModels = [
-            '/models/tank1.glb', // 0
-            '/models/tank2.glb'  // 1
+            '/models/tank1.glb',    // 0
+            '/models/tank2.glb',    // 1
+            '/models/npcTank1.glb'  // 2
         ]
 
         // 3d
@@ -156,26 +157,5 @@ export default class Tank {
         else if (this.dirX != 0) halfAngle = this.dirX > 0 ? (3 * Math.PI) / 2 / 2 : Math.PI / 2 / 2 // Вправо или влево
         let q = new THREE.Quaternion(0, 1 * Math.sin(halfAngle), 0, Math.cos(halfAngle))
         this.model.quaternion.slerp(q, lag * this.speedRotation)
-    }
-
-    render() {
-        if (!this.isUse) return
-
-        // if (this.dirX == 1)
-        //     drawImage(this.config.ctx, this.image_right, pos, {x:this.config.grid2, y:this.config.grid2});
-        // else if (this.dirX == -1)
-        //     drawImage(this.config.ctx, this.image_left, pos, {x:this.config.grid2, y:this.config.grid2});
-        // else if (this.dirY == 1)
-        //     drawImage(this.config.ctx, this.image_down, pos, {x:this.config.grid2, y:this.config.grid2});
-        // else if (this.dirY == -1)
-        //     drawImage(this.config.ctx, this.image_up, pos, {x:this.config.grid2, y:this.config.grid2});
-
-        //   pos = {x: Math.ceil((this.position.x + this.config.grid) / this.config.grid) * this.config.grid,
-        //          y: Math.ceil((this.position.y + this.config.grid * this.moveY) / this.config.grid) * this.config.grid};
-        //   drawRect(this.config.ctx, pos, {x:this.config.grid, y:this.config.grid}, "#fff");
-
-        // pos = {x: Math.ceil((this.position.x + this.config.grid * this.moveX) / this.config.grid) * this.config.grid,
-        //       y: Math.ceil((this.position.y + this.config.grid * this.moveY) / this.config.grid) * this.config.grid};
-        // drawRect(this.config.ctx, pos, {x:this.config.grid, y:this.config.grid}, "#007");
     }
 }

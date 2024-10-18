@@ -4,7 +4,7 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import * as BufferGeometryUtils from "three/examples/jsm/utils/BufferGeometryUtils.js";
 //import SaveManager from "./saveManager.js";
 import levels from "./levels.json";
-//import NpcPool from "./npcPool.js";
+import NpcPool from "./npcPool.js";
 import PlayerTank from "./playerTank.js";
 //import BangPool from "./bangPool.js";
 import * as THREE from "three";
@@ -123,7 +123,7 @@ export default class LevelManager {
             this.playerDead.bind(this),
             1,
             this.scene);
-        // this.npcPool = new NpcPool(this.config, this.bulletPool.create.bind(this.bulletPool), this.players, this.win.bind(this), uiFields);
+        this.npcPool = new NpcPool(this.config, this.bulletPool.create.bind(this.bulletPool), this.players, this.win.bind(this), uiFields);
 
         // this.players[0].otherTanks.push(...this.npcPool.tanks);
         // this.players[1].otherTanks.push(...this.npcPool.tanks);
@@ -262,7 +262,7 @@ export default class LevelManager {
             //this.players[1].setOtherCollisionObject(base);
             this.players[1].isPause = false;
         }
-        // this.npcPool.init(this.currentMap, this.uiFields.currentLevel, base);
+        this.npcPool.init(this.currentMap, this.uiFields.currentLevel, base);
         this.isPlay = true; // Для того что-бы коректно ставить на паузу до появления игроков
     }
 
@@ -283,7 +283,7 @@ export default class LevelManager {
         // }
         // this.players[0].setPause();
         // if (this.uiFields.playersMode === 1) this.players[1].setPause();
-        // this.npcPool.setPause();
+        this.npcPool.setPause();
     }
 
     setResume() {
@@ -295,7 +295,7 @@ export default class LevelManager {
         // }
         // this.players[0].isPause = false;
         // if (this.uiFields.playersMode === 1) this.players[1].isPause = false;
-        // this.npcPool.setResume();
+        this.npcPool.setResume();
     }
 
     gameOver() {
@@ -315,7 +315,7 @@ export default class LevelManager {
             this.players[1].setReset();
             this.uiFields.playersHealth[1] = 3;
         }
-        // this.npcPool.setReset();
+        this.npcPool.setReset();
         // this.bulletPool.setReset();
         // this.bangPool.setReset();
         // this.uiFields.playersHealth[0] = 3;
@@ -354,7 +354,7 @@ export default class LevelManager {
         this.players[0].update(lag);
         if (this.uiFields.playersMode === 1) this.players[1].update(lag);
         this.bulletPool.update(lag);
-        // this.npcPool.update(lag);
+        this.npcPool.update(lag);
         // this.bangPool.update(lag);
     }
 

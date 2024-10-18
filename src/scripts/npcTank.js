@@ -1,11 +1,11 @@
-import { drawRect, randomRange, coordinatesToId, idToCoordinates } from "./general.js";
+import { randomRange, coordinatesToId, idToCoordinates } from "./general.js";
 import Tank from "./tank.js";
 import Timer from "./timer.js";
 
 export default class NpcTank extends Tank {
     constructor(config, spawnBullet, players, deadNpcEvent, id) {
-        super(config, spawnBullet);
-        this.npcId = id;
+        super(config, spawnBullet, id);
+        this.npcId = id; // 2 - 3
         this.dirY = 1;
         this.speed = 0.003 * config.grid;
         this.isDead = false;
@@ -53,18 +53,10 @@ export default class NpcTank extends Tank {
         if (type === 0) {
             this.maxTimeWaitOfJamming = 300;
             this.speed = 0.003 * this.config.grid;
-            this.image_up.src = "/Tanks2D/sprites/tankNpc_Up.png";
-            this.image_down.src = "/Tanks2D/sprites/tankNpc_Down.png";
-            this.image_right.src = "/Tanks2D/sprites/tankNpc_Right.png";
-            this.image_left.src = "/Tanks2D/sprites/tankNpc_Left.png";
         }
         else {
             this.maxTimeWaitOfJamming = 800;
             this.speed = 0.0045 * this.config.grid;
-            this.image_up.src = "/Tanks2D/sprites/tankNpc1_Up.png";
-            this.image_down.src = "/Tanks2D/sprites/tankNpc1_Down.png";
-            this.image_right.src = "/Tanks2D/sprites/tankNpc1_Right.png";
-            this.image_left.src = "/Tanks2D/sprites/tankNpc1_Left.png";
         }
 
         this.moveX = this.dirX;
@@ -516,23 +508,5 @@ export default class NpcTank extends Tank {
         else {
             this.movingTowardsTheGoal(lag);
         }
-    }
-
-    render() {
-        super.render();
-        // if (this.drivingMode === 0)
-        //     drawRect(this.config.ctx, this.position, {x:10, y:10}, "#ffffff");
-        // else if (this.drivingMode === 1)
-        //     drawRect(this.config.ctx, this.position, {x:10, y:10}, "#00ff00");
-        // else 
-        //     drawRect(this.config.ctx, this.position, {x:10, y:10}, "#ff0000");
-        // for (let i = 0; i < this.path.length; i++) 
-        // {
-        //     let pos = {
-        //                 x: idToCoordinates(this.path[i], this.currentMap[0].length).x * this.config.grid,
-        //                 y: idToCoordinates(this.path[i], this.currentMap[0].length).y * this.config.grid
-        //             }; 
-        //     drawRect(this.config.ctx, pos, {x:this.config.grid-4, y:this.config.grid-4}, "#f7f");
-        // }
     }
 }
