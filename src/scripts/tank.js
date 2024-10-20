@@ -1,8 +1,7 @@
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import * as THREE from 'three'
 
 export default class Tank {
-    constructor(config, spawnBullet, scene, idModel) {
+    constructor(config, spawnBullet, scene) {
         this.config = config
         this.scene = scene
         this.spawnBullet = spawnBullet
@@ -27,19 +26,9 @@ export default class Tank {
         this.otherTanks = [] // Присваивает Level Manager или npcPool
         this.otherCollisionObject = []
 
-        let urlModels = [
-            '/models/tank1.glb',    // 0
-            '/models/tank2.glb',    // 1
-            '/models/npcTank1.glb'  // 2
-        ]
-
-        // 3d
+        // 3d, присваивается в дочерних классах
         this.model
-        const gltfLoader = new GLTFLoader()
-        gltfLoader.load(urlModels[idModel], (gltf) => {
-            this.model = gltf.scene.children[0]
-            this.model.material.map.minFilter = THREE.LinearFilter
-        })
+
     }
 
     create(currentMap, pos) {

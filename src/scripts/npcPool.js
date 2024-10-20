@@ -14,6 +14,16 @@ export default class NpcPool {
 
         const pool_size = 5;
         this.tanks = [];
+        
+        let urlModels = [
+            '/models/npcTank1.glb'    // 0
+        ]
+        this.npcTank1;
+        const gltfLoader = new GLTFLoader()
+        gltfLoader.load(urlModels[playerId], (gltf) => {
+            this.npcTank1 = gltf.scene.children[0]
+            this.npcTank1.material.map.minFilter = THREE.LinearFilter
+        })
 
         for (let i = 0; i < pool_size; i++) {
             this.tanks[i] = new NpcTank(this.config, bulletPool, players, this.deadNpcEvent.bind(this), i);
