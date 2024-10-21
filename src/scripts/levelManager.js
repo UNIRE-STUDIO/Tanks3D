@@ -123,7 +123,7 @@ export default class LevelManager {
             this.playerDead.bind(this),
             1,
             this.scene);
-        this.npcPool = new NpcPool(this.config, this.bulletPool.create.bind(this.bulletPool), this.players, this.win.bind(this), uiFields);
+        this.npcPool = new NpcPool(this.config, this.bulletPool.create.bind(this.bulletPool), this.players, this.win.bind(this), uiFields, this.scene);
 
         // this.players[0].otherTanks.push(...this.npcPool.tanks);
         // this.players[1].otherTanks.push(...this.npcPool.tanks);
@@ -262,7 +262,7 @@ export default class LevelManager {
             //this.players[1].setOtherCollisionObject(base);
             this.players[1].isPause = false;
         }
-        this.npcPool.init(this.currentMap, this.uiFields.currentLevel, base);
+        this.npcPool.init(this.currentMap, base);
         this.isPlay = true; // Для того что-бы коректно ставить на паузу до появления игроков
     }
 

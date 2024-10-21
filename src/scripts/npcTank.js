@@ -5,7 +5,7 @@ import Timer from "./timer.js";
 export default class NpcTank extends Tank {
     constructor(config, spawnBullet, players, deadNpcEvent, id) {
         super(config, spawnBullet, id);
-        this.npcId = id; // 2 - 3
+        this.npcId = id;
         this.dirY = 1;
         this.speed = 0.003 * config.grid;
         this.isDead = false;

@@ -4,7 +4,7 @@ import NpcTank from "./npcTank.js";
 import Timer from "./timer.js";
 
 export default class NpcPool {
-    constructor(config, bulletPool, players, winEvent, uiFields) {
+    constructor(config, bulletPool, players, winEvent, uiFields, scene) {
         this.config = config;
         this.currentMap;
         this.currentLevel;
@@ -19,11 +19,16 @@ export default class NpcPool {
             '/models/npcTank1.glb'    // 0
         ]
         this.npcTank1;
+        //this.npcTank2;
         const gltfLoader = new GLTFLoader()
-        gltfLoader.load(urlModels[playerId], (gltf) => {
+        gltfLoader.load(urlModels[0], (gltf) => {
             this.npcTank1 = gltf.scene.children[0]
             this.npcTank1.material.map.minFilter = THREE.LinearFilter
         })
+        // gltfLoader.load(urlModels[1], (gltf) => {
+        //     this.npcTank2 = gltf.scene.children[0]
+        //     this.npcTank2.material.map.minFilter = THREE.LinearFilter
+        // })
 
         for (let i = 0; i < pool_size; i++) {
             this.tanks[i] = new NpcTank(this.config, bulletPool, players, this.deadNpcEvent.bind(this), i);
@@ -40,12 +45,12 @@ export default class NpcPool {
         this.winEvent = winEvent;
     }
 
-    init(currentMap, currentLevel, basePos) {
+    init(currentMap, basePos) {
         this.currentMap = currentMap;
-        this.currentLevel = currentLevel;
+        this.currentLevel = this.uiFields.currentLevel;
         this.basePos = basePos;
-        this.uiFields.countReserveNpcTanks = levels[currentLevel].npc.length;
-        this.countNpcTanks = levels[currentLevel].npc.length;
+        this.uiFields.countReserveNpcTanks = levels[this.currentLevel].npc.length;
+        this.countNpcTanks = levels[this.currentLevel].npc.length;
         this.timerSpawn.reset();
         this.timerSpawn.start();
     }
