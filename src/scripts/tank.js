@@ -28,7 +28,7 @@ export default class Tank {
 
         // 3d, присваивается в дочерних классах
         this.model
-
+        this.scene.add(this.model)
     }
 
     create(currentMap, pos) {
@@ -37,7 +37,6 @@ export default class Tank {
         this.position.y = pos.y * this.config.grid
         this.otherCollisionObject = []
         this.isUse = true
-        this.scene.add(this.model)
     }
 
     setOtherCollisionObject(obj) {
@@ -146,5 +145,6 @@ export default class Tank {
         else if (this.dirX != 0) halfAngle = this.dirX > 0 ? (3 * Math.PI) / 2 / 2 : Math.PI / 2 / 2 // Вправо или влево
         let q = new THREE.Quaternion(0, 1 * Math.sin(halfAngle), 0, Math.cos(halfAngle))
         this.model.quaternion.slerp(q, lag * this.speedRotation)
+        
     }
 }

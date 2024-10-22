@@ -43,6 +43,7 @@ export default class PlayerTank extends Tank {
         this.isCooldown = false
         this.timerShoot.stop()
         this.timerShoot.reset()
+        this.model.visible = false;
     }
 
     setPause() {
@@ -90,11 +91,7 @@ export default class PlayerTank extends Tank {
         super.update(lag)
 
         this.move(lag)
-        let pos = {
-            x: this.position.x + this.config.grid,
-            y: this.position.y + this.config.grid
-        }
-        this.model.position.x = pos.x
-        this.model.position.z = pos.y
+        this.model.position.x = this.position.x + this.config.grid
+        this.model.position.z = this.position.y + this.config.grid
     }
 }

@@ -1,3 +1,4 @@
+import * as THREE from "three";
 import { randomRange, coordinatesToId, idToCoordinates } from "./general.js";
 import Tank from "./tank.js";
 import Timer from "./timer.js";
@@ -38,7 +39,6 @@ export default class NpcTank extends Tank {
         this.maxTimeWaitOfJamming = 800;
         this.timeWaitOfJamming = randomRange(this.minTimeWaitOfJamming, this.maxTimeWaitOfJamming);
 
-
         this.minCooldownTime = 1;
         this.maxCooldownTime = 5;
         this.timerShoot = new Timer(randomRange(this.minCooldownTime, this.maxCooldownTime), this.randomShoot.bind(this), 0.1);
@@ -47,9 +47,11 @@ export default class NpcTank extends Tank {
         this.type = 0;
     }
 
-    create(currentMap, pos, basePos, playersMode, type) {
+    create(currentMap, pos, basePos, playersMode, type, originModel) {
+        this.model = new THREE.Mesh(originModel.geometry, originModel.material)
         super.create(currentMap, pos);
         this.type = type;
+
         if (type === 0) {
             this.maxTimeWaitOfJamming = 300;
             this.speed = 0.003 * this.config.grid;
@@ -500,6 +502,8 @@ export default class NpcTank extends Tank {
 
     update(lag) {
         if (!this.isUse || this.isDead) return;
+        super.update(lag)
+
         this.moveX = this.dirX;
         this.moveY = this.dirY;
         if (this.drivingMode === 0) {
@@ -508,5 +512,7 @@ export default class NpcTank extends Tank {
         else {
             this.movingTowardsTheGoal(lag);
         }
+        this.model.position.x = this.position.x + this.config.grid
+        this.model.position.z = this.position.y + this.config.grid
     }
 }

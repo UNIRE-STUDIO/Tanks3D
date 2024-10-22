@@ -235,7 +235,6 @@ export default class LevelManager {
         if (wh < 0.9) {
             this.camera.fov = 60 * hw * 1.5;
         }
-        console.log(wh);
         this.camera.updateProjectionMatrix();
         this.renderer.setSize(window.innerWidth, window.innerHeight);
         this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));

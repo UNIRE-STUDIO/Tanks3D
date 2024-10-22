@@ -2,6 +2,8 @@ import { randomRange } from "./general.js";
 import levels from "./levels.json";
 import NpcTank from "./npcTank.js";
 import Timer from "./timer.js";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+import * as THREE from "three";
 
 export default class NpcPool {
     constructor(config, bulletPool, players, winEvent, uiFields, scene) {
@@ -18,12 +20,12 @@ export default class NpcPool {
         let urlModels = [
             '/models/npcTank1.glb'    // 0
         ]
-        this.npcTank1;
+        this.npcModels = [];
         //this.npcTank2;
         const gltfLoader = new GLTFLoader()
         gltfLoader.load(urlModels[0], (gltf) => {
-            this.npcTank1 = gltf.scene.children[0]
-            this.npcTank1.material.map.minFilter = THREE.LinearFilter
+            this.npcModels[0] = gltf.scene.children[0]
+            this.npcModels[0].material.map.minFilter = THREE.LinearFilter
         })
         // gltfLoader.load(urlModels[1], (gltf) => {
         //     this.npcTank2 = gltf.scene.children[0]
@@ -31,7 +33,7 @@ export default class NpcPool {
         // })
 
         for (let i = 0; i < pool_size; i++) {
-            this.tanks[i] = new NpcTank(this.config, bulletPool, players, this.deadNpcEvent.bind(this), i);
+            this.tanks[i] = new NpcTank(this.config, bulletPool, players, this.deadNpcEvent.bind(this), scene, i);
         }
         for (let i = 0; i < pool_size; i++) {
             this.tanks[i].otherTanks.push(...this.tanks);
@@ -74,7 +76,8 @@ export default class NpcPool {
                     { x: levels[this.currentLevel].spawnPoints[rand][0], y: levels[this.currentLevel].spawnPoints[rand][1] },
                     this.basePos,
                     this.uiFields.playersMode,
-                    this.uiFields.npc[0]);
+                    this.uiFields.npc[0],
+                    this.npcModels[this.uiFields.npc[0]]); // Отправляем исходную модель
 
                 this.uiFields.countReserveNpcTanks--;
                 this.uiFields.npc.splice(0, 1);
@@ -123,14 +126,6 @@ export default class NpcPool {
         for (let i = 0; i < this.tanks.length; i++) {
             if (this.tanks[i].isUse) {
                 this.tanks[i].update(lag);
-            }
-        }
-    }
-
-    render() {
-        for (let i = 0; i < this.tanks.length; i++) {
-            if (this.tanks[i].isUse) {
-                this.tanks[i].render();
             }
         }
     }
