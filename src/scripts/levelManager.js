@@ -123,6 +123,7 @@ export default class LevelManager {
             this.playerDead.bind(this),
             1,
             this.scene);
+            
         this.npcPool = new NpcPool(this.config, this.bulletPool.create.bind(this.bulletPool), this.players, this.win.bind(this), uiFields, this.scene);
 
         // this.players[0].otherTanks.push(...this.npcPool.tanks);

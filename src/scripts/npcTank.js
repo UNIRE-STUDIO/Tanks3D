@@ -28,9 +28,9 @@ export default class NpcTank extends Tank {
         this.currentPosOnPath = 0; // Позиция на пути к цели
 
         this.sides = [[-2, 0], // слева
-        [0, -2], // сверху
-        [2, 0],  // справа
-        [0, 2]]; // снизу
+                      [0, -2], // сверху
+                      [2, 0],  // справа
+                      [0, 2]]; // снизу
 
         this.timerDrivingMode = new Timer(this.timeOfModeChange, this.changeMode.bind(this));
 
@@ -356,6 +356,7 @@ export default class NpcTank extends Tank {
         this.visited = [];
         this.whereFrom.clear();
         this.currentPosOnPath = 1;
+        console.log(target);
 
         this.identifyPrioritiesSides(); // Выбираем приоритетные направления поиска
         this.depthFirstSearch({ x: Math.round(this.position.x / this.config.grid), y: Math.round(this.position.y / this.config.grid) });

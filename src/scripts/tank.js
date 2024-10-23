@@ -28,7 +28,6 @@ export default class Tank {
 
         // 3d, присваивается в дочерних классах
         this.model
-        this.scene.add(this.model)
     }
 
     create(currentMap, pos) {
@@ -37,6 +36,7 @@ export default class Tank {
         this.position.y = pos.y * this.config.grid
         this.otherCollisionObject = []
         this.isUse = true
+        this.scene.add(this.model)
     }
 
     setOtherCollisionObject(obj) {
