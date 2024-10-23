@@ -329,6 +329,7 @@ export default class NpcTank extends Tank {
         }
         this.position.x += incrementX;
         this.position.y += incrementY;
+        console.log(this.position.x)
 
         if (Math.abs(posOnPath.x - this.position.x) < accuracy
             && Math.abs(posOnPath.y - this.position.y) < accuracy) {
@@ -356,7 +357,6 @@ export default class NpcTank extends Tank {
         this.visited = [];
         this.whereFrom.clear();
         this.currentPosOnPath = 1;
-        console.log(target);
 
         this.identifyPrioritiesSides(); // Выбираем приоритетные направления поиска
         this.depthFirstSearch({ x: Math.round(this.position.x / this.config.grid), y: Math.round(this.position.y / this.config.grid) });

@@ -126,12 +126,12 @@ export default class LevelManager {
             
         this.npcPool = new NpcPool(this.config, this.bulletPool.create.bind(this.bulletPool), this.players, this.win.bind(this), uiFields, this.scene);
 
-        // this.players[0].otherTanks.push(...this.npcPool.tanks);
-        // this.players[1].otherTanks.push(...this.npcPool.tanks);
+        this.players[0].otherTanks.push(...this.npcPool.tanks);
+        this.players[1].otherTanks.push(...this.npcPool.tanks);
         this.players[0].otherTanks.push(this.players[1]);
         this.players[1].otherTanks.push(this.players[0]);
 
-        // this.bulletPool.setListNpcTanks(this.npcPool.tanks);
+        this.bulletPool.setListNpcTanks(this.npcPool.tanks);
         this.bulletPool.setListPlayers(this.players);
 
         input.movePlayer1Event = this.players[0].setDirection.bind(this.players[0]);
@@ -253,13 +253,13 @@ export default class LevelManager {
             levels[this.uiFields.currentLevel].playerSpawnsPos[0]
         );
 
-        // //this.players[0].setOtherCollisionObject(base);
+        this.players[0].setOtherCollisionObject(base);
         this.players[0].isPause = false;
         if (this.uiFields.playersMode === 1) {
             this.players[1].create(
                 this.currentMap,
                 levels[this.uiFields.currentLevel].playerSpawnsPos[1]);
-            //this.players[1].setOtherCollisionObject(base);
+            this.players[1].setOtherCollisionObject(base);
             this.players[1].isPause = false;
         }
         this.npcPool.init(this.currentMap, base);
@@ -275,26 +275,26 @@ export default class LevelManager {
     }
 
     setPause() {
-        // this.isPause = true;
-        // if (!this.isPlay)
-        // {
-        //     clearTimeout(this.timerStart);
-        //     return;
-        // }
-        // this.players[0].setPause();
-        // if (this.uiFields.playersMode === 1) this.players[1].setPause();
+        this.isPause = true;
+        if (!this.isPlay)
+        {
+            clearTimeout(this.timerStart);
+            return;
+        }
+        this.players[0].setPause();
+        if (this.uiFields.playersMode === 1) this.players[1].setPause();
         this.npcPool.setPause();
     }
 
     setResume() {
-        // this.isPause = false;
-        // if (!this.isPlay)
-        // {
-        //     this.delayedSpawn();
-        //     return;
-        // }
-        // this.players[0].isPause = false;
-        // if (this.uiFields.playersMode === 1) this.players[1].isPause = false;
+        this.isPause = false;
+        if (!this.isPlay)
+        {
+            this.delayedSpawn();
+            return;
+        }
+        this.players[0].isPause = false;
+        if (this.uiFields.playersMode === 1) this.players[1].isPause = false;
         this.npcPool.setResume();
     }
 
@@ -309,33 +309,33 @@ export default class LevelManager {
     }
 
     reset() {
-        // this.uiFields.npc = levels[this.uiFields.currentLevel].npc.slice();
+        this.uiFields.npc = levels[this.uiFields.currentLevel].npc.slice();
         this.players[0].setReset();
         if (this.uiFields.playersMode === 1) {
             this.players[1].setReset();
             this.uiFields.playersHealth[1] = 3;
         }
         this.npcPool.setReset();
-        // this.bulletPool.setReset();
+        this.bulletPool.setReset();
         // this.bangPool.setReset();
-        // this.uiFields.playersHealth[0] = 3;
+        this.uiFields.playersHealth[0] = 3;
         this.scene.clear();
     }
 
     // Принимаем от танка игрока
     playerDead(playerId) {
-        // this.uiFields.playersHealth[playerId]--;
-        // if (this.uiFields.playersHealth[0] === 0
-        //     && (this.uiFields.playersHealth[1] === 0 || this.uiFields.playersMode === 0))
-        // {
-        //     this.gameOver();
-        //     return;
-        // }
-        // if (this.uiFields.playersHealth[playerId] === 0) return;
-        // setTimeout(() =>
-        // {
-        //     this.players[playerId].create(this.currentMap, levels[this.uiFields.currentLevel].playerSpawnsPos[playerId]);
-        // }, 2000);
+        this.uiFields.playersHealth[playerId]--;
+        if (this.uiFields.playersHealth[0] === 0
+            && (this.uiFields.playersHealth[1] === 0 || this.uiFields.playersMode === 0))
+        {
+            this.gameOver();
+            return;
+        }
+        if (this.uiFields.playersHealth[playerId] === 0) return;
+        setTimeout(() =>
+        {
+            this.players[playerId].create(this.currentMap, levels[this.uiFields.currentLevel].playerSpawnsPos[playerId]);
+        }, 2000);
     }
 
     nextLevel() {
@@ -359,19 +359,6 @@ export default class LevelManager {
     }
 
     render() {
-        // drawImage(this.config.ctx, this.tiles[4], {x: levels[this.uiFields.currentLevel].basePos.x * this.config.grid, y:levels[this.uiFields.currentLevel].basePos.y * this.config.grid}, {x:this.config.grid2, y:this.config.grid2});
-
-        // this.players[0].render();
-        // if (this.uiFields.playersMode === 1) this.players[1].render();
-
-        // this.bulletPool.render();
-        // this.npcPool.render();
-        // this.bangPool.render();
-
-        // for (let i = 0; i < coversPos.length; i++)
-        // {
-        //     drawImage(this.config.ctx, this.tiles[3], {x:coversPos[i].x, y:coversPos[i].y}, {x:this.config.grid, y:this.config.grid});
-        // }
         this.renderer.render(this.scene, this.camera);
     }
 }
