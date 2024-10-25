@@ -37,6 +37,7 @@ export default class Tank {
         this.otherCollisionObject = []
         this.isUse = true
         this.scene.add(this.model)
+        this.model.visible = true;
     }
 
     setOtherCollisionObject(obj) {

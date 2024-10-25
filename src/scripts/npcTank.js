@@ -75,6 +75,7 @@ export default class NpcTank extends Tank {
 
     setReset() {
         this.isUse = false;
+        if (this.model !== undefined) this.model.visible = false;
         this.timerDrivingMode.stop();
         this.timerDrivingMode.reset();
         this.drivingMode = 0;
@@ -290,7 +291,7 @@ export default class NpcTank extends Tank {
     }
 
     movingTowardsTheGoal(lag) {
-        let accuracy = 8; // Точность
+        let accuracy = this.config.grid/2; // Точность
         let posOnPath = idToCoordinates(this.path[this.currentPosOnPath], this.currentMap[0].length);
         posOnPath.x *= this.config.grid;
         posOnPath.y *= this.config.grid;
@@ -329,7 +330,6 @@ export default class NpcTank extends Tank {
         }
         this.position.x += incrementX;
         this.position.y += incrementY;
-        console.log(this.position.x)
 
         if (Math.abs(posOnPath.x - this.position.x) < accuracy
             && Math.abs(posOnPath.y - this.position.y) < accuracy) {

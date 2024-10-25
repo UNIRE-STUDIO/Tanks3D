@@ -43,6 +43,7 @@ export default class PlayerTank extends Tank {
         this.isCooldown = false
         this.timerShoot.stop()
         this.timerShoot.reset()
+        this.model.visible = false;
     }
 
     setPause() {
