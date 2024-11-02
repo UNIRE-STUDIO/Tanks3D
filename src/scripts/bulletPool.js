@@ -1,4 +1,6 @@
 import Bullet from './bullet.js'
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+import * as THREE from "three";
 
 export default class BulletPool {
     constructor(config, removeTile, destructionOfTheBaseEvent, bangCreateEvent, uiFields, scene) {
@@ -6,13 +8,20 @@ export default class BulletPool {
 
         const pool_size = 12
         this.bullets = []
+        let originModel;
 
-        for (let i = 0; i < pool_size; i++) {
-            this.bullets[i] = new Bullet(this.config, removeTile, destructionOfTheBaseEvent, i, bangCreateEvent, uiFields, scene)
-        }
-        for (let i = 0; i < pool_size; i++) {
-            this.bullets[i].bullets = this.bullets
-        }
+        const gltfLoader = new GLTFLoader()
+        gltfLoader.load('/models/bullet.glb', (gltf) => {
+            originModel = gltf.scene.children[0]
+            //model.material.map.minFilter = THREE.LinearFilter <------ Вернуть когда появится настоящий материал
+
+            for (let i = 0; i < pool_size; i++) {
+                this.bullets[i] = new Bullet(this.config, removeTile, destructionOfTheBaseEvent, i, bangCreateEvent, uiFields, scene, originModel)
+            }
+            for (let i = 0; i < pool_size; i++) {
+                this.bullets[i].bullets = this.bullets
+            }
+        })
     }
 
     setListNpcTanks(tanks) {

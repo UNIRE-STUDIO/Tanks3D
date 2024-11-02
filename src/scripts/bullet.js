@@ -10,7 +10,8 @@ export default class Bullet {
         id,
         bangCreateEvent,
         uiFields,
-        scene
+        scene,
+        model
     ) {
         this.config = config;
         this.scene = scene;
@@ -39,9 +40,10 @@ export default class Bullet {
         this.bangCreateEvent = bangCreateEvent;
 
         // 3d
-        const geometry = new THREE.BoxGeometry(0.5, 0.5, 0.5);
         const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-        this.mesh = new THREE.Mesh(geometry, material);
+        this.model = new THREE.Mesh(model.geometry, model.material);
+        this.scene.add(this.model);
+        //this.model.visible = false;
     }
 
     create(pos, dir, bulletsPlayer, tankId) {
@@ -52,8 +54,8 @@ export default class Bullet {
         this.bulletsPlayer = bulletsPlayer;
         this.otherCollisionObject = [];
         this.tankId = tankId;
-        this.mesh.position.set(this.posX, this.posY, 1);
-        this.scene.add(this.mesh);
+        this.model.position.set(this.posX, this.posY, 1);
+        this.model.visible = true;
         this.isUse = true;
     }
 
@@ -172,7 +174,7 @@ export default class Bullet {
 
     destroy() {
         this.isUse = false;
-        this.scene.remove(this.mesh);
+//        this.model.visible = false;
     }
 
     update(lag) {
@@ -208,6 +210,6 @@ export default class Bullet {
 
         this.posX += this.dirX * lag * this.speed;
         this.posY += this.dirY * lag * this.speed;
-        this.mesh.position.set(this.posX, 1, this.posY);
+        this.model.position.set(this.posX, 1, this.posY);
     }
 }
