@@ -11,7 +11,7 @@ export default class Bullet {
         bangCreateEvent,
         uiFields,
         scene,
-        model
+        originModel
     ) {
         this.config = config;
         this.scene = scene;
@@ -41,9 +41,10 @@ export default class Bullet {
 
         // 3d
         const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-        this.model = new THREE.Mesh(model.geometry, model.material);
+        let geo = new THREE.BoxGeometry(0.5, 0.5, 0.5);
+        this.model = new THREE.Mesh(geo, originModel.material);
         this.scene.add(this.model);
-        //this.model.visible = false;
+        this.model.visible = true;
     }
 
     create(pos, dir, bulletsPlayer, tankId) {
@@ -174,7 +175,7 @@ export default class Bullet {
 
     destroy() {
         this.isUse = false;
-//        this.model.visible = false;
+        this.model.visible = false;
     }
 
     update(lag) {

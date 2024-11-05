@@ -29,11 +29,12 @@ export default class PlayerTank extends Tank {
         ]
         const gltfLoader = new GLTFLoader()
         let originModel;
-        await gltfLoader.loadAsync(urlModels[playerId]).then((gltf) => {
+        gltfLoader.load(urlModels[playerId], (gltf) => {
             originModel = gltf.scene.children[0]
             originModel.material.map.minFilter = THREE.LinearFilter
+            this.model = new THREE.Mesh(originModel.geometry, originModel.material)
         })
-        this.model = new THREE.Mesh(originModel.geomentry, originModel.material)
+
     }
 
     setReset() {
