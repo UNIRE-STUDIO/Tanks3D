@@ -70,8 +70,10 @@ export default class LevelManager {
         });
 
         this.ambient = new THREE.AmbientLight(0xffffff, 1);
-
         this.directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+
+        this.scene.add(this.directionalLight);
+        this.scene.add(this.ambient);
 
         this.plane = new THREE.PlaneGeometry(1, 1, 1, 1);
 
@@ -157,8 +159,6 @@ export default class LevelManager {
         for (let i = 0; i < levels[this.uiFields.currentLevel].map.length; i++) {
             this.currentMap.push(levels[this.uiFields.currentLevel].map[i].slice());
         }
-        this.scene.add(this.directionalLight);
-        this.scene.add(this.ambient);
         let floor1 = [];
         let water = new THREE.Object3D();
         let covers = new THREE.Object3D();
@@ -319,7 +319,6 @@ export default class LevelManager {
         this.bulletPool.setReset();
         // this.bangPool.setReset();
         this.uiFields.playersHealth[0] = 3;
-        this.scene.clear();
     }
 
     // Принимаем от танка игрока

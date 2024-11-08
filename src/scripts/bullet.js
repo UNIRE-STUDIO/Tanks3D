@@ -40,9 +40,7 @@ export default class Bullet {
         this.bangCreateEvent = bangCreateEvent;
 
         // 3d
-        const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-        let geo = new THREE.BoxGeometry(0.5, 0.5, 0.5);
-        this.model = new THREE.Mesh(geo, originModel.material);
+        this.model = new THREE.Mesh(originModel.geometry, originModel.material);
         this.scene.add(this.model);
         this.model.visible = true;
     }
@@ -56,6 +54,7 @@ export default class Bullet {
         this.otherCollisionObject = [];
         this.tankId = tankId;
         this.model.position.set(this.posX, this.posY, 1);
+        this.model.rotation.y = (this.dirX * 90) + (this.dirY * 180);
         this.model.visible = true;
         this.isUse = true;
     }
