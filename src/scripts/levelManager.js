@@ -1,4 +1,5 @@
 import BulletPool from "./bulletPool.js";
+import ThreeManager from "./ThreeManager.js";
 import { idToCoordinates, coordinatesToId } from "./general.js";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import * as BufferGeometryUtils from "three/examples/jsm/utils/BufferGeometryUtils.js";
@@ -27,73 +28,7 @@ export default class LevelManager {
         this.uiFields.currentLevel = 0;
         this.currentMap = null;
         this.config = config;
-
-        this.scene = new THREE.Scene();
-
-        this.camera = new THREE.PerspectiveCamera(
-            60,
-            window.innerWidth / window.innerHeight,
-            10,
-            40
-        );
-        this.camera.position.set(this.config.viewSize.x / 2, 17, 25);
-        this.camera.lookAt(
-            new THREE.Vector3(
-                this.config.viewSize.x / 2,
-                0,
-                this.config.viewSize.y / 2
-            )
-        );
-
-        const canvas = document.querySelector(".canvas");
-        this.renderer = new THREE.WebGLRenderer({
-            antialias: true,
-            canvas,
-            alpha: true,
-        });
-        this.renderer.setSize(window.innerWidth, window.innerHeight);
-        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-        document.body.appendChild(this.renderer.domElement);
-
-        window.addEventListener("resize", () => {
-            this.updateCameraFov();
-            if (this.uiFields.currentScreen === 0) return;
-            this.renderer.render(this.scene, this.camera);
-        });
-
-        window.addEventListener("dblclick", () => {
-            if (document.fullscreenElement) {
-                document.exitFullscreen();
-            } else {
-                document.body.requestFullscreen();
-            }
-        });
-
-        this.ambient = new THREE.AmbientLight(0xffffff, 1);
-        this.directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-
-        this.scene.add(this.directionalLight);
-        this.scene.add(this.ambient);
-
-        this.plane = new THREE.PlaneGeometry(1, 1, 1, 1);
-
-        // block1
-        this.block1;
-        const gltfLoader = new GLTFLoader();
-        gltfLoader.load("/models/block1.glb", (gltf) => {
-            this.block1 = gltf.scene.children[0];
-            this.block1.material.map.minFilter = THREE.LinearMipMapLinearFilter;
-            this.block1.material.map.magFilter = THREE.LinearFilter;
-            this.block1.scale.set(1, 1.4, 1);
-        });
-
-        this.boxGeometry = new THREE.BoxGeometry(1, 1.4, 1);
-        this.materials = [
-            new THREE.MeshBasicMaterial({ color: 0x242424 }), // пол
-            new THREE.MeshBasicMaterial({ color: 0xb5c3c1 }), // бетонная стена
-            new THREE.MeshBasicMaterial({ color: 0x4bc8e4 }), // вода
-            new THREE.MeshBasicMaterial({ color: 0x1fad6d }), // тент
-        ];
+        this.threeManager = new ThreeManager(uiFields);
 
         //this.bangPool = new BangPool(this.config)
         // this.bulletPool = new BulletPool(
@@ -109,7 +44,7 @@ export default class LevelManager {
             this.destructionOfTheBase.bind(this),
             undefined, // <--------
             this.uiFields,
-            this.scene
+            this.threeManager
         );
         this.players = [];
         this.players[0] = new PlayerTank(
@@ -117,16 +52,16 @@ export default class LevelManager {
             this.bulletPool.create.bind(this.bulletPool),
             this.playerDead.bind(this),
             0,
-            this.scene
+            this.threeManager
         );
         this.players[1] = new PlayerTank(
             this.config,
             this.bulletPool.create.bind(this.bulletPool),
             this.playerDead.bind(this),
             1,
-            this.scene);
+            this.threeManager);
             
-        this.npcPool = new NpcPool(this.config, this.bulletPool.create.bind(this.bulletPool), this.players, this.win.bind(this), uiFields, this.scene);
+        this.npcPool = new NpcPool(this.config, this.bulletPool.create.bind(this.bulletPool), this.players, this.win.bind(this), uiFields, this.threeManager);
 
         this.players[0].otherTanks.push(...this.npcPool.tanks);
         this.players[1].otherTanks.push(...this.npcPool.tanks);
@@ -143,7 +78,6 @@ export default class LevelManager {
         input.shootPlayer2Event = this.players[1].shoot.bind(this.players[1]);
 
         this.timerStart;
-        this.updateCameraFov();
     }
 
     start(playersMode = 0) {
@@ -160,18 +94,13 @@ export default class LevelManager {
             this.currentMap.push(levels[this.uiFields.currentLevel].map[i].slice());
         }
         let floor1 = [];
-        let water = new THREE.Object3D();
-        let covers = new THREE.Object3D();
-        let blocks = new THREE.Object3D();
-        let bricks = new THREE.Object3D();
-        bricks.name = 'bricks';
         for (let i = 0; i < this.config.viewSize.y; i++) {
             for (let j = 0; j < this.config.viewSize.x; j++) { // Вода
                 if (this.currentMap[i][j] === 3) {
                     let p = new THREE.Mesh(this.plane, this.materials[2]);
                     p.position.set(j * this.config.grid + 0.5, 0, i * this.config.grid + 0.5);
                     p.rotation.x = (-90 * Math.PI) / 180;
-                    water.add(p);
+                    this.water3D.add(p);
                     continue;
                 }
                 let p = this.plane.clone() // Плоскости
@@ -182,7 +111,7 @@ export default class LevelManager {
                     let p = new THREE.Mesh(this.plane, this.materials[3]);
                     p.position.set(j * this.config.grid + 0.5, 1.4, i * this.config.grid + 0.5);
                     p.rotation.x = (-90 * Math.PI) / 180;
-                    covers.add(p);
+                    this.covers3D.add(p);
                     continue;
                 }
                 if (this.currentMap[i][j] === 1) {
@@ -194,7 +123,7 @@ export default class LevelManager {
                         0.7,
                         i * this.config.grid + 0.5
                     );
-                    bricks.add(b1);
+                    this.bricks3D.add(b1);
                 } else if (this.currentMap[i][j] === 2) {
                     let cube = new THREE.Mesh(this.boxGeometry, this.materials[1]);
                     cube.name = coordinatesToId(j, i, this.currentMap[0].length);
@@ -203,42 +132,21 @@ export default class LevelManager {
                         0.7,
                         i * this.config.grid + 0.5
                     );
-                    blocks.add(cube);
+                    this.blocks3D.add(cube);
                 }
             }
         }
         let floorMerge = BufferGeometryUtils.mergeGeometries([...floor1]);
-        this.scene.add(new THREE.Mesh(floorMerge, this.materials[0]));
+        this.floor3D.add(new THREE.Mesh(floorMerge, this.materials[0]));
 
-        this.scene.add(water);
-        this.scene.add(covers);
-        this.scene.add(blocks);
-        this.scene.add(bricks);
+        this.scene.add(this.water3D);
+        this.scene.add(this.covers3D);
+        this.scene.add(this.blocks3D);
+        this.scene.add(this.bricks3D);
+        this.scene.add(this.floor3D);
         this.timerStart = setTimeout(() => {
             this.delayedSpawn();
         }, 1000);
-    }
-
-    updateCameraFov() {
-        let hw = window.innerHeight / window.innerWidth;
-        let wh = window.innerWidth / window.innerHeight;
-        this.camera.aspect = wh;
-        this.camera.fov = 60;
-        if (wh < 1.8) {
-            this.camera.fov = 60 * hw * 1.9;
-        }
-        if (wh < 1.4) {
-            this.camera.fov = 60 * hw * 1.7;
-        }
-        if (wh < 1.1) {
-            this.camera.fov = 60 * hw * 1.6;
-        }
-        if (wh < 0.9) {
-            this.camera.fov = 60 * hw * 1.5;
-        }
-        this.camera.updateProjectionMatrix();
-        this.renderer.setSize(window.innerWidth, window.innerHeight);
-        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     }
 
     delayedSpawn() {
@@ -319,6 +227,11 @@ export default class LevelManager {
         this.bulletPool.setReset();
         // this.bangPool.setReset();
         this.uiFields.playersHealth[0] = 3;
+        this.water3D.clear();
+        this.covers3D.clear();
+        this.blocks3D.clear();
+        this.bricks3D.clear();
+        this.floor3D.clear();
     }
 
     // Принимаем от танка игрока

@@ -34,7 +34,6 @@ export default class PlayerTank extends Tank {
             originModel.material.map.minFilter = THREE.LinearFilter
             this.model = new THREE.Mesh(originModel.geometry, originModel.material)
         })
-
     }
 
     setReset() {

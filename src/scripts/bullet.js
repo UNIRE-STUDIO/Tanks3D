@@ -54,7 +54,7 @@ export default class Bullet {
         this.otherCollisionObject = [];
         this.tankId = tankId;
         this.model.position.set(this.posX, this.posY, 1);
-        this.model.rotation.y = (this.dirX * 90) + (this.dirY * 180);
+        this.model.rotation.y = THREE.MathUtils.degToRad((this.dirX * -90) + (this.dirY * 180));
         this.model.visible = true;
         this.isUse = true;
     }

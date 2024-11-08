@@ -1,5 +1,14 @@
 export default class Input {
     constructor() {
+        // На весь экран
+        window.addEventListener("dblclick", () => {
+            if (document.fullscreenElement) {
+                document.exitFullscreen();
+            } else {
+                document.body.requestFullscreen();
+            }
+        });
+
         document.addEventListener('keydown', (e) => this.setKeydown(e))
         document.addEventListener('keyup', (e) => this.setKeyup(e))
 
