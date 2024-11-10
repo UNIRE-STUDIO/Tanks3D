@@ -95,4 +95,69 @@ export default class ThreeManager {
         this.renderer.setSize(window.innerWidth, window.innerHeight);
         this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     }
+
+    createWater(posX, posY, posZ){
+        let p = new THREE.Mesh(this.plane, this.materials[2]);
+        p.position.set(posX, posY, posZ);
+        p.rotation.x = (-90 * Math.PI) / 180;
+        this.water3D.add(p);
+    }
+
+    createFloor(posX, posY, posZ){
+        let p = this.plane.clone(); // Плоскости
+        p.rotateX((-90 * Math.PI) / 180);
+        p.translate(posX, posY, posZ);
+        floor1.push(p);
+    }
+
+    createCover(posX, posY, posZ){
+        let p = new THREE.Mesh(this.plane, this.materials[3]);
+        p.position.set(posX, posY, posZ);
+        p.rotation.x = (-90 * Math.PI) / 180;
+        this.covers3D.add(p);
+    }
+
+    createBrick(posX, posY, posZ, j, i, length){
+        let b1 = new THREE.Mesh(this.block1.geometry, this.block1.material);
+        b1.scale.set(1, 1.4, 1);
+        b1.name = coordinatesToId(j, i, length);
+        b1.position.set(posX, posY, posZ);
+        this.bricks3D.add(b1);
+    }
+
+    createBlock(posX, posY, posZ, j, i, length){
+        let cube = new THREE.Mesh(this.boxGeometry, this.materials[1]);
+        cube.name = coordinatesToId(j, i, length);
+        cube.position.set(posX, posY, posZ);
+        this.blocks3D.add(cube);
+    }
+
+    addToScene(){
+        let floorMerge = BufferGeometryUtils.mergeGeometries([...floor1]);
+        this.floor3D.add(new THREE.Mesh(floorMerge, this.materials[0]));
+        this.scene.add(this.water3D);
+        this.scene.add(this.covers3D);
+        this.scene.add(this.blocks3D);
+        this.scene.add(this.bricks3D);
+        this.scene.add(this.floor3D);
+    }
+
+    removeBlock(posX, posY, length){
+        let nameObj = this.scene.getObjectByName(
+            coordinatesToId(posX, posY, length)
+        );
+        this.scene.getObjectByName('bricks').remove(nameObj);
+    }
+
+    reset(){
+        this.water3D.clear();
+        this.covers3D.clear();
+        this.blocks3D.clear();
+        this.bricks3D.clear();
+        this.floor3D.clear();
+    }
+
+    render(){
+        this.renderer.render(this.scene, this.camera);
+    }
 }

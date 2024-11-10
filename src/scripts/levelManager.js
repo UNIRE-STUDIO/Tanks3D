@@ -1,5 +1,5 @@
 import BulletPool from "./bulletPool.js";
-import ThreeManager from "./ThreeManager.js";
+import ThreeManager from "./threeManager.js";
 import { idToCoordinates, coordinatesToId } from "./general.js";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import * as BufferGeometryUtils from "three/examples/jsm/utils/BufferGeometryUtils.js";
@@ -96,54 +96,25 @@ export default class LevelManager {
         let floor1 = [];
         for (let i = 0; i < this.config.viewSize.y; i++) {
             for (let j = 0; j < this.config.viewSize.x; j++) { // Вода
+                let posX = j * this.config.grid + 0.5;
+                let posZ = i * this.config.grid + 0.5;
                 if (this.currentMap[i][j] === 3) {
-                    let p = new THREE.Mesh(this.plane, this.materials[2]);
-                    p.position.set(j * this.config.grid + 0.5, 0, i * this.config.grid + 0.5);
-                    p.rotation.x = (-90 * Math.PI) / 180;
-                    this.water3D.add(p);
+                    this.threeManager.createWater(posX, 0, posZ);
                     continue;
                 }
-                let p = this.plane.clone() // Плоскости
-                p.rotateX((-90 * Math.PI) / 180);
-                p.translate(j * this.config.grid + 0.5, 0, i * this.config.grid + 0.5);
-                floor1.push(p);
+                this.threeManager.createWater(posX, 0, posZ);
                 if (this.currentMap[i][j] === 4) { // Маскировка
-                    let p = new THREE.Mesh(this.plane, this.materials[3]);
-                    p.position.set(j * this.config.grid + 0.5, 1.4, i * this.config.grid + 0.5);
-                    p.rotation.x = (-90 * Math.PI) / 180;
-                    this.covers3D.add(p);
+                    this.threeManager.createCover(posX, 1.4, posZ);
                     continue;
                 }
                 if (this.currentMap[i][j] === 1) {
-                    let b1 = new THREE.Mesh(this.block1.geometry, this.block1.material);
-                    b1.scale.set(1, 1.4, 1);
-                    b1.name = coordinatesToId(j, i, this.currentMap[0].length);
-                    b1.position.set(
-                        j * this.config.grid + 0.5,
-                        0.7,
-                        i * this.config.grid + 0.5
-                    );
-                    this.bricks3D.add(b1);
+                    this.threeManager.createBrick(posX, 0.7, posZ, j, i, this.currentMap[0].length);
                 } else if (this.currentMap[i][j] === 2) {
-                    let cube = new THREE.Mesh(this.boxGeometry, this.materials[1]);
-                    cube.name = coordinatesToId(j, i, this.currentMap[0].length);
-                    cube.position.set(
-                        j * this.config.grid + 0.5,
-                        0.7,
-                        i * this.config.grid + 0.5
-                    );
-                    this.blocks3D.add(cube);
+                    this.threeManager.createBlock(posX, 0.7, posZ, j, i, this.currentMap[0].length);
                 }
             }
         }
-        let floorMerge = BufferGeometryUtils.mergeGeometries([...floor1]);
-        this.floor3D.add(new THREE.Mesh(floorMerge, this.materials[0]));
 
-        this.scene.add(this.water3D);
-        this.scene.add(this.covers3D);
-        this.scene.add(this.blocks3D);
-        this.scene.add(this.bricks3D);
-        this.scene.add(this.floor3D);
         this.timerStart = setTimeout(() => {
             this.delayedSpawn();
         }, 1000);
@@ -176,10 +147,7 @@ export default class LevelManager {
 
     removeTile(posX, posY) {
         this.currentMap[posY][posX] = 0;
-        let nameObj = this.scene.getObjectByName(
-            coordinatesToId(posX, posY, this.currentMap[0].length)
-        );
-        this.scene.getObjectByName('bricks').remove(nameObj);
+        this.threeManager.removeBlock(posX, posY, this.currentMap[0].length)
     }
 
     setPause() {
@@ -227,11 +195,6 @@ export default class LevelManager {
         this.bulletPool.setReset();
         // this.bangPool.setReset();
         this.uiFields.playersHealth[0] = 3;
-        this.water3D.clear();
-        this.covers3D.clear();
-        this.blocks3D.clear();
-        this.bricks3D.clear();
-        this.floor3D.clear();
     }
 
     // Принимаем от танка игрока
@@ -271,6 +234,6 @@ export default class LevelManager {
     }
 
     render() {
-        this.renderer.render(this.scene, this.camera);
+        this.threeManager.render();
     }
 }
