@@ -1,5 +1,4 @@
 import { drawImage, drawRect, isInside } from "./general.js";
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import * as THREE from "three";
 
 export default class Bullet {
@@ -10,11 +9,11 @@ export default class Bullet {
         id,
         bangCreateEvent,
         uiFields,
-        scene,
-        originModel
+        threeManager,
+        model
     ) {
         this.config = config;
-        this.scene = scene;
+        this.threeManager = threeManager;
         this.posX = 0;
         this.posY = 0;
         this.dirY = 0;
@@ -40,8 +39,8 @@ export default class Bullet {
         this.bangCreateEvent = bangCreateEvent;
 
         // 3d
-        this.model = new THREE.Mesh(originModel.geometry, originModel.material);
-        this.scene.add(this.model);
+        this.model = model;
+        this.threeManager.scene.add(this.model);
         this.model.visible = true;
     }
 

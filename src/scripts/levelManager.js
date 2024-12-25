@@ -1,5 +1,5 @@
 import BulletPool from "./bulletPool.js";
-import ThreeManager from "./threeManager.js";
+import ThreeManager from "./ThreeManager.js";
 import { idToCoordinates, coordinatesToId } from "./general.js";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import * as BufferGeometryUtils from "three/examples/jsm/utils/BufferGeometryUtils.js";
@@ -28,8 +28,15 @@ export default class LevelManager {
         this.uiFields.currentLevel = 0;
         this.currentMap = null;
         this.config = config;
-        this.threeManager = new ThreeManager(uiFields);
+        this.threeManager = new ThreeManager(uiFields, config);
+        this.initAsync();
 
+        this.timerStart;
+    }
+
+    async initAsync()
+    {
+        await this.threeManager.initAsync();
         //this.bangPool = new BangPool(this.config)
         // this.bulletPool = new BulletPool(
         //     this.config,
@@ -76,8 +83,6 @@ export default class LevelManager {
 
         input.movePlayer2Event = this.players[1].setDirection.bind(this.players[1]);
         input.shootPlayer2Event = this.players[1].shoot.bind(this.players[1]);
-
-        this.timerStart;
     }
 
     start(playersMode = 0) {

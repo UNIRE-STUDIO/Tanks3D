@@ -3,8 +3,9 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import * as BufferGeometryUtils from "three/examples/jsm/utils/BufferGeometryUtils.js";
 
 export default class ThreeManager {
-    constructor(uiFields){
-        
+    constructor(uiFields, config){
+        this.uiFields = uiFields;
+        this.config = config;
         this.scene = new THREE.Scene();
         const canvas = document.querySelector(".canvas");
         this.renderer = new THREE.WebGLRenderer({
@@ -50,8 +51,8 @@ export default class ThreeManager {
 
         // block1
         this.block1;
-        const gltfLoader = new GLTFLoader();
-        gltfLoader.load("/models/block1.glb", (gltf) => {
+        this.gltfLoader = new GLTFLoader();
+        this.gltfLoader.load("/models/block1.glb", (gltf) => {
             this.block1 = gltf.scene.children[0];
             this.block1.material.map.minFilter = THREE.LinearMipMapLinearFilter;
             this.block1.material.map.magFilter = THREE.LinearFilter;
@@ -65,6 +66,7 @@ export default class ThreeManager {
             new THREE.MeshBasicMaterial({ color: 0x4bc8e4 }), // вода
             new THREE.MeshBasicMaterial({ color: 0x1fad6d }), // тент
         ];
+        this.bulletOrigin;
 
         this.water3D = new THREE.Object3D();
         this.covers3D = new THREE.Object3D();
@@ -72,6 +74,14 @@ export default class ThreeManager {
         this.bricks3D = new THREE.Object3D();
         this.bricks3D.name = 'bricks';
         this.floor3D = new THREE.Object3D();
+    }
+
+    async initAsync(){
+        await this.gltfLoader.loadAsync('/models/bullet.glb', (gltf) => {
+            console.log(gltf);
+            return gltf.scene.children[0];
+            //model.material.map.minFilter = THREE.LinearFilter <------ Вернуть когда появится настоящий материал
+        })
     }
 
     updateCameraFov() {
@@ -130,6 +140,10 @@ export default class ThreeManager {
         cube.name = coordinatesToId(j, i, length);
         cube.position.set(posX, posY, posZ);
         this.blocks3D.add(cube);
+    }
+
+    createBullet(){
+        return new THREE.Mesh(this.bulletOrigin.geometry, this.bulletOrigin.material);
     }
 
     addToScene(){

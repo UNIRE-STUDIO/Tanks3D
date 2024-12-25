@@ -1,27 +1,21 @@
 import Bullet from './bullet.js'
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
-import * as THREE from "three";
 
 export default class BulletPool {
-    constructor(config, removeTile, destructionOfTheBaseEvent, bangCreateEvent, uiFields, scene) {
+    constructor(config, removeTile, destructionOfTheBaseEvent, bangCreateEvent, uiFields, threeManager) {
         this.config = config
-
+        this.threeManager = threeManager;
         const pool_size = 12
         this.bullets = []
-        let originModel;
 
-        const gltfLoader = new GLTFLoader()
-        gltfLoader.load('/models/bullet.glb', (gltf) => {
-            originModel = gltf.scene.children[0]
-            //model.material.map.minFilter = THREE.LinearFilter <------ Вернуть когда появится настоящий материал
-
-            for (let i = 0; i < pool_size; i++) {
-                this.bullets[i] = new Bullet(this.config, removeTile, destructionOfTheBaseEvent, i, bangCreateEvent, uiFields, scene, originModel)
-            }
-            for (let i = 0; i < pool_size; i++) {
-                this.bullets[i].bullets = this.bullets
-            }
-        })
+        let model
+        for (let i = 0; i < pool_size; i++) {
+            // Добавить сюда создание самого 3д объекта с помощью threeManager
+            model = this.threeManager.createBullet();
+            this.bullets[i] = new Bullet(this.config, removeTile, destructionOfTheBaseEvent, i, bangCreateEvent, uiFields, threeManager, model);
+        }
+        for (let i = 0; i < pool_size; i++) {
+            this.bullets[i].bullets = this.bullets;
+        }
     }
 
     setListNpcTanks(tanks) {
