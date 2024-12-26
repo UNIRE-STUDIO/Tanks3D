@@ -1,14 +1,10 @@
 import BulletPool from "./bulletPool.js";
-import ThreeManager from "./ThreeManager.js";
-import { idToCoordinates, coordinatesToId } from "./general.js";
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
-import * as BufferGeometryUtils from "three/examples/jsm/utils/BufferGeometryUtils.js";
+import ThreeManager from "./threeManager.js";
 //import SaveManager from "./saveManager.js";
 import levels from "./levels.json";
 import NpcPool from "./npcPool.js";
 import PlayerTank from "./playerTank.js";
 //import BangPool from "./bangPool.js";
-import * as THREE from "three";
 
 export default class LevelManager {
     constructor(input, config, uiFields) {
@@ -29,12 +25,12 @@ export default class LevelManager {
         this.currentMap = null;
         this.config = config;
         this.threeManager = new ThreeManager(uiFields, config);
-        this.initAsync();
+        this.initAsync(input);
 
         this.timerStart;
     }
 
-    async initAsync()
+    async initAsync(input)
     {
         await this.threeManager.initAsync();
         //this.bangPool = new BangPool(this.config)
@@ -68,7 +64,7 @@ export default class LevelManager {
             1,
             this.threeManager);
             
-        this.npcPool = new NpcPool(this.config, this.bulletPool.create.bind(this.bulletPool), this.players, this.win.bind(this), uiFields, this.threeManager);
+        this.npcPool = new NpcPool(this.config, this.bulletPool.create.bind(this.bulletPool), this.players, this.win.bind(this), this.uiFields, this.threeManager);
 
         this.players[0].otherTanks.push(...this.npcPool.tanks);
         this.players[1].otherTanks.push(...this.npcPool.tanks);
@@ -119,6 +115,7 @@ export default class LevelManager {
                 }
             }
         }
+        this.threeManager.addToScene();
 
         this.timerStart = setTimeout(() => {
             this.delayedSpawn();

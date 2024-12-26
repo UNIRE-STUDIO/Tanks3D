@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import * as BufferGeometryUtils from "three/examples/jsm/utils/BufferGeometryUtils.js";
+import { idToCoordinates, coordinatesToId } from "./general.js";
 
 export default class ThreeManager {
     constructor(uiFields, config){
@@ -73,15 +74,13 @@ export default class ThreeManager {
         this.blocks3D = new THREE.Object3D();
         this.bricks3D = new THREE.Object3D();
         this.bricks3D.name = 'bricks';
+        this.floors = []; //Массив с плоскостями пола, затем преобразовываем в единый объект
         this.floor3D = new THREE.Object3D();
     }
 
     async initAsync(){
-        await this.gltfLoader.loadAsync('/models/bullet.glb', (gltf) => {
-            console.log(gltf);
-            return gltf.scene.children[0];
+        this.bulletOrigin = await this.gltfLoader.loadAsync('/models/bullet.glb');
             //model.material.map.minFilter = THREE.LinearFilter <------ Вернуть когда появится настоящий материал
-        })
     }
 
     updateCameraFov() {
@@ -117,7 +116,7 @@ export default class ThreeManager {
         let p = this.plane.clone(); // Плоскости
         p.rotateX((-90 * Math.PI) / 180);
         p.translate(posX, posY, posZ);
-        floor1.push(p);
+        this.floors.push(p);
     }
 
     createCover(posX, posY, posZ){
@@ -147,8 +146,9 @@ export default class ThreeManager {
     }
 
     addToScene(){
-        let floorMerge = BufferGeometryUtils.mergeGeometries([...floor1]);
-        this.floor3D.add(new THREE.Mesh(floorMerge, this.materials[0]));
+        console.log(...this.floors);
+        let floorMerge = BufferGeometryUtils.mergeGeometries([...this.floors]);
+        this.floor3D = new THREE.Mesh(floorMerge, this.materials[0]);
         this.scene.add(this.water3D);
         this.scene.add(this.covers3D);
         this.scene.add(this.blocks3D);
@@ -168,6 +168,7 @@ export default class ThreeManager {
         this.covers3D.clear();
         this.blocks3D.clear();
         this.bricks3D.clear();
+        this.floors.clear();
         this.floor3D.clear();
     }
 
