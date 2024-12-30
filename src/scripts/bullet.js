@@ -210,5 +210,6 @@ export default class Bullet {
         this.posX += this.dirX * lag * this.speed;
         this.posY += this.dirY * lag * this.speed;
         this.model.position.set(this.posX, 1, this.posY);
+        console.log(this.model.position);
     }
 }

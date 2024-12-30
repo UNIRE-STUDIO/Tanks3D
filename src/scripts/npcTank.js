@@ -1,10 +1,9 @@
-import * as THREE from "three";
 import { randomRange, coordinatesToId, idToCoordinates } from "./general.js";
 import Tank from "./tank.js";
 import Timer from "./timer.js";
 
 export default class NpcTank extends Tank {
-    constructor(config, spawnBullet, players, deadNpcEvent, id) {
+    constructor(config, spawnBullet, players, deadNpcEvent, id, threeManager) {
         super(config, spawnBullet, id);
         this.npcId = id;
         this.dirY = 1;
@@ -48,7 +47,7 @@ export default class NpcTank extends Tank {
     }
 
     create(currentMap, pos, basePos, playersMode, type, originModel) {
-        this.model = new THREE.Mesh(originModel.geometry, originModel.material)
+        this.model = this.threeManager.createNpcTank();
         super.create(currentMap, pos);
         this.type = type;
 

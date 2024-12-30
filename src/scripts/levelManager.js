@@ -55,14 +55,16 @@ export default class LevelManager {
             this.bulletPool.create.bind(this.bulletPool),
             this.playerDead.bind(this),
             0,
-            this.threeManager
-        );
+            this.threeManager,
+            this.threeManager.player1TankMesh);
+
         this.players[1] = new PlayerTank(
             this.config,
             this.bulletPool.create.bind(this.bulletPool),
             this.playerDead.bind(this),
             1,
-            this.threeManager);
+            this.threeManager,
+            this.threeManager.player2TankMesh);
             
         this.npcPool = new NpcPool(this.config, this.bulletPool.create.bind(this.bulletPool), this.players, this.win.bind(this), this.uiFields, this.threeManager);
 
@@ -96,19 +98,19 @@ export default class LevelManager {
         }
         let floor1 = [];
         for (let i = 0; i < this.config.viewSize.y; i++) {
-            for (let j = 0; j < this.config.viewSize.x; j++) { // Вода
+            for (let j = 0; j < this.config.viewSize.x; j++) { 
                 let posX = j * this.config.grid + 0.5;
                 let posZ = i * this.config.grid + 0.5;
-                if (this.currentMap[i][j] === 3) {
+                if (this.currentMap[i][j] === 3) { // Вода
                     this.threeManager.createWater(posX, 0, posZ);
                     continue;
                 }
-                this.threeManager.createWater(posX, 0, posZ);
+                this.threeManager.createFloor(posX, 0, posZ);
                 if (this.currentMap[i][j] === 4) { // Маскировка
                     this.threeManager.createCover(posX, 1.4, posZ);
                     continue;
                 }
-                if (this.currentMap[i][j] === 1) {
+                if (this.currentMap[i][j] === 1) { 
                     this.threeManager.createBrick(posX, 0.7, posZ, j, i, this.currentMap[0].length);
                 } else if (this.currentMap[i][j] === 2) {
                     this.threeManager.createBlock(posX, 0.7, posZ, j, i, this.currentMap[0].length);

@@ -1,12 +1,9 @@
 import Tank from './tank.js'
 import Timer from './timer.js'
-import { moveTo } from './general.js'
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
-import * as THREE from 'three'
 
 export default class PlayerTank extends Tank {
-    constructor(config, spawnBullet, deadEvent, playerId, scene) {
-        super(config, spawnBullet, scene)
+    constructor(config, spawnBullet, deadEvent, playerId, threeManager, model) {
+        super(config, spawnBullet, threeManager)
 
         this.speed = 0.005 * config.grid
 
@@ -23,17 +20,7 @@ export default class PlayerTank extends Tank {
         this.deadEvent = deadEvent
         this.playerId = playerId
 
-        let urlModels = [
-            '/models/tank1.glb',    // 0
-            '/models/tank2.glb',    // 1
-        ]
-        const gltfLoader = new GLTFLoader()
-        let originModel;
-        gltfLoader.load(urlModels[playerId], (gltf) => {
-            originModel = gltf.scene.children[0]
-            originModel.material.map.minFilter = THREE.LinearFilter
-            this.model = new THREE.Mesh(originModel.geometry, originModel.material)
-        })
+        this.model = model;
     }
 
     setReset() {

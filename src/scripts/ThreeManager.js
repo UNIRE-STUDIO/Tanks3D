@@ -48,6 +48,14 @@ export default class ThreeManager {
         this.scene.add(this.directionalLight);
         this.scene.add(this.ambient);
 
+        this.urlPlayerTankModels = [
+            '/models/tank1.glb',    // 0
+            '/models/tank2.glb',    // 1
+        ]
+        this.urlNpcTankModels = [
+            '/models/npcTank1.glb'
+        ]
+
         this.plane = new THREE.PlaneGeometry(1, 1, 1, 1);
 
         // block1
@@ -68,6 +76,9 @@ export default class ThreeManager {
             new THREE.MeshBasicMaterial({ color: 0x1fad6d }), // тент
         ];
         this.bulletOrigin;
+        this.player1TankMesh; 
+        this.player2TankMesh;
+        this.npc1TankOrigin;
 
         this.water3D = new THREE.Object3D();
         this.covers3D = new THREE.Object3D();
@@ -80,8 +91,19 @@ export default class ThreeManager {
 
     async initAsync(){
         this.bulletOrigin = await this.gltfLoader.loadAsync('/models/bullet.glb');
-            //model.material.map.minFilter = THREE.LinearFilter <------ Вернуть когда появится настоящий материал
+        //model.material.map.minFilter = THREE.LinearFilter <------ Вернуть когда появится настоящий материал
+        
+        let player1TankOrigin = (await this.gltfLoader.loadAsync(this.urlPlayerTankModels[0])).scene.children[0];
+        let player2TankOrigin = (await this.gltfLoader.loadAsync(this.urlPlayerTankModels[1])).scene.children[0];
+        player1TankOrigin.material.map.minFilter = THREE.LinearFilter;
+        player2TankOrigin.material.map.minFilter = THREE.LinearFilter;
+        this.player1TankMesh = new THREE.Mesh(player1TankOrigin.geometry, player1TankOrigin.material);
+        this.player2TankMesh = new THREE.Mesh(player2TankOrigin.geometry, player2TankOrigin.material);
+    
+        this.npc1TankOrigin = (await this.gltfLoader.loadAsync(this.urlNpcTankModels[0])).scene.children[0];
+        this.npc1TankOrigin.material.map.minFilter = THREE.LinearFilter;
     }
+    
 
     updateCameraFov() {
         let hw = window.innerHeight / window.innerWidth;
@@ -103,6 +125,16 @@ export default class ThreeManager {
         this.camera.updateProjectionMatrix();
         this.renderer.setSize(window.innerWidth, window.innerHeight);
         this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    }
+
+    createPlayerTank()
+    {
+
+    }
+
+    createNpcTank()
+    {
+        return new THREE.Mesh(this.npc1TankOrigin.geometry, this.npc1TankOrigin.material);
     }
 
     createWater(posX, posY, posZ){
@@ -142,11 +174,10 @@ export default class ThreeManager {
     }
 
     createBullet(){
-        return new THREE.Mesh(this.bulletOrigin.geometry, this.bulletOrigin.material);
+        return new THREE.Mesh(this.bulletOrigin.geometry, new THREE.MeshBasicMaterial({ color: 0x000000 }));
     }
 
     addToScene(){
-        console.log(...this.floors);
         let floorMerge = BufferGeometryUtils.mergeGeometries([...this.floors]);
         this.floor3D = new THREE.Mesh(floorMerge, this.materials[0]);
         this.scene.add(this.water3D);

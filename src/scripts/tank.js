@@ -1,9 +1,9 @@
 import * as THREE from 'three'
 
 export default class Tank {
-    constructor(config, spawnBullet, scene) {
+    constructor(config, spawnBullet, threeManager) {
         this.config = config
-        this.scene = scene
+        this.threeManager = threeManager;
         this.spawnBullet = spawnBullet
 
         this.position = {
@@ -36,7 +36,7 @@ export default class Tank {
         this.position.y = pos.y * this.config.grid
         this.otherCollisionObject = []
         this.isUse = true
-        this.scene.add(this.model)
+        this.threeManager.scene.add(this.model)
         this.model.visible = true;
     }
 
