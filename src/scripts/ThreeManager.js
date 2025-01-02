@@ -90,7 +90,7 @@ export default class ThreeManager {
     }
 
     async initAsync(){
-        this.bulletOrigin = await this.gltfLoader.loadAsync('/models/bullet.glb');
+        this.bulletOrigin = (await this.gltfLoader.loadAsync('/models/bullet.glb')).scene.children[0];
         //model.material.map.minFilter = THREE.LinearFilter <------ Вернуть когда появится настоящий материал
         
         let player1TankOrigin = (await this.gltfLoader.loadAsync(this.urlPlayerTankModels[0])).scene.children[0];
@@ -174,7 +174,7 @@ export default class ThreeManager {
     }
 
     createBullet(){
-        return new THREE.Mesh(this.bulletOrigin.geometry, new THREE.MeshBasicMaterial({ color: 0x000000 }));
+        return new THREE.Mesh(this.bulletOrigin.geometry, this.bulletOrigin.material);
     }
 
     addToScene(){

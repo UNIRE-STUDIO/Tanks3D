@@ -41,7 +41,7 @@ export default class Bullet {
         // 3d
         this.model = model;
         this.threeManager.scene.add(this.model);
-        this.model.visible = true;
+        this.model.visible = false;
     }
 
     create(pos, dir, bulletsPlayer, tankId) {
