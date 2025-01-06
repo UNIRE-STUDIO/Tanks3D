@@ -53,7 +53,7 @@ export default class Bullet {
         this.otherCollisionObject = [];
         this.tankId = tankId;
         this.model.position.set(this.posX, this.posY, 1);
-        this.model.rotation.y = THREE.MathUtils.degToRad((this.dirX * -90) + (this.dirY * 180));
+        this.model.rotation.y = THREE.MathUtils.degToRad((this.dirX * -90) + (this.dirY > 0 ? 180 : 0));
         this.model.visible = true;
         this.isUse = true;
     }
@@ -210,6 +210,5 @@ export default class Bullet {
         this.posX += this.dirX * lag * this.speed;
         this.posY += this.dirY * lag * this.speed;
         this.model.position.set(this.posX, 1, this.posY);
-        console.log(this.model.position);
     }
 }

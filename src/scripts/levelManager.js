@@ -197,6 +197,7 @@ export default class LevelManager {
         }
         this.npcPool.setReset();
         this.bulletPool.setReset();
+        this.threeManager.reset();
         // this.bangPool.setReset();
         this.uiFields.playersHealth[0] = 3;
     }

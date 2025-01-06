@@ -68,9 +68,22 @@ export default class ThreeManager {
             this.block1.scale.set(1, 1.4, 1);
         });
 
+        let textureLoader = new THREE.TextureLoader();
+        let floor1Texture = textureLoader.load('/sprites/floor1.png');
+        let floor2Texture = textureLoader.load('/sprites/floor2.png');
+        let floor3Texture = textureLoader.load('/sprites/floor3.png');
+        let floor4Texture = textureLoader.load('/sprites/floor4.png');
+        floor1Texture.colorSpace = THREE.SRGBColorSpace;
+        floor2Texture.colorSpace = THREE.SRGBColorSpace;
+        floor3Texture.colorSpace = THREE.SRGBColorSpace;
+        floor4Texture.colorSpace = THREE.SRGBColorSpace;
+
         this.boxGeometry = new THREE.BoxGeometry(1, 1.4, 1);
         this.materials = [
-            new THREE.MeshBasicMaterial({ color: 0x242424 }), // пол
+            new THREE.MeshBasicMaterial({ map: floor1Texture }), // пол
+            new THREE.MeshBasicMaterial({ map: floor2Texture }), // пол
+            new THREE.MeshBasicMaterial({ map: floor3Texture }), // пол
+            new THREE.MeshBasicMaterial({ map: floor4Texture }), // пол
             new THREE.MeshBasicMaterial({ color: 0xb5c3c1 }), // бетонная стена
             new THREE.MeshBasicMaterial({ color: 0x4bc8e4 }), // вода
             new THREE.MeshBasicMaterial({ color: 0x1fad6d }), // тент
@@ -85,8 +98,14 @@ export default class ThreeManager {
         this.blocks3D = new THREE.Object3D();
         this.bricks3D = new THREE.Object3D();
         this.bricks3D.name = 'bricks';
-        this.floors = []; //Массив с плоскостями пола, затем преобразовываем в единый объект
-        this.floor3D = new THREE.Object3D();
+        this.floors1 = []; //Массив с плоскостями пола, затем преобразовываем в единый объект
+        this.floors2 = [];
+        this.floors3 = [];
+        this.floors4 = [];
+        this.floor3D_1 = new THREE.Object3D();
+        this.floor3D_2 = new THREE.Object3D();
+        this.floor3D_3 = new THREE.Object3D();
+        this.floor3D_4 = new THREE.Object3D();
     }
 
     async initAsync(){
@@ -138,7 +157,7 @@ export default class ThreeManager {
     }
 
     createWater(posX, posY, posZ){
-        let p = new THREE.Mesh(this.plane, this.materials[2]);
+        let p = new THREE.Mesh(this.plane, this.materials[5]);
         p.position.set(posX, posY, posZ);
         p.rotation.x = (-90 * Math.PI) / 180;
         this.water3D.add(p);
@@ -148,11 +167,28 @@ export default class ThreeManager {
         let p = this.plane.clone(); // Плоскости
         p.rotateX((-90 * Math.PI) / 180);
         p.translate(posX, posY, posZ);
-        this.floors.push(p);
+        posX -= 0.5;
+        posZ += 0.5;
+        if (posX % 2 === 0 && posZ % 2 === 0)  // 0, 0
+        {
+            this.floors1.push(p);
+        }
+        else if (posX % 2 === 0 && posZ % 2 === 1) // 0, 1
+        {
+            this.floors2.push(p);
+        }
+        else if (posX % 2 === 1 && posZ % 2 === 1) // 1, 1
+        {
+            this.floors3.push(p);
+        }
+        else {
+            this.floors4.push(p);
+        }
+        
     }
 
     createCover(posX, posY, posZ){
-        let p = new THREE.Mesh(this.plane, this.materials[3]);
+        let p = new THREE.Mesh(this.plane, this.materials[6]);
         p.position.set(posX, posY, posZ);
         p.rotation.x = (-90 * Math.PI) / 180;
         this.covers3D.add(p);
@@ -167,7 +203,7 @@ export default class ThreeManager {
     }
 
     createBlock(posX, posY, posZ, j, i, length){
-        let cube = new THREE.Mesh(this.boxGeometry, this.materials[1]);
+        let cube = new THREE.Mesh(this.boxGeometry, this.materials[4]);
         cube.name = coordinatesToId(j, i, length);
         cube.position.set(posX, posY, posZ);
         this.blocks3D.add(cube);
@@ -178,13 +214,27 @@ export default class ThreeManager {
     }
 
     addToScene(){
-        let floorMerge = BufferGeometryUtils.mergeGeometries([...this.floors]);
-        this.floor3D = new THREE.Mesh(floorMerge, this.materials[0]);
+        let floorMerge1 = BufferGeometryUtils.mergeGeometries([...this.floors1]);
+        let floorMerge2 = BufferGeometryUtils.mergeGeometries([...this.floors2]);
+        let floorMerge3 = BufferGeometryUtils.mergeGeometries([...this.floors3]);
+        let floorMerge4 = BufferGeometryUtils.mergeGeometries([...this.floors4]);
+        this.floors1 = [];
+        this.floors2 = [];
+        this.floors3 = [];
+        this.floors4 = [];
+        this.floor3D_1 = new THREE.Mesh(floorMerge1, this.materials[0]);
+        this.floor3D_2 = new THREE.Mesh(floorMerge2, this.materials[1]);
+        this.floor3D_3 = new THREE.Mesh(floorMerge3, this.materials[2]);
+        this.floor3D_4 = new THREE.Mesh(floorMerge4, this.materials[3]);
+
         this.scene.add(this.water3D);
         this.scene.add(this.covers3D);
         this.scene.add(this.blocks3D);
         this.scene.add(this.bricks3D);
-        this.scene.add(this.floor3D);
+        this.scene.add(this.floor3D_1);
+        this.scene.add(this.floor3D_2);
+        this.scene.add(this.floor3D_3);
+        this.scene.add(this.floor3D_4);
     }
 
     removeBlock(posX, posY, length){
@@ -199,8 +249,10 @@ export default class ThreeManager {
         this.covers3D.clear();
         this.blocks3D.clear();
         this.bricks3D.clear();
-        this.floors.clear();
-        this.floor3D.clear();
+        this.floor3D_1.clear();
+        this.floor3D_2.clear();
+        this.floor3D_3.clear();
+        this.floor3D_4.clear();
     }
 
     render(){
