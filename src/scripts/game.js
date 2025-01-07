@@ -24,7 +24,7 @@ export default class Game {
         this.levelManager.winEvent = this.changeScreen.bind(this, GameScreens.WIN)
         this.levelManager.saveManager = this.saveManager
 
-        //this.changeScreen(3); // Тут можно проверять интерфейс
+        //this.changeScreen(4); // Тут можно проверять интерфейс
     }
 
     // изменить экран игры на указанный + дополнительный параметр для уточнения поведения
@@ -46,6 +46,8 @@ export default class Game {
                 this.uiFields.currentScreen = GameScreens.PAUSE
                 break
             case GameScreens.GAMEOVER:
+                this.levelManager.setPause();
+                
                 this.uiFields.currentScreen = GameScreens.GAMEOVER
                 break
             case GameScreens.WIN:
