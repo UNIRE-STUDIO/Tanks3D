@@ -41,17 +41,16 @@ export default class Game {
                 this.uiFields.currentScreen = GameScreens.PLAY
                 break
             case GameScreens.PAUSE:
-                this.levelManager.setPause()
-
-                this.uiFields.currentScreen = GameScreens.PAUSE
+                this.levelManager.setPause();
+                this.uiFields.currentScreen = GameScreens.PAUSE;
                 break
             case GameScreens.GAMEOVER:
                 this.levelManager.setPause();
-                
-                this.uiFields.currentScreen = GameScreens.GAMEOVER
+                this.uiFields.currentScreen = GameScreens.GAMEOVER;
                 break
             case GameScreens.WIN:
-                this.uiFields.currentScreen = GameScreens.WIN
+                this.levelManager.setPause();
+                this.uiFields.currentScreen = GameScreens.WIN;
                 break
             case -1: // Если нажата кнопка назад
                 if (this.uiFields.currentScreen === GameScreens.PAUSE) this.changeScreen(GameScreens.MENU)

@@ -6,6 +6,8 @@ import MainScreen from "./components/MainScreen.vue";
 import PlayScreen from "./components/PlayScreen.vue";
 import PauseSceen from "./components/PauseSceen.vue";
 import GameoverScreen from "./components/GameoverScreen.vue";
+import WinScreen from "./components/WinScreen.vue";
+import WinScreen from "./components/WinScreen.vue";
 
 let game = new Game();
 
@@ -14,6 +16,7 @@ export default {
 		MainScreen,
 		PlayScreen,
 		PauseSceen,
+		WinScreen,
 		GameoverScreen
 	},
 	data() {
@@ -47,6 +50,7 @@ export default {
 		<MainScreen v-if="uiFields.currentScreen === 0" :game="gameLink" />
 		<PlayScreen v-if="uiFields.currentScreen === 1" :game="gameLink" />
 		<PauseSceen v-if="uiFields.currentScreen === 2" :game="gameLink" />
+		<WinScreen 	v-if="uiFields.currentScreen === 3" :game="gameLing" />
 		<GameoverScreen v-if="uiFields.currentScreen === 4" :game="gameLink"/>
 	</div>
 </template>
