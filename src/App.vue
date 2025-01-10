@@ -7,7 +7,6 @@ import PlayScreen from "./components/PlayScreen.vue";
 import PauseSceen from "./components/PauseSceen.vue";
 import GameoverScreen from "./components/GameoverScreen.vue";
 import WinScreen from "./components/WinScreen.vue";
-import WinScreen from "./components/WinScreen.vue";
 
 let game = new Game();
 
