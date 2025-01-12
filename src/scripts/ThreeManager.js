@@ -42,8 +42,13 @@ export default class ThreeManager {
         });
         this.updateCameraFov();
 
-        this.ambient = new THREE.AmbientLight(0xffffff, 1);
-        this.directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+        this.ambient = new THREE.AmbientLight(0xffffff, 0.5);
+        this.directionalLight = new THREE.DirectionalLight(0xffffff, 2);
+        this.directionalLight.castShadow = true;
+        let targetDirLight = new THREE.Object3D();
+        this.directionalLight.target = targetDirLight;
+        this.directionalLight.target.position.set(0.5, 0, -0.5);
+        this.directionalLight.target.updateMatrixWorld();
 
         this.scene.add(this.directionalLight);
         this.scene.add(this.ambient);
@@ -59,13 +64,20 @@ export default class ThreeManager {
         this.plane = new THREE.PlaneGeometry(1, 1, 1, 1);
 
         // block1
-        this.block1;
+        this.brick;
         this.gltfLoader = new GLTFLoader();
-        this.gltfLoader.load("/models/block1.glb", (gltf) => {
-            this.block1 = gltf.scene.children[0];
-            this.block1.material.map.minFilter = THREE.LinearMipMapLinearFilter;
-            this.block1.material.map.magFilter = THREE.LinearFilter;
-            this.block1.scale.set(1, 1.4, 1);
+        this.gltfLoader.load("/models/brick.glb", (gltf) => {
+            this.brick = gltf.scene.children[0];
+            this.brick.material.map.minFilter = THREE.LinearMipMapLinearFilter;
+            this.brick.material.map.magFilter = THREE.LinearFilter;
+            this.brick.scale.set(1, 1.4, 1);
+        });
+        this.block;
+        this.gltfLoader.load("/models/block.glb", (gltf) => {
+            this.block = gltf.scene.children[0];
+            this.block.material.map.minFilter = THREE.LinearMipMapLinearFilter;
+            this.block.material.map.magFilter = THREE.LinearFilter;
+            this.block.scale.set(1, 1.4, 1);
         });
 
         let textureLoader = new THREE.TextureLoader();
@@ -165,7 +177,7 @@ export default class ThreeManager {
 
     createFloor(posX, posY, posZ){
         let p = this.plane.clone(); // Плоскости
-        p.rotateX((-90 * Math.PI) / 180);
+        p.rotateX((270 * Math.PI) / 180);
         p.translate(posX, posY, posZ);
         posX -= 0.5;
         posZ += 0.5;
@@ -195,7 +207,7 @@ export default class ThreeManager {
     }
 
     createBrick(posX, posY, posZ, j, i, length){
-        let b1 = new THREE.Mesh(this.block1.geometry, this.block1.material);
+        let b1 = new THREE.Mesh(this.brick.geometry, this.brick.material);
         b1.scale.set(1, 1.4, 1);
         b1.name = coordinatesToId(j, i, length);
         b1.position.set(posX, posY, posZ);
@@ -203,10 +215,11 @@ export default class ThreeManager {
     }
 
     createBlock(posX, posY, posZ, j, i, length){
-        let cube = new THREE.Mesh(this.boxGeometry, this.materials[4]);
-        cube.name = coordinatesToId(j, i, length);
-        cube.position.set(posX, posY, posZ);
-        this.blocks3D.add(cube);
+        let b = new THREE.Mesh(this.block.geometry, this.block.material);
+        b.scale.set(1, 1.4, 1);
+        b.name = coordinatesToId(j, i, length);
+        b.position.set(posX, posY, posZ);
+        this.blocks3D.add(b);
     }
 
     createBullet(){
