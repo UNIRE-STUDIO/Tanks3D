@@ -43,12 +43,12 @@ export default class ThreeManager {
         this.updateCameraFov();
 
         this.ambient = new THREE.AmbientLight(0xffffff, 0.5);
-        this.directionalLight = new THREE.DirectionalLight(0xffffff, 2);
+        this.directionalLight = new THREE.DirectionalLight(0xffffff, 3);
         this.directionalLight.castShadow = true;
         let targetDirLight = new THREE.Object3D();
         this.directionalLight.target = targetDirLight;
-        this.directionalLight.target.position.set(0.5, 0, -0.5);
-        this.directionalLight.target.updateMatrixWorld();
+        this.directionalLight.target.position.set(0.5, 0, 5);
+        this.directionalLight.target.updateMatrixWorld(); // Расчитывает положение на сцене (что-бы не добавлять target на сцену)
 
         this.scene.add(this.directionalLight);
         this.scene.add(this.ambient);
@@ -90,12 +90,17 @@ export default class ThreeManager {
         floor3Texture.colorSpace = THREE.SRGBColorSpace;
         floor4Texture.colorSpace = THREE.SRGBColorSpace;
 
+        let floor1NormalTexture = textureLoader.load('/sprites/floor1-normalMap.jpg');
+        let floor2NormalTexture = textureLoader.load('/sprites/floor2-normalMap.jpg');
+        let floor3NormalTexture = textureLoader.load('/sprites/floor3-normalMap.jpg');
+        let floor4NormalTexture = textureLoader.load('/sprites/floor4-normalMap.jpg');
+
         this.boxGeometry = new THREE.BoxGeometry(1, 1.4, 1);
         this.materials = [
-            new THREE.MeshBasicMaterial({ map: floor1Texture }), // пол
-            new THREE.MeshBasicMaterial({ map: floor2Texture }), // пол
-            new THREE.MeshBasicMaterial({ map: floor3Texture }), // пол
-            new THREE.MeshBasicMaterial({ map: floor4Texture }), // пол
+            new THREE.MeshLambertMaterial({ map: floor1Texture, normalMap: floor1NormalTexture }), // пол
+            new THREE.MeshLambertMaterial({ map: floor2Texture, normalMap: floor2NormalTexture }), // пол
+            new THREE.MeshLambertMaterial({ map: floor3Texture, normalMap: floor3NormalTexture }), // пол
+            new THREE.MeshLambertMaterial({ map: floor4Texture, normalMap: floor4NormalTexture }), // пол
             new THREE.MeshBasicMaterial({ color: 0xb5c3c1 }), // бетонная стена
             new THREE.MeshBasicMaterial({ color: 0x4bc8e4 }), // вода
             new THREE.MeshBasicMaterial({ color: 0x1fad6d }), // тент
