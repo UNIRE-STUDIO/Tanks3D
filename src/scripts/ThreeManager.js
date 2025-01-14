@@ -47,7 +47,7 @@ export default class ThreeManager {
         this.directionalLight.castShadow = true;
         let targetDirLight = new THREE.Object3D();
         this.directionalLight.target = targetDirLight;
-        this.directionalLight.target.position.set(0.5, 0, 5);
+        this.directionalLight.target.position.set(0.5, 0, -1);
         this.directionalLight.target.updateMatrixWorld(); // Расчитывает положение на сцене (что-бы не добавлять target на сцену)
 
         this.scene.add(this.directionalLight);

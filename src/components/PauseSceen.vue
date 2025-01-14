@@ -21,12 +21,11 @@ export default {
 
 <style scoped>
 #center {
-    width: 100%;
-    height: 90%;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    height: 100%;
 }
 
 h2 {
@@ -42,7 +41,6 @@ h2 {
 #pause-panel {
     background-color: rgba(27, 27, 27, 0.808);
     border-radius: 8px;
-    width: 60%;
     min-width: 400px;
     height: 200px;
     display: flex;

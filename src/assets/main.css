@@ -43,6 +43,10 @@ button:hover {
     transition: 0.3s;
 }
 
+.btn-normal{
+    padding: 8px 8px;
+}
+
 /* Статистика */
 #stats {
     left: 1vw;

@@ -52,7 +52,7 @@ export default {
                         </tr>
                     </table>
                 </div>
-                <div id="player2" v-if="uiFields.playersMode === 1">
+                <div id="player2" v-if="uiFields.playersMode === 0">
                     <p class="header" id="p2">Игрок 2</p>
                     <table>
                         <tr><th>Очки</th><th>Уничтожено</th><th>Тип</th></tr>
@@ -76,7 +76,7 @@ export default {
                 </div>
             </div>
             <div id="button-wrapper">
-                <button class="btn" type="button">СЛЕДУЮЩИЙ УРОВЕНЬ</button>
+                <button class="btn btn-normal" type="button">СЛЕДУЮЩИЙ УРОВЕНЬ</button>
             </div>
         </div>
     </div>
@@ -119,7 +119,10 @@ table{
 }
 
 .wrapper {
-
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
 }
 
 .fields {
