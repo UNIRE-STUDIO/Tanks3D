@@ -119,10 +119,8 @@ export default class ThreeManager {
         this.floors2 = [];
         this.floors3 = [];
         this.floors4 = [];
-        this.floor3D_1 = new THREE.Object3D();
-        this.floor3D_2 = new THREE.Object3D();
-        this.floor3D_3 = new THREE.Object3D();
-        this.floor3D_4 = new THREE.Object3D();
+
+        this.floors3D = new THREE.Object3D();
     }
 
     async initAsync(){
@@ -240,19 +238,16 @@ export default class ThreeManager {
         this.floors2 = [];
         this.floors3 = [];
         this.floors4 = [];
-        this.floor3D_1 = new THREE.Mesh(floorMerge1, this.materials[0]);
-        this.floor3D_2 = new THREE.Mesh(floorMerge2, this.materials[1]);
-        this.floor3D_3 = new THREE.Mesh(floorMerge3, this.materials[2]);
-        this.floor3D_4 = new THREE.Mesh(floorMerge4, this.materials[3]);
+        this.floors3D.add(new THREE.Mesh(floorMerge1, this.materials[0]));
+        this.floors3D.add(new THREE.Mesh(floorMerge2, this.materials[1]));
+        this.floors3D.add(new THREE.Mesh(floorMerge3, this.materials[2]));
+        this.floors3D.add(new THREE.Mesh(floorMerge4, this.materials[3]));
 
         this.scene.add(this.water3D);
         this.scene.add(this.covers3D);
         this.scene.add(this.blocks3D);
         this.scene.add(this.bricks3D);
-        this.scene.add(this.floor3D_1);
-        this.scene.add(this.floor3D_2);
-        this.scene.add(this.floor3D_3);
-        this.scene.add(this.floor3D_4);
+        this.scene.add(this.floors3D);
     }
 
     removeBlock(posX, posY, length){
@@ -267,10 +262,7 @@ export default class ThreeManager {
         this.covers3D.clear();
         this.blocks3D.clear();
         this.bricks3D.clear();
-        this.floor3D_1.clear();
-        this.floor3D_2.clear();
-        this.floor3D_3.clear();
-        this.floor3D_4.clear();
+        this.floors3D.clear();
     }
 
     render(){
