@@ -41,6 +41,7 @@ h2 {
 #pause-panel {
     background-color: rgba(27, 27, 27, 0.808);
     border-radius: 8px;
+    width: 60%;
     min-width: 400px;
     height: 200px;
     display: flex;

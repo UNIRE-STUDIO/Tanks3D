@@ -14,7 +14,7 @@ export default class NpcPool {
         this.uiFields.countReserveNpcTanks = 0;
         this.countNpcTanks = 0;
 
-        const pool_size = 1;
+        const pool_size = 4;
         this.tanks = [];
         
         let urlModels = [

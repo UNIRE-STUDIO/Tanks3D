@@ -53,14 +53,14 @@ export default class BulletPool {
 
     setReset() {
         for (let i = 0; i < this.bullets.length; i++) {
-            this.bullets[i].isUse = false
+            this.bullets[i].destroy();
         }
     }
 
     update(lag) {
         for (let i = 0; i < this.bullets.length; i++) {
             if (this.bullets[i].isUse) {
-                this.bullets[i].update(lag)
+                this.bullets[i].update(lag);
             }
         }
     }

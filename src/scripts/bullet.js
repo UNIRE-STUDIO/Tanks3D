@@ -23,6 +23,10 @@ export default class Bullet {
         this.isUse = false;
         this.id = id;
         this.uiFields = uiFields;
+        this.checkerX = 0;
+        this.checkerY = 0;
+        this.checkerExtraX = 0;
+        this.checkerExtraY = 0;
 
         this.speed = 0.01 * config.grid;
         this.damage = 1;
@@ -38,8 +42,8 @@ export default class Bullet {
         this.size = this.config.grid / 2;
         this.bangCreateEvent = bangCreateEvent;
 
-        // 3d
-        this.model = model;
+        // 3d                                                    
+        this.model = model; // центром пули является её начало *|========>
         this.threeManager.scene.add(this.model);
         this.model.visible = false;
     }
@@ -63,12 +67,8 @@ export default class Bullet {
     }
 
     checkCollisionWithObstacle() {
-        let tileX = Math.round(
-            (this.posX + (this.size / 2) * this.dirX) / this.config.grid
-        );
-        let tileY = Math.round(
-            (this.posY + (this.size / 2) * this.dirY) / this.config.grid
-        );
+        let tileX = Math.round((this.posX + (this.size / 2) * this.dirX) / this.config.grid);
+        let tileY = Math.round((this.posY + (this.size / 2) * this.dirY) / this.config.grid);
 
         if (
             this.currentMap[tileY] === undefined ||
@@ -84,12 +84,8 @@ export default class Bullet {
             if (tile === 1) this.removeTile(tileX, tileY);
             isCollision = true;
         }
-        if (
-            this.dirY != 0 &&
-            this.currentMap[0][tileX - 1] !== undefined &&
-            (this.currentMap[tileY][tileX - 1] === 1 ||
-                this.currentMap[tileY][tileX - 1] === 2)
-        ) {
+        if (this.dirY != 0 && this.currentMap[0][tileX - 1] !== undefined && (this.currentMap[tileY][tileX - 1] === 1 || this.currentMap[tileY][tileX - 1] === 2)) 
+        {
             // Проверяем соседний блок по горизонтале
             if (this.currentMap[tileY][tileX - 1] === 1)
                 this.removeTile(tileX - 1, tileY);
@@ -130,7 +126,6 @@ export default class Bullet {
             if (this.players[i].isUse) {
                 if (this.bulletsPlayer && i === this.tankId) continue;
                 if (this.checkCollisionWithTank(this.players[i].position, this.config.grid2)) {
-                    // магические числа
                     if (!this.bulletsPlayer) this.players[i].setDamage(this.damage);
                     return true;
                 }
@@ -157,18 +152,9 @@ export default class Bullet {
     }
 
     checkCollisionWithTank(pos, size) {
-        if (this.dirX !== 0) {
-            return (
-                isInside({ x: this.posX, y: this.posY }, pos, size, size) ||
-                isInside({ x: this.posX, y: this.posY + this.size }, pos, size, size)
-            );
-        }
-        if (this.dirY !== 0) {
-            return (
-                isInside({ x: this.posX, y: this.posY }, pos, size, size) ||
-                isInside({ x: this.posX + this.size, y: this.posY }, pos, size, size)
-            );
-        }
+        return (
+            isInside({ x: this.checkerX, y: this.checkerY }, pos, size, size) ||
+            isInside({ x: this.checkerExtraX, y: this.checkerExtraY }, pos, size, size));
     }
 
     destroy() {
@@ -176,7 +162,24 @@ export default class Bullet {
         this.model.visible = false;
     }
 
+    checkerUpdatePos()
+    {
+        let halfSize = this.size / 2;
+        let dirAbsX = Math.abs(this.dirX);
+        let dirAbsY = Math.abs(this.dirY);
+        // датчик * с боку
+        this.checkerX = (this.posX - (halfSize * dirAbsY) + (halfSize * dirAbsX)); // Если Движемся по вертикали, то смещаем датчик в бок, если движемся по горизонтали смещаем чек по направлению
+        this.checkerY = (this.posY - (halfSize * dirAbsX) + (halfSize * dirAbsY)); // Если Движемся по горизонтали, то смещаем датчик в бок, если движемся по вертикали смещаем чек по направлению
+        //   *        *     ##   /\   
+        // ====>    <====  *##  *##
+        //                  \/   ##
+        
+        this.checkerExtraX = this.checkerX + this.size * dirAbsY;
+        this.checkerExtraY = this.checkerY + this.size * dirAbsX;
+    }
+
     update(lag) {
+        this.checkerUpdatePos(); // Обновляем положения датчика
         if (this.checkCollisionWithObstacle() || this.sortTanks() || this.checkCollisionWithBullets()) {
             this.destroy();
 
@@ -187,21 +190,10 @@ export default class Bullet {
             // })
             return;
         }
-        // Левый верхний угол пули и правый нижний угл
-        if (
-            isInside(
-                { x: this.posX, y: this.posY },
-                { x: this.basePos.x, y: this.basePos.y },
-                this.config.grid2,
-                this.config.grid2
-            ) ||
-            isInside(
-                { x: this.posX + this.size, y: this.posY + this.size },
-                { x: this.basePos.x, y: this.basePos.y },
-                this.config.grid2,
-                this.config.grid2
-            )
-        ) {
+
+        if (isInside({ x: this.checkerX, y: this.checkerY}, { x: this.basePos.x, y: this.basePos.y }, this.config.grid2, this.config.grid2) ||
+            isInside({ x: this.checkerExtraX, y: this.checkerExtraY },{ x: this.basePos.x, y: this.basePos.y }, this.config.grid2, this.config.grid2)) 
+        {
             this.destroy();
             this.destructionOfTheBaseEvent();
             return;

@@ -61,7 +61,7 @@ export default class ThreeManager {
             '/models/npcTank1.glb'
         ]
 
-        this.plane = new THREE.PlaneGeometry(1, 1, 1, 1);
+        this.planeGeomentry = new THREE.PlaneGeometry(1, 1, 1, 1);
 
         // block1
         this.brick;
@@ -95,6 +95,10 @@ export default class ThreeManager {
         let floor3NormalTexture = textureLoader.load('/sprites/floor3-normalMap.jpg');
         let floor4NormalTexture = textureLoader.load('/sprites/floor4-normalMap.jpg');
 
+        let waterTexture = textureLoader.load('/sprites/water-test.jpg');
+        waterTexture.wrapS = THREE.RepeatWrapping;
+        waterTexture.wrapT = THREE.RepeatWrapping;
+
         this.boxGeometry = new THREE.BoxGeometry(1, 1.4, 1);
         this.materials = [
             new THREE.MeshLambertMaterial({ map: floor1Texture, normalMap: floor1NormalTexture }), // пол
@@ -102,15 +106,15 @@ export default class ThreeManager {
             new THREE.MeshLambertMaterial({ map: floor3Texture, normalMap: floor3NormalTexture }), // пол
             new THREE.MeshLambertMaterial({ map: floor4Texture, normalMap: floor4NormalTexture }), // пол
             new THREE.MeshBasicMaterial({ color: 0xb5c3c1 }), // бетонная стена
-            new THREE.MeshBasicMaterial({ color: 0x4bc8e4 }), // вода
+            new THREE.MeshLambertMaterial({ map: waterTexture }), // вода
             new THREE.MeshBasicMaterial({ color: 0x1fad6d }), // тент
         ];
+
         this.bulletOrigin;
         this.player1TankMesh; 
         this.player2TankMesh;
         this.npc1TankOrigin;
 
-        this.water3D = new THREE.Object3D();
         this.covers3D = new THREE.Object3D();
         this.blocks3D = new THREE.Object3D();
         this.bricks3D = new THREE.Object3D();
@@ -121,6 +125,11 @@ export default class ThreeManager {
         this.floors4 = [];
 
         this.floors3D = new THREE.Object3D();
+
+        this.waters = []
+        this.waters3D = new THREE.Object3D();
+
+        this.temp1 = 0;
     }
 
     async initAsync(){
@@ -172,14 +181,14 @@ export default class ThreeManager {
     }
 
     createWater(posX, posY, posZ){
-        let p = new THREE.Mesh(this.plane, this.materials[5]);
-        p.position.set(posX, posY, posZ);
-        p.rotation.x = (-90 * Math.PI) / 180;
-        this.water3D.add(p);
+        let p = this.planeGeomentry.clone();
+        p.rotateX((-90 * Math.PI) / 180);
+        p.translate(posX, posY, posZ);
+        this.waters.push(p);
     }
 
     createFloor(posX, posY, posZ){
-        let p = this.plane.clone(); // Плоскости
+        let p = this.planeGeomentry.clone(); // Плоскости
         p.rotateX((270 * Math.PI) / 180);
         p.translate(posX, posY, posZ);
         posX -= 0.5;
@@ -203,7 +212,7 @@ export default class ThreeManager {
     }
 
     createCover(posX, posY, posZ){
-        let p = new THREE.Mesh(this.plane, this.materials[6]);
+        let p = new THREE.Mesh(this.planeGeomentry, this.materials[6]);
         p.position.set(posX, posY, posZ);
         p.rotation.x = (-90 * Math.PI) / 180;
         this.covers3D.add(p);
@@ -243,7 +252,12 @@ export default class ThreeManager {
         this.floors3D.add(new THREE.Mesh(floorMerge3, this.materials[2]));
         this.floors3D.add(new THREE.Mesh(floorMerge4, this.materials[3]));
 
-        this.scene.add(this.water3D);
+        
+        let waterMerge = BufferGeometryUtils.mergeGeometries([...this.waters]);
+        this.waters = [];
+        this.waters3D.add(new THREE.Mesh(waterMerge, this.materials[5]))
+
+        this.scene.add(this.waters3D);
         this.scene.add(this.covers3D);
         this.scene.add(this.blocks3D);
         this.scene.add(this.bricks3D);
@@ -258,7 +272,7 @@ export default class ThreeManager {
     }
 
     reset(){
-        this.water3D.clear();
+        this.waters3D.clear();
         this.covers3D.clear();
         this.blocks3D.clear();
         this.bricks3D.clear();
@@ -267,5 +281,9 @@ export default class ThreeManager {
 
     render(){
         this.renderer.render(this.scene, this.camera);
+        this.temp1 += 0.01;
+        if (this.temp1 >= 1) this.temp1 = 0;
+        this.waters3D.children[0].material.map.offset.set(this.temp1, this.temp1);
+
     }
 }

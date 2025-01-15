@@ -57,19 +57,19 @@ export default {
                     <table>
                         <tr><th>Очки</th><th>Уничтожено</th><th>Тип</th></tr>
                         <tr>
-                            <td :class="[uiFields.playersMode === 1 && scoreType0p0 <= scoreType0p1 ? 'best' : '']">{{scoreType0p1}}</td>
-                            <td :class="[uiFields.playersMode === 1 && uiFields.numDestroyedType0[0] <= uiFields.numDestroyedType0[1] ? 'best' : '']">{{uiFields.numDestroyedType0[1]}}</td>
+                            <td :class="[scoreType0p0 <= scoreType0p1 ? 'best' : '']">{{scoreType0p1}}</td>
+                            <td :class="[uiFields.numDestroyedType0[0] <= uiFields.numDestroyedType0[1] ? 'best' : '']">{{uiFields.numDestroyedType0[1]}}</td>
                             <td><img width="64" src="/sprites/tankNpc1_mini.png" alt="" srcset=""></td>
                         </tr>
                         <tr>
-                            <td :class="[uiFields.playersMode === 1 && scoreType1p0 <= scoreType1p1 ? 'best' : '']">{{scoreType1p1}}</td>
-                            <td :class="[uiFields.playersMode === 1 && uiFields.numDestroyedType1[0] <= uiFields.numDestroyedType1[1] ? 'best' : '']">{{uiFields.numDestroyedType1[1]}}</td>
+                            <td :class="[scoreType1p0 <= scoreType1p1 ? 'best' : '']">{{scoreType1p1}}</td>
+                            <td :class="[uiFields.numDestroyedType1[0] <= uiFields.numDestroyedType1[1] ? 'best' : '']">{{uiFields.numDestroyedType1[1]}}</td>
                             <!-- <td><img src="/sprites/tankNpc1_Up.png" alt="" srcset=""></td> -->
                         </tr>
                         <tr><td colspan="3"><hr noshade="true" size="1"/></td></tr>
                         <tr>
-                            <td class="sum" :class="[uiFields.playersMode === 1 && scoreType0p0 + scoreType1p0 <= scoreType0p1 + scoreType1p1 ? 'best' : '']">{{scoreType0p1 + scoreType1p1}}</td>
-                            <td :class="[uiFields.playersMode === 1 && sumDestroyedP0 <= sumDestroyedP1 ? 'best' : '']">{{sumDestroyedP1}}</td>
+                            <td class="sum" :class="[scoreType0p0 + scoreType1p0 <= scoreType0p1 + scoreType1p1 ? 'best' : '']">{{scoreType0p1 + scoreType1p1}}</td>
+                            <td :class="[sumDestroyedP0 <= sumDestroyedP1 ? 'best' : '']">{{sumDestroyedP1}}</td>
                             <td></td>
                         </tr>
                     </table>
