@@ -95,7 +95,7 @@ export default class ThreeManager {
         let floor3NormalTexture = textureLoader.load('/sprites/floor3-normalMap.jpg');
         let floor4NormalTexture = textureLoader.load('/sprites/floor4-normalMap.jpg');
 
-        let waterTexture = textureLoader.load('/sprites/water-test.jpg');
+        let waterTexture = textureLoader.load('/sprites/water.jpg');
         waterTexture.wrapS = THREE.RepeatWrapping;
         waterTexture.wrapT = THREE.RepeatWrapping;
         let waterNormalTexture = textureLoader.load("/sprite/water-normalMap.jpg");
@@ -109,7 +109,7 @@ export default class ThreeManager {
             new THREE.MeshLambertMaterial({ map: floor3Texture, normalMap: floor3NormalTexture }), // пол
             new THREE.MeshLambertMaterial({ map: floor4Texture, normalMap: floor4NormalTexture }), // пол
             new THREE.MeshLambertMaterial({ color: 0xb5c3c1 }), // бетонная стена
-            new THREE.MeshLambertMaterial({ map: waterTexture, normalMap: waterNormalTexture }), // вода
+            new THREE.MeshLambertMaterial({ map: waterTexture}), // вода
             new THREE.MeshBasicMaterial({ color: 0x1fad6d }), // тент
         ];
 
@@ -131,6 +131,7 @@ export default class ThreeManager {
 
         this.waters = []
         this.waters3D = new THREE.Object3D();
+        this.wallsForWater3D = new THREE.Object3D();
 
         this.temp1 = 0;
     }
@@ -284,9 +285,8 @@ export default class ThreeManager {
 
     render(){
         this.renderer.render(this.scene, this.camera);
-        this.temp1 += 0.001;
-        if (this.temp1 * 5 >= 2 * Math.PI) this.temp1 = 0;
-        this.waters3D.children[0].material.map.offset.set(Math.sin(this.temp1 * 5), Math.cos(this.temp1 * 5));
-        this.waters3D.children[0].material.normalMap.offset.set(Math.sin(this.temp1 * 5), Math.cos(this.temp1 * 5));
+        this.temp1 += 0.003;
+        if (this.temp1 >= 2 * Math.PI) this.temp1 = 0;
+        this.waters3D.children[0].material.map.offset.set(Math.sin(this.temp1), Math.cos(this.temp1));
     }
 }
