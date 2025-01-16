@@ -144,7 +144,7 @@ export default class Bullet {
             let oY = Math.round(this.bullets[i].posY / this.config.grid);
 
             if (tX === oX && tY === oY) {
-                this.bullets[i].isUse = false;
+                this.bullets[i].destroy();
                 return true;
             }
         }

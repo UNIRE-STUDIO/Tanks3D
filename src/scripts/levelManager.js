@@ -102,7 +102,7 @@ export default class LevelManager {
                 let posX = j * this.config.grid + 0.5;
                 let posZ = i * this.config.grid + 0.5;
                 if (this.currentMap[i][j] === 3) { // Вода
-                    this.threeManager.createWater(posX, 0, posZ);
+                    this.threeManager.createWater(posX, -0.5, posZ);
                     continue;
                 }
                 this.threeManager.createFloor(posX, 0, posZ);
