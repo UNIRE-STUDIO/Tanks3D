@@ -108,7 +108,7 @@ export default class ThreeManager {
             new THREE.MeshLambertMaterial({ map: floor2Texture, normalMap: floor2NormalTexture }), // пол
             new THREE.MeshLambertMaterial({ map: floor3Texture, normalMap: floor3NormalTexture }), // пол
             new THREE.MeshLambertMaterial({ map: floor4Texture, normalMap: floor4NormalTexture }), // пол
-            new THREE.MeshLambertMaterial({ color: 0xb5c3c1 }), // бетонная стена
+            new THREE.MeshLambertMaterial({ color: 0x3F4141	 }), // стены окружающие воду
             new THREE.MeshLambertMaterial({ map: waterTexture}), // вода
             new THREE.MeshBasicMaterial({ color: 0x1fad6d }), // тент
         ];
@@ -131,6 +131,8 @@ export default class ThreeManager {
 
         this.waters = []
         this.waters3D = new THREE.Object3D();
+
+        this.wallsForWaters = [];
         this.wallsForWater3D = new THREE.Object3D();
 
         this.temp1 = 0;
@@ -189,6 +191,15 @@ export default class ThreeManager {
         p.rotateX((-90 * Math.PI) / 180);
         p.translate(posX, posY, posZ);
         this.waters.push(p);
+    }
+
+    createWallForWater(posX, posY, posZ, left = false, right = false){
+        let p = this.planeGeomentry.clone();
+        p.scale(1, 0.5, 1);
+        if (left) p.rotateY((90 * Math.PI) / 180);
+        else if (right) p.rotateY((-90 * Math.PI) / 180);
+        p.translate(posX, posY, posZ);
+        this.wallsForWaters.push(p);
     }
 
     createFloor(posX, posY, posZ){
@@ -256,11 +267,15 @@ export default class ThreeManager {
         this.floors3D.add(new THREE.Mesh(floorMerge3, this.materials[2]));
         this.floors3D.add(new THREE.Mesh(floorMerge4, this.materials[3]));
 
-        
         let waterMerge = BufferGeometryUtils.mergeGeometries([...this.waters]);
         this.waters = [];
         this.waters3D.add(new THREE.Mesh(waterMerge, this.materials[5]))
 
+        let wallForWaterMerge = BufferGeometryUtils.mergeGeometries(this.wallsForWaters);
+        this.wallsForWaters = [];
+        this.wallsForWater3D.add(new THREE.Mesh(wallForWaterMerge, this.materials[4]));
+
+        this.scene.add(this.wallsForWater3D);
         this.scene.add(this.waters3D);
         this.scene.add(this.covers3D);
         this.scene.add(this.blocks3D);

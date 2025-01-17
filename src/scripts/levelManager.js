@@ -103,9 +103,25 @@ export default class LevelManager {
                 let posZ = i * this.config.grid + 0.5;
                 if (this.currentMap[i][j] === 3) { // Вода
                     this.threeManager.createWater(posX, -0.5, posZ);
+                    if (this.currentMap[i + 1] === undefined || this.currentMap[i + 1][j] !== 3)    // Ниже блока воды
+                    {
+                        this.threeManager.createWallForWater(posX, -0.25, posZ + this.config.grid/2);
+                    }
+                    if (this.currentMap[i - 1] === undefined || this.currentMap[i - 1][j] !== 3)   // Выше блока воды
+                    {
+                        this.threeManager.createWallForWater(posX, -0.25, posZ - this.config.grid/2);
+                    }
+                    if (this.currentMap[i][j + 1] !== 3)                                           // Правее блока воды
+                    {
+                        this.threeManager.createWallForWater(posX + this.config.grid/2, -0.25, posZ, false, true);
+                    }
+                    if (this.currentMap[i][j - 1] !== 3)                                           // Левее блока воды
+                    {
+                        this.threeManager.createWallForWater(posX - this.config.grid/2, -0.25, posZ, true);
+                    }
                     continue;
                 }
-                this.threeManager.createFloor(posX, 0, posZ);
+                this.threeManager.createFloor(posX, 0, posZ); // Пол
                 if (this.currentMap[i][j] === 4) { // Маскировка
                     this.threeManager.createCover(posX, 1.4, posZ);
                     continue;
