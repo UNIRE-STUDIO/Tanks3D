@@ -63,7 +63,6 @@ export default class ThreeManager {
 
         this.planeGeomentry = new THREE.PlaneGeometry(1, 1, 1, 1);
 
-        // block1
         this.brick;
         this.gltfLoader = new GLTFLoader();
         this.gltfLoader.load("/models/brick.glb", (gltf) => {
@@ -78,6 +77,12 @@ export default class ThreeManager {
             this.block.material.map.minFilter = THREE.LinearMipMapLinearFilter;
             this.block.material.map.magFilter = THREE.LinearFilter;
             this.block.scale.set(1, 1.4, 1);
+        });
+        this.border;
+        this.gltfLoader.load("/models/block.glb", (gltf) => {
+            this.border = gltf.scene.children[0];
+            this.border.material.map.minFilter = THREE.LinearMipMapLinearFilter;
+            this.border.material.map.magFilter = THREE.LinearFilter;
         });
 
         let textureLoader = new THREE.TextureLoader();
@@ -135,6 +140,8 @@ export default class ThreeManager {
         this.wallsForWaters = [];
         this.wallsForWater3D = new THREE.Object3D();
 
+        this.borders3D = new THREE.Object3D();
+
         this.temp1 = 0;
     }
 
@@ -174,6 +181,23 @@ export default class ThreeManager {
         this.camera.updateProjectionMatrix();
         this.renderer.setSize(window.innerWidth, window.innerHeight);
         this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    }
+
+    createBorders()
+    {
+        let borders = [];
+        function create(posX, posY, posZ){
+            let b = new THREE.Mesh(this.border.geometry, THREE.MeshBasicMaterial);
+            b.position.set(posX, posY, posZ);
+            borders.push(b);
+        }
+        // Верх
+        for (let i = -this.config.grid2; i < this.config.viewSize; i + 2) {
+            create(i, 0.7, 0);
+        }
+        let bordersMerge = BufferGeometryUtils.mergeGeometries(borders);
+        this.borders3D.add(new THREE.Mesh(bordersMerge, this.border.material));
+        this.scene.add(this.borders3D);
     }
 
     createPlayerTank()
