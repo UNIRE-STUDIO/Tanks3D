@@ -26,7 +26,7 @@ export default class ThreeManager {
             10,
             40
         );
-        this.camera.position.set(this.config.viewSize.x / 2, 17, 25);
+        this.camera.position.set(this.config.viewSize.x / 2, 18, 20);
         this.camera.lookAt(
             new THREE.Vector3(
                 this.config.viewSize.x / 2,
@@ -53,10 +53,6 @@ export default class ThreeManager {
         this.scene.add(this.directionalLight);
         this.scene.add(this.ambient);
 
-        this.urlPlayerTankModels = [
-            '/models/tank1.glb',    // 0
-            '/models/tank2.glb',    // 1
-        ]
         this.urlNpcTankModels = [
             '/models/npcTank1.glb'
         ]
@@ -78,12 +74,7 @@ export default class ThreeManager {
             this.block.material.map.magFilter = THREE.LinearFilter;
             this.block.scale.set(1, 1.4, 1);
         });
-        this.border;
-        this.gltfLoader.load("/models/block.glb", (gltf) => {
-            this.border = gltf.scene.children[0];
-            this.border.material.map.minFilter = THREE.LinearMipMapLinearFilter;
-            this.border.material.map.magFilter = THREE.LinearFilter;
-        });
+        this.border; // -> в Async
 
         let textureLoader = new THREE.TextureLoader();
         let floor1Texture = textureLoader.load('/sprites/floor1.png');
@@ -149,8 +140,8 @@ export default class ThreeManager {
         this.bulletOrigin = (await this.gltfLoader.loadAsync('/models/bullet.glb')).scene.children[0];
         //model.material.map.minFilter = THREE.LinearFilter <------ Вернуть когда появится настоящий материал
         
-        let player1TankOrigin = (await this.gltfLoader.loadAsync(this.urlPlayerTankModels[0])).scene.children[0];
-        let player2TankOrigin = (await this.gltfLoader.loadAsync(this.urlPlayerTankModels[1])).scene.children[0];
+        let player1TankOrigin = (await this.gltfLoader.loadAsync('/models/tank1.glb')).scene.children[0];
+        let player2TankOrigin = (await this.gltfLoader.loadAsync('/models/tank2.glb')).scene.children[0];
         player1TankOrigin.material.map.minFilter = THREE.LinearFilter;
         player2TankOrigin.material.map.minFilter = THREE.LinearFilter;
         this.player1TankMesh = new THREE.Mesh(player1TankOrigin.geometry, player1TankOrigin.material);
@@ -158,6 +149,12 @@ export default class ThreeManager {
     
         this.npc1TankOrigin = (await this.gltfLoader.loadAsync(this.urlNpcTankModels[0])).scene.children[0];
         this.npc1TankOrigin.material.map.minFilter = THREE.LinearFilter;
+
+        this.border = (await this.gltfLoader.loadAsync('/models/border.glb')).scene.children[0];
+        this.border.material.map.minFilter = THREE.LinearMipMapLinearFilter;
+        this.border.material.map.magFilter = THREE.LinearFilter;
+
+        this.createBorders();
     }
     
 
@@ -186,15 +183,29 @@ export default class ThreeManager {
     createBorders()
     {
         let borders = [];
-        function create(posX, posY, posZ){
-            let b = new THREE.Mesh(this.border.geometry, THREE.MeshBasicMaterial);
-            b.position.set(posX, posY, posZ);
-            borders.push(b);
+        function create(posX, posY, posZ, clone){
+            clone.translate(posX, posY, posZ);
+            borders.push(clone);
         }
+        let size = this.config.grid2;
+        let halfSize = this.config.grid;
         // Верх
-        for (let i = -this.config.grid2; i < this.config.viewSize; i + 2) {
-            create(i, 0.7, 0);
+        for (let i = -halfSize; i < this.config.viewSize.x + size; i=i+size) {
+            create(i, 0.7, -halfSize, this.border.geometry.clone());
         }
+        // Лево
+        for (let i = halfSize; i < this.config.viewSize.y + size; i=i+size) {
+            create(-halfSize, 0.7, i, this.border.geometry.clone());
+        }
+        // Низ
+        for (let i = halfSize; i < this.config.viewSize.x + size; i=i+size) {
+            create(i, 0.7, this.config.viewSize.y + halfSize, this.border.geometry.clone());
+        }
+        // Лево
+        for (let i = halfSize; i < this.config.viewSize.y; i=i+size) {
+            create(this.config.viewSize.x + halfSize, 0.7, i, this.border.geometry.clone());
+        }
+
         let bordersMerge = BufferGeometryUtils.mergeGeometries(borders);
         this.borders3D.add(new THREE.Mesh(bordersMerge, this.border.material));
         this.scene.add(this.borders3D);
@@ -219,7 +230,7 @@ export default class ThreeManager {
 
     createWallForWater(posX, posY, posZ, left = false, right = false){
         let p = this.planeGeomentry.clone();
-        p.scale(1, 0.5, 1);
+        p.scale(1, 0.8, 1);
         if (left) p.rotateY((90 * Math.PI) / 180);
         else if (right) p.rotateY((-90 * Math.PI) / 180);
         p.translate(posX, posY, posZ);
