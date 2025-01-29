@@ -1,1 +1,3 @@
 this.model.visible = false; // Отключение видимости
+
+git mv -f src/scripts/ThreeManager.js src/scripts/threeManager.js  
