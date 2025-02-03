@@ -98,6 +98,8 @@ export default class ThreeManager {
         waterNormalTexture.wrapS = THREE.RepeatWrapping;
         waterNormalTexture.wrapT = THREE.RepeatWrapping;
 
+        let grassTexture = textureLoader.load('/sprites/grass128.jpg');
+
         this.boxGeometry = new THREE.BoxGeometry(1, 1.4, 1);
         this.materials = [
             new THREE.MeshLambertMaterial({ map: floor1Texture, normalMap: floor1NormalTexture }), // пол
@@ -107,6 +109,7 @@ export default class ThreeManager {
             new THREE.MeshLambertMaterial({ color: 0x3F4141	 }), // стены окружающие воду
             new THREE.MeshLambertMaterial({ map: waterTexture}), // вода
             new THREE.MeshBasicMaterial({ color: 0x1fad6d }), // тент
+            new THREE.MeshLambertMaterial({map: grassTexture}) // трава
         ];
 
         this.bulletOrigin;
@@ -155,6 +158,8 @@ export default class ThreeManager {
         this.border.material.map.magFilter = THREE.LinearFilter;
 
         this.createBorders();
+        
+        this.createAbroad();
     }
     
 
@@ -209,6 +214,23 @@ export default class ThreeManager {
         let bordersMerge = BufferGeometryUtils.mergeGeometries(borders);
         this.borders3D.add(new THREE.Mesh(bordersMerge, this.border.material));
         this.scene.add(this.borders3D);
+    }
+
+    createAbroad()
+    {
+        let width = 5;
+        let abroadGeomnetries = [];
+        for (let i = -width; i < this.config.viewSize.x+2; i++) 
+        {
+            for (let j = 0; j < array.length; j++) 
+            {
+                let p = this.planeGeomentry.clone(); // Плоскости
+                p.rotateX((270 * Math.PI) / 180);
+                p.translate(posX, 0, posZ);
+                posX -= 0.5;
+                posZ += 0.5;
+            }
+        }
     }
 
     createPlayerTank()
