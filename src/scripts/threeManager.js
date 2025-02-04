@@ -12,7 +12,7 @@ export default class ThreeManager {
         this.renderer = new THREE.WebGLRenderer({
             antialias: true,
             canvas,
-            alpha: true,
+            alpha: false,
         });
         this.renderer.setSize(window.innerWidth, window.innerHeight);
         this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -230,15 +230,19 @@ export default class ThreeManager {
 
     createAbroad()
     {
-        let width = 5;
+        let width = 10; // Рамка вокруг карты
         let abroadGeomnetries = [];
-        checki: for (let i = -5.5; i <= 5; i++) 
+        let sizeMapX = this.config.viewSize.x/2;
+        let sizeMapY = this.config.viewSize.y/2;
+        checki: for (let i = -width + 0.5; i <= sizeMapY; i++) 
         {
-            checkj: for (let j = -9; j <= this.config.viewSize.x + 9; j++) 
+            checkj: for (let j = -width + 0.5; j <= sizeMapX + width; j++) 
             {
-                //if (i >= -1 && i < this.config.viewSize.y) continue checki;
-                if (j >= -1 && j < this.config.viewSize.x) continue checkj;
-                let p = this.planeGeomentry.clone(); // Плоскости
+                if (j >= -1 && j < sizeMapX + 1 && i >= -1 && i < sizeMapY + 1)
+                {
+                    continue checkj;
+                } 
+                let p = this.planeGeomentry.clone();    // Плоскости
                 p.translate(j, 0, i);
                 p.scale(2, 1, 2);
                 abroadGeomnetries.push(p);
