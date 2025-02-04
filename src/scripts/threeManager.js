@@ -57,7 +57,8 @@ export default class ThreeManager {
             '/models/npcTank1.glb'
         ]
 
-        this.planeGeomentry = new THREE.PlaneGeometry(1, 1, 1, 1);
+        this.planeGeomentry = new THREE.PlaneGeometry(1, 1, 1);
+        this.planeGeomentry.rotateX((270 * Math.PI) / 180);
 
         this.brick;
         this.gltfLoader = new GLTFLoader();
@@ -94,11 +95,12 @@ export default class ThreeManager {
         let waterTexture = textureLoader.load('/sprites/water.jpg');
         waterTexture.wrapS = THREE.RepeatWrapping;
         waterTexture.wrapT = THREE.RepeatWrapping;
-        let waterNormalTexture = textureLoader.load("/sprite/water-normalMap.jpg");
+        let waterNormalTexture = textureLoader.load("/sprites/water-normalMap.jpg");
         waterNormalTexture.wrapS = THREE.RepeatWrapping;
         waterNormalTexture.wrapT = THREE.RepeatWrapping;
 
         let grassTexture = textureLoader.load('/sprites/grass128.jpg');
+        grassTexture.colorSpace = THREE.SRGBColorSpace;
 
         this.boxGeometry = new THREE.BoxGeometry(1, 1.4, 1);
         this.materials = [
@@ -136,7 +138,18 @@ export default class ThreeManager {
 
         this.borders3D = new THREE.Object3D();
 
+        this.abroad3D = new THREE.Object3D();
+
         this.temp1 = 0;
+
+        this.scene.add(this.wallsForWater3D);
+        this.scene.add(this.waters3D);
+        this.scene.add(this.covers3D);
+        this.scene.add(this.blocks3D);
+        this.scene.add(this.bricks3D);
+        this.scene.add(this.floors3D);
+        this.scene.add(this.borders3D);
+        this.scene.add(this.abroad3D);
     }
 
     async initAsync(){
@@ -213,24 +226,27 @@ export default class ThreeManager {
 
         let bordersMerge = BufferGeometryUtils.mergeGeometries(borders);
         this.borders3D.add(new THREE.Mesh(bordersMerge, this.border.material));
-        this.scene.add(this.borders3D);
     }
 
     createAbroad()
     {
         let width = 5;
         let abroadGeomnetries = [];
-        for (let i = -width; i < this.config.viewSize.x+2; i++) 
+        checki: for (let i = -5.5; i <= 5; i++) 
         {
-            for (let j = 0; j < array.length; j++) 
+            checkj: for (let j = -9; j <= this.config.viewSize.x + 9; j++) 
             {
+                //if (i >= -1 && i < this.config.viewSize.y) continue checki;
+                if (j >= -1 && j < this.config.viewSize.x) continue checkj;
                 let p = this.planeGeomentry.clone(); // Плоскости
-                p.rotateX((270 * Math.PI) / 180);
-                p.translate(posX, 0, posZ);
-                posX -= 0.5;
-                posZ += 0.5;
+                p.translate(j, 0, i);
+                p.scale(2, 1, 2);
+                abroadGeomnetries.push(p);
             }
         }
+
+        let abroadsMerge = BufferGeometryUtils.mergeGeometries([...abroadGeomnetries]);
+        this.abroad3D.add(new THREE.Mesh(abroadsMerge, this.materials[7]));
     }
 
     createPlayerTank()
@@ -245,7 +261,6 @@ export default class ThreeManager {
 
     createWater(posX, posY, posZ){
         let p = this.planeGeomentry.clone();
-        p.rotateX((-90 * Math.PI) / 180);
         p.translate(posX, posY, posZ);
         this.waters.push(p);
     }
@@ -253,6 +268,7 @@ export default class ThreeManager {
     createWallForWater(posX, posY, posZ, left = false, right = false){
         let p = this.planeGeomentry.clone();
         p.scale(1, 0.8, 1);
+        p.rotateX(-270 * Math.PI / 180);
         if (left) p.rotateY((90 * Math.PI) / 180);
         else if (right) p.rotateY((-90 * Math.PI) / 180);
         p.translate(posX, posY, posZ);
@@ -261,7 +277,6 @@ export default class ThreeManager {
 
     createFloor(posX, posY, posZ){
         let p = this.planeGeomentry.clone(); // Плоскости
-        p.rotateX((270 * Math.PI) / 180);
         p.translate(posX, posY, posZ);
         posX -= 0.5;
         posZ += 0.5;
@@ -331,13 +346,6 @@ export default class ThreeManager {
         let wallForWaterMerge = BufferGeometryUtils.mergeGeometries(this.wallsForWaters);
         this.wallsForWaters = [];
         this.wallsForWater3D.add(new THREE.Mesh(wallForWaterMerge, this.materials[4]));
-
-        this.scene.add(this.wallsForWater3D);
-        this.scene.add(this.waters3D);
-        this.scene.add(this.covers3D);
-        this.scene.add(this.blocks3D);
-        this.scene.add(this.bricks3D);
-        this.scene.add(this.floors3D);
     }
 
     removeBlock(posX, posY, length){
