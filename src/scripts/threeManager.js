@@ -62,11 +62,10 @@ export default class ThreeManager {
 
         this.brick;
         this.gltfLoader = new GLTFLoader();
-        this.gltfLoader.load("/models/brick.glb", (gltf) => {
+        this.gltfLoader.load("/models/brick2.glb", (gltf) => {
             this.brick = gltf.scene.children[0];
             this.brick.material.map.minFilter = THREE.LinearMipMapLinearFilter;
             this.brick.material.map.magFilter = THREE.LinearFilter;
-            this.brick.scale.set(1, 1.4, 1);
         });
         this.block;
         this.gltfLoader.load("/models/block.glb", (gltf) => {
@@ -311,7 +310,6 @@ export default class ThreeManager {
 
     createBrick(posX, posY, posZ, j, i, length){
         let b1 = new THREE.Mesh(this.brick.geometry, this.brick.material);
-        b1.scale.set(1, 1.4, 1);
         b1.name = coordinatesToId(j, i, length);
         b1.position.set(posX, posY, posZ);
         this.bricks3D.add(b1);
