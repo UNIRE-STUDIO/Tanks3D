@@ -66,6 +66,7 @@ export default class ThreeManager {
             this.brick = gltf.scene.children[0];
             this.brick.material.map.minFilter = THREE.LinearMipMapLinearFilter;
             this.brick.material.map.magFilter = THREE.LinearFilter;
+            //this.brick.material.map.colorSpace = THREE.SRGBColorSpace;
         });
         this.block;
         this.gltfLoader.load("/models/block.glb", (gltf) => {
@@ -77,10 +78,10 @@ export default class ThreeManager {
         this.border; // -> в Async
 
         let textureLoader = new THREE.TextureLoader();
-        let floor1Texture = textureLoader.load('/sprites/floor1.png');
-        let floor2Texture = textureLoader.load('/sprites/floor2.png');
-        let floor3Texture = textureLoader.load('/sprites/floor3.png');
-        let floor4Texture = textureLoader.load('/sprites/floor4.png');
+        let floor1Texture = textureLoader.load('/sprites/floor1.jpg');
+        let floor2Texture = textureLoader.load('/sprites/floor2.jpg');
+        let floor3Texture = textureLoader.load('/sprites/floor3.jpg');
+        let floor4Texture = textureLoader.load('/sprites/floor4.jpg');
         floor1Texture.colorSpace = THREE.SRGBColorSpace;
         floor2Texture.colorSpace = THREE.SRGBColorSpace;
         floor3Texture.colorSpace = THREE.SRGBColorSpace;
@@ -103,10 +104,10 @@ export default class ThreeManager {
 
         this.boxGeometry = new THREE.BoxGeometry(1, 1.4, 1);
         this.materials = [
-            new THREE.MeshLambertMaterial({ map: floor1Texture, normalMap: floor1NormalTexture }), // пол
-            new THREE.MeshLambertMaterial({ map: floor2Texture, normalMap: floor2NormalTexture }), // пол
-            new THREE.MeshLambertMaterial({ map: floor3Texture, normalMap: floor3NormalTexture }), // пол
-            new THREE.MeshLambertMaterial({ map: floor4Texture, normalMap: floor4NormalTexture }), // пол
+            new THREE.MeshLambertMaterial({ map: floor1Texture }), // пол
+            new THREE.MeshLambertMaterial({ map: floor2Texture }), // пол
+            new THREE.MeshLambertMaterial({ map: floor3Texture }), // пол
+            new THREE.MeshLambertMaterial({ map: floor4Texture }), // пол
             new THREE.MeshLambertMaterial({ color: 0x3F4141	 }), // стены окружающие воду
             new THREE.MeshLambertMaterial({ map: waterTexture}), // вода
             new THREE.MeshBasicMaterial({ color: 0x1fad6d }), // тент
@@ -270,10 +271,10 @@ export default class ThreeManager {
 
     createWallForWater(posX, posY, posZ, left = false, right = false){
         let p = this.planeGeomentry.clone();
-        p.scale(1, 0.8, 1);
         p.rotateX(-270 * Math.PI / 180);
         if (left) p.rotateY((90 * Math.PI) / 180);
         else if (right) p.rotateY((-90 * Math.PI) / 180);
+        p.scale(1, 0.8, 1);
         p.translate(posX, posY, posZ);
         this.wallsForWaters.push(p);
     }
