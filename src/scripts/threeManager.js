@@ -104,10 +104,10 @@ export default class ThreeManager {
 
         this.boxGeometry = new THREE.BoxGeometry(1, 1.4, 1);
         this.materials = [
-            new THREE.MeshLambertMaterial({ map: floor1Texture }), // пол
-            new THREE.MeshLambertMaterial({ map: floor2Texture }), // пол
-            new THREE.MeshLambertMaterial({ map: floor3Texture }), // пол
-            new THREE.MeshLambertMaterial({ map: floor4Texture }), // пол
+            new THREE.MeshLambertMaterial({ map: floor1Texture, normalMap: floor1NormalTexture }), // пол
+            new THREE.MeshLambertMaterial({ map: floor2Texture, normalMap: floor2NormalTexture }), // пол
+            new THREE.MeshLambertMaterial({ map: floor3Texture, normalMap: floor3NormalTexture }), // пол
+            new THREE.MeshLambertMaterial({ map: floor4Texture, normalMap: floor4NormalTexture }), // пол
             new THREE.MeshLambertMaterial({ color: 0x3F4141	 }), // стены окружающие воду
             new THREE.MeshLambertMaterial({ map: waterTexture}), // вода
             new THREE.MeshBasicMaterial({ color: 0x1fad6d }), // тент
