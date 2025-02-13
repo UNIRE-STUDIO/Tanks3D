@@ -79,18 +79,18 @@ export default class ThreeManager {
 
         let textureLoader = new THREE.TextureLoader();
         let floor1Texture = textureLoader.load('/sprites/floor1.jpg');
-        let floor2Texture = textureLoader.load('/sprites/floor2.jpg');
-        let floor3Texture = textureLoader.load('/sprites/floor3.jpg');
-        let floor4Texture = textureLoader.load('/sprites/floor4.jpg');
+        // let floor2Texture = textureLoader.load('/sprites/floor2.jpg');
+        // let floor3Texture = textureLoader.load('/sprites/floor3.jpg');
+        // let floor4Texture = textureLoader.load('/sprites/floor4.jpg');
         floor1Texture.colorSpace = THREE.SRGBColorSpace;
-        floor2Texture.colorSpace = THREE.SRGBColorSpace;
-        floor3Texture.colorSpace = THREE.SRGBColorSpace;
-        floor4Texture.colorSpace = THREE.SRGBColorSpace;
+        // floor2Texture.colorSpace = THREE.SRGBColorSpace;
+        // floor3Texture.colorSpace = THREE.SRGBColorSpace;
+        // floor4Texture.colorSpace = THREE.SRGBColorSpace;
 
         let floor1NormalTexture = textureLoader.load('/sprites/floor1-normalMap.jpg');
-        let floor2NormalTexture = textureLoader.load('/sprites/floor2-normalMap.jpg');
-        let floor3NormalTexture = textureLoader.load('/sprites/floor3-normalMap.jpg');
-        let floor4NormalTexture = textureLoader.load('/sprites/floor4-normalMap.jpg');
+        // let floor2NormalTexture = textureLoader.load('/sprites/floor2-normalMap.jpg');
+        // let floor3NormalTexture = textureLoader.load('/sprites/floor3-normalMap.jpg');
+        // let floor4NormalTexture = textureLoader.load('/sprites/floor4-normalMap.jpg');
 
         let waterTexture = textureLoader.load('/sprites/water.jpg');
         waterTexture.wrapS = THREE.RepeatWrapping;
@@ -104,10 +104,10 @@ export default class ThreeManager {
 
         this.boxGeometry = new THREE.BoxGeometry(1, 1.4, 1);
         this.materials = [
-            new THREE.MeshLambertMaterial({ map: floor1Texture, normalMap: floor1NormalTexture }), // пол
-            new THREE.MeshLambertMaterial({ map: floor2Texture, normalMap: floor2NormalTexture }), // пол
-            new THREE.MeshLambertMaterial({ map: floor3Texture, normalMap: floor3NormalTexture }), // пол
-            new THREE.MeshLambertMaterial({ map: floor4Texture, normalMap: floor4NormalTexture }), // пол
+            new THREE.MeshLambertMaterial({ map: floor1Texture, normalMap:  floor1NormalTexture}), // пол
+            new THREE.MeshLambertMaterial({ map: floor1Texture }), // пол
+            new THREE.MeshLambertMaterial({ map: floor1Texture }), // пол
+            new THREE.MeshLambertMaterial({ map: floor1Texture }), // пол
             new THREE.MeshLambertMaterial({ color: 0x3F4141	 }), // стены окружающие воду
             new THREE.MeshLambertMaterial({ map: waterTexture}), // вода
             new THREE.MeshBasicMaterial({ color: 0x1fad6d }), // тент
@@ -284,21 +284,22 @@ export default class ThreeManager {
         p.translate(posX, posY, posZ);
         posX -= 0.5;
         posZ += 0.5;
-        if (posX % 2 === 0 && posZ % 2 === 0)  // 0, 0
-        {
-            this.floors1.push(p);
-        }
-        else if (posX % 2 === 0 && posZ % 2 === 1) // 0, 1
-        {
-            this.floors2.push(p);
-        }
-        else if (posX % 2 === 1 && posZ % 2 === 1) // 1, 1
-        {
-            this.floors3.push(p);
-        }
-        else {
-            this.floors4.push(p);
-        }
+        this.floors1.push(p);
+        // if (posX % 2 === 0 && posZ % 2 === 0)  // 0, 0
+        // {
+        //     this.floors1.push(p);
+        // }
+        // else if (posX % 2 === 0 && posZ % 2 === 1) // 0, 1
+        // {
+        //     this.floors2.push(p);
+        // }
+        // else if (posX % 2 === 1 && posZ % 2 === 1) // 1, 1
+        // {
+        //     this.floors3.push(p);
+        // }
+        // else {
+        //     this.floors4.push(p);
+        // }
         
     }
 
@@ -330,17 +331,17 @@ export default class ThreeManager {
 
     addToScene(){
         let floorMerge1 = BufferGeometryUtils.mergeGeometries([...this.floors1]);
-        let floorMerge2 = BufferGeometryUtils.mergeGeometries([...this.floors2]);
-        let floorMerge3 = BufferGeometryUtils.mergeGeometries([...this.floors3]);
-        let floorMerge4 = BufferGeometryUtils.mergeGeometries([...this.floors4]);
+        // let floorMerge2 = BufferGeometryUtils.mergeGeometries([...this.floors2]);
+        // let floorMerge3 = BufferGeometryUtils.mergeGeometries([...this.floors3]);
+        // let floorMerge4 = BufferGeometryUtils.mergeGeometries([...this.floors4]);
         this.floors1 = [];
-        this.floors2 = [];
-        this.floors3 = [];
-        this.floors4 = [];
+        // this.floors2 = [];
+        // this.floors3 = [];
+        // this.floors4 = [];
         this.floors3D.add(new THREE.Mesh(floorMerge1, this.materials[0]));
-        this.floors3D.add(new THREE.Mesh(floorMerge2, this.materials[1]));
-        this.floors3D.add(new THREE.Mesh(floorMerge3, this.materials[2]));
-        this.floors3D.add(new THREE.Mesh(floorMerge4, this.materials[3]));
+        // this.floors3D.add(new THREE.Mesh(floorMerge2, this.materials[1]));
+        // this.floors3D.add(new THREE.Mesh(floorMerge3, this.materials[2]));
+        // this.floors3D.add(new THREE.Mesh(floorMerge4, this.materials[3]));
 
         let waterMerge = BufferGeometryUtils.mergeGeometries([...this.waters]);
         this.waters = [];
