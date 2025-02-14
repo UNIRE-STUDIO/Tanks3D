@@ -85,10 +85,7 @@ export default class LevelManager {
 
     start(playersMode = 0) {
         this.uiFields.playersMode = playersMode;
-        this.uiFields.numDestroyedType0[0] = 0;
-        this.uiFields.numDestroyedType0[1] = 0;
-        this.uiFields.numDestroyedType1[0] = 0;
-        this.uiFields.numDestroyedType1[1] = 0;
+        this.uiFields.reset();
         this.reset();
         this.currentMap = [];
 
@@ -148,10 +145,7 @@ export default class LevelManager {
         };
         this.bulletPool.init(this.currentMap, base);
         this.isPause = false;
-        this.players[0].create(
-            this.currentMap,
-            levels[this.uiFields.currentLevel].playerSpawnsPos[0]
-        );
+        this.players[0].create(this.currentMap, levels[this.uiFields.currentLevel].playerSpawnsPos[0]);
 
         this.players[0].setOtherCollisionObject(base);
         this.players[0].isPause = false;
@@ -236,14 +230,13 @@ export default class LevelManager {
     }
 
     nextLevel() {
-        this.uiFields.currentLevel =
-            this.uiFields.currentLevel >= levels.length - 1
-                ? (this.uiFields.currentLevel = 0)
-                : this.uiFields.currentLevel + 1;
+        this.uiFields.currentLevel = this.uiFields.currentLevel >= levels.length - 1 ? (this.uiFields.currentLevel = 0) : this.uiFields.currentLevel + 1;
     }
 
     destructionOfTheBase() {
-        this.gameOver();
+        setTimeout(() => { // Уничтожение с задержкой
+            this.gameOver();
+        }, 200);
     }
 
     update(lag) {

@@ -58,7 +58,8 @@ export default class NpcPool {
     }
 
     setOtherCollisionObject(obj) {
-        for (let i = 0; i < this.tanks.length; i++) {
+        for (let i = 0; i < this.tanks.length; i++) 
+        {
             this.tanks[i].setOtherCollisionObject(obj);
         }
     }
@@ -70,14 +71,15 @@ export default class NpcPool {
             return;
         }
         for (let i = 0; i < this.tanks.length; i++) {
-            if (!this.tanks[i].isUse) {
+            if (!this.tanks[i].isUse) 
+            {
                 let rand = randomRange(0, levels[this.currentLevel].spawnPoints.length);
                 this.tanks[i].create(this.currentMap,
-                    { x: levels[this.currentLevel].spawnPoints[rand][0], y: levels[this.currentLevel].spawnPoints[rand][1] },
-                    this.basePos,
-                    this.uiFields.playersMode,
-                    this.uiFields.npc[0],
-                    this.npcModels[this.uiFields.npc[0]]); // Отправляем исходную модель
+                                    { x: levels[this.currentLevel].spawnPoints[rand][0], y: levels[this.currentLevel].spawnPoints[rand][1] },
+                                    this.basePos,
+                                    this.uiFields.playersMode,
+                                    this.uiFields.npc[0],
+                                    this.npcModels[this.uiFields.npc[0]]); // Отправляем исходную модель
 
                 this.uiFields.countReserveNpcTanks--;
                 this.uiFields.npc.splice(0, 1);

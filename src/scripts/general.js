@@ -76,3 +76,7 @@ export function idToCoordinates(id, length) {
     let y = Math.floor(id / length)
     return { x: id - length * y, y: y }
 }
+
+export function getPosOnSliceImage(x, y, gridSize){
+    return {x: x * gridSize + x + 1, y: y * gridSize + y + 1};
+}

@@ -3,7 +3,7 @@ import Game from "./scripts/game.js";
 import Config from "./scripts/config.js";
 import UIFields from "./scripts/uiFields.js";
 import MainScreen from "./components/MainScreen.vue";
-import PlayScreen from "./components/PlayScreen.vue";
+import TopPanel from "./components/TopPanel.vue";
 import PauseSceen from "./components/PauseSceen.vue";
 import GameoverScreen from "./components/GameoverScreen.vue";
 import WinScreen from "./components/WinScreen.vue";
@@ -13,7 +13,7 @@ let game = new Game();
 export default {
 	components: {
 		MainScreen,
-		PlayScreen,
+		TopPanel,
 		PauseSceen,
 		WinScreen,
 		GameoverScreen
@@ -51,10 +51,11 @@ export default {
 			<div id="top-right"></div>
 		</div>
 		<MainScreen v-if="uiFields.currentScreen === 0" :game="gameLink" />
-		<PlayScreen v-if="uiFields.currentScreen === 1" :game="gameLink" />
 		<PauseSceen v-if="uiFields.currentScreen === 2" :game="gameLink" />
 		<WinScreen 	v-if="uiFields.currentScreen === 3" :game="gameLink" :uiFields="uiFields"/>
 		<GameoverScreen v-if="uiFields.currentScreen === 4" :game="gameLink"/>
+
+		<TopPanel v-if="uiFields.currentScreen >= 1" :game="gameLink" :uiFields="uiFields"/>
 	</div>
 </template>
 

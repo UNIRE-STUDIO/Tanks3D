@@ -109,7 +109,7 @@ export default class ThreeManager {
             new THREE.MeshLambertMaterial({ map: floor1Texture }), // пол
             new THREE.MeshLambertMaterial({ map: floor1Texture }), // пол
             new THREE.MeshLambertMaterial({ color: 0x3F4141	 }), // стены окружающие воду
-            new THREE.MeshLambertMaterial({ map: waterTexture}), // вода
+            new THREE.MeshLambertMaterial({ map: waterTexture}), // водав
             new THREE.MeshBasicMaterial({ color: 0x1fad6d }), // тент
             new THREE.MeshLambertMaterial({map: grassTexture}) // трава
         ];

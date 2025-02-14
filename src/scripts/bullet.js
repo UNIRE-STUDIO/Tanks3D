@@ -2,16 +2,8 @@ import { drawImage, drawRect, isInside } from "./general.js";
 import * as THREE from "three";
 
 export default class Bullet {
-    constructor(
-        config,
-        removeTile,
-        destructionOfTheBaseEvent,
-        id,
-        bangCreateEvent,
-        uiFields,
-        threeManager,
-        model
-    ) {
+    constructor(config, removeTile, destructionOfTheBaseEvent, id, bangCreateEvent, uiFields, threeManager, model) 
+    {
         this.config = config;
         this.threeManager = threeManager;
         this.posX = 0;
@@ -113,9 +105,7 @@ export default class Bullet {
                     if (this.bulletsPlayer) {
                         this.tanks[i].setDamage(this.damage);
                         if (this.tanks[i].isDead) {
-                            if (this.tanks[i].type === 1)
-                                this.uiFields.numDestroyedType1[this.tankId]++;
-                            else this.uiFields.numDestroyedType0[this.tankId]++;
+                            this.uiFields.numDestroyedTypes[this.tanks[i].type][this.tankId]++;
                         }
                     }
                     return true;
