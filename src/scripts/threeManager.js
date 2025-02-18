@@ -311,10 +311,19 @@ export default class ThreeManager {
     }
 
     createBrick(posX, posY, posZ, j, i, length){
+        let base = new THREE.Object3D();
+
+        // Кирпич
         let b1 = new THREE.Mesh(this.brick.geometry, this.brick.material);
         b1.name = coordinatesToId(j, i, length);
         b1.position.set(posX, posY, posZ);
-        this.bricks3D.add(b1);
+        base.add(b1);
+
+        // Тень
+        const shadowMat = new THREE.MeshBasicMaterial({color: 0})
+        let shadow = new THREE.Mesh(this.brick.geometry, this.brick.material);
+
+        this.bricks3D.add(base);
     }
 
     createBlock(posX, posY, posZ, j, i, length){
