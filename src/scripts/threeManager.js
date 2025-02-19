@@ -12,7 +12,7 @@ export default class ThreeManager {
         this.renderer = new THREE.WebGLRenderer({
             antialias: true,
             canvas,
-            alpha: false,
+            alpha: true,
         });
         this.renderer.setSize(window.innerWidth, window.innerHeight);
         this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -57,8 +57,8 @@ export default class ThreeManager {
             '/models/npcTank1.glb'
         ]
 
-        this.planeGeomentry = new THREE.PlaneGeometry(1, 1, 1);
-        this.planeGeomentry.rotateX((270 * Math.PI) / 180);
+        this.planeGeometry = new THREE.PlaneGeometry(1, 1, 1);
+        this.planeGeometry.rotateX((270 * Math.PI) / 180);
 
         this.brick;
         this.gltfLoader = new GLTFLoader();
@@ -242,7 +242,7 @@ export default class ThreeManager {
                 {
                     continue checkj;
                 } 
-                let p = this.planeGeomentry.clone();    // Плоскости
+                let p = this.planeGeometry.clone();    // Плоскости
                 p.translate(j, 0, i);
                 p.scale(2, 1, 2);
                 abroadGeomnetries.push(p);
@@ -264,13 +264,13 @@ export default class ThreeManager {
     }
 
     createWater(posX, posY, posZ){
-        let p = this.planeGeomentry.clone();
+        let p = this.planeGeometry.clone();
         p.translate(posX, posY, posZ);
         this.waters.push(p);
     }
 
     createWallForWater(posX, posY, posZ, left = false, right = false){
-        let p = this.planeGeomentry.clone();
+        let p = this.planeGeometry.clone();
         p.rotateX(-270 * Math.PI / 180);
         if (left) p.rotateY((90 * Math.PI) / 180);
         else if (right) p.rotateY((-90 * Math.PI) / 180);
@@ -280,7 +280,7 @@ export default class ThreeManager {
     }
 
     createFloor(posX, posY, posZ){
-        let p = this.planeGeomentry.clone(); // Плоскости
+        let p = this.planeGeometry.clone(); // Плоскости
         p.translate(posX, posY, posZ);
         posX -= 0.5;
         posZ += 0.5;
@@ -304,7 +304,7 @@ export default class ThreeManager {
     }
 
     createCover(posX, posY, posZ){
-        let p = new THREE.Mesh(this.planeGeomentry, this.materials[6]);
+        let p = new THREE.Mesh(this.planeGeometry, this.materials[6]);
         p.position.set(posX, posY, posZ);
         p.rotation.x = (-90 * Math.PI) / 180;
         this.covers3D.add(p);
@@ -312,17 +312,19 @@ export default class ThreeManager {
 
     createBrick(posX, posY, posZ, j, i, length){
         let base = new THREE.Object3D();
+        base.name = coordinatesToId(j, i, length);
 
         // Кирпич
         let b1 = new THREE.Mesh(this.brick.geometry, this.brick.material);
-        b1.name = coordinatesToId(j, i, length);
         b1.position.set(posX, posY, posZ);
         base.add(b1);
 
         // Тень
-        const shadowMat = new THREE.MeshBasicMaterial({color: 0})
-        let shadow = new THREE.Mesh(this.brick.geometry, this.brick.material);
-
+        const shadowMat = new THREE.MeshBasicMaterial({color: 0x000, transparent: true, depthWrite: false, opacity: 0.5})
+        let shadow = new THREE.Mesh(this.planeGeometry, shadowMat);
+        shadow.position.set(posX + this.config.grid/2, 0.001, posZ - this.config.grid/2);
+        base.add(shadow);
+        
         this.bricks3D.add(base);
     }
 
