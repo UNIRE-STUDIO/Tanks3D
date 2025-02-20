@@ -64,7 +64,7 @@ export default class ThreeManager {
         this.boxGeometry = new THREE.BoxGeometry(1, 1.4, 1);
 
         // ТЕНЬ ----------------------------------------------------------------------
-        // let gr = this.config.grid;
+        let gr = this.config.grid;
         // const verticesOfShadow = [
         //     -gr/2, 0,-gr/2,    -gr/4, 0, -gr,    gr*0.75, 0,-gr,    gr*0.75, 0, 0,   gr/2, 0, gr/2,
         // ];
@@ -80,12 +80,14 @@ export default class ThreeManager {
         // // shape.lineTo(gr*0.75,-gr);
         // // shape.lineTo(gr*0.75, 0);
         // // shape.lineTo(gr/2, gr/2);
-        shape.moveTo(-0.5, -0.5);
-        shape.lineTo(1, -2);
-        shape.lineTo(-1, -2);
+        shape.moveTo(-gr/2, gr/2);
+        shape.lineTo(0, 1.25);
+        shape.lineTo(1, 1.25);
+        shape.lineTo(1, 0);
+        shape.lineTo(0.5, -0.5);
+
         this.shadowGeometry = new THREE.ShapeGeometry(shape);
         this.shadowGeometry.rotateX((270 * Math.PI) / 180);
-        this.shadowGeometry.scale(.5,.5,.5);
 
         // ----------------------------------------------------------------------
 
@@ -142,7 +144,7 @@ export default class ThreeManager {
             new THREE.MeshLambertMaterial({ map: waterTexture}), // водав
             new THREE.MeshBasicMaterial({ color: 0x1fad6d }), // тент
             new THREE.MeshLambertMaterial({map: grassTexture}), // трава
-            new THREE.MeshBasicMaterial({color: 0x000, map: shadowTexture, transparent: true, depthWrite: false, opacity: 1}),
+            new THREE.MeshBasicMaterial({color: 0x000, transparent: true, depthWrite: false, opacity: 0.5}),
         ];
 
         let uniforms = {};
@@ -354,11 +356,10 @@ export default class ThreeManager {
         // Кирпич
         let b1 = new THREE.Mesh(this.brick.geometry, this.brick.material);
         b1.position.set(posX, posY, posZ);
-        //base.add(b1);
+        base.add(b1);
 
         // Тень
         let shadow = new THREE.Mesh(this.shadowGeometry, this.shadowMatrial);
-        shadow.scale.set(2, 1, 2);
         shadow.position.set(posX, 0.001, posZ);
         base.add(shadow);
         
