@@ -17,6 +17,8 @@ export default class ThreeManager {
         });
         this.renderer.setSize(window.innerWidth, window.innerHeight);
         this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        // const context = this.renderer.getContext();
+        // context.disable(context.DEPTH_TEST);
         document.body.appendChild(this.renderer.domElement);
 
         ////
@@ -65,21 +67,7 @@ export default class ThreeManager {
 
         // ТЕНЬ ----------------------------------------------------------------------
         let gr = this.config.grid;
-        // const verticesOfShadow = [
-        //     -gr/2, 0,-gr/2,    -gr/4, 0, -gr,    gr*0.75, 0,-gr,    gr*0.75, 0, 0,   gr/2, 0, gr/2,
-        // ];
-        
-        // const indicesOfFaces = [
-        //     0,1,2,  2,3,4,  4,2,0
-        // ];
-
         const shape = new THREE.Shape();
-        // // shape.moveTo(0,0);
-        // // shape.lineTo(gr/2,-gr/2);
-        // // shape.lineTo(-gr/4, -gr);
-        // // shape.lineTo(gr*0.75,-gr);
-        // // shape.lineTo(gr*0.75, 0);
-        // // shape.lineTo(gr/2, gr/2);
         shape.moveTo(-gr/2, gr/2);
         shape.lineTo(0, 1.25);
         shape.lineTo(1, 1.25);
@@ -144,14 +132,13 @@ export default class ThreeManager {
             new THREE.MeshLambertMaterial({ map: waterTexture}), // водав
             new THREE.MeshBasicMaterial({ color: 0x1fad6d }), // тент
             new THREE.MeshLambertMaterial({map: grassTexture}), // трава
-            new THREE.MeshBasicMaterial({color: 0x000, transparent: true, depthWrite: false, opacity: 0.5}),
+            new THREE.MeshBasicMaterial({color: 0x000, transparent: true, opacity: 0.5, clipIntersection: false }),
         ];
 
         let uniforms = {};
         uniforms.resolution = {type:'v2',value:new THREE.Vector2(window.innerWidth,window.innerHeight)};
         uniforms.tex = {type: 't', value: shadowTexture};
-        this.shadowMatrial = new THREE.ShaderMaterial({fragmentShader: shadowShader, uniforms: uniforms});
-
+        this.shadowMatrial = new THREE.ShaderMaterial({fragmentShader: shadowShader, uniforms: uniforms, transparent: true, alphaTest: 0.3, opacity: 0.5});
 
         this.bulletOrigin;
         this.player1TankMesh; 
@@ -359,7 +346,7 @@ export default class ThreeManager {
         base.add(b1);
 
         // Тень
-        let shadow = new THREE.Mesh(this.shadowGeometry, this.shadowMatrial);
+        let shadow = new THREE.Mesh(this.shadowGeometry, this.materials[8]);
         shadow.position.set(posX, 0.001, posZ);
         base.add(shadow);
         
