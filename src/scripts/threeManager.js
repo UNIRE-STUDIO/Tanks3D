@@ -132,13 +132,18 @@ export default class ThreeManager {
             new THREE.MeshLambertMaterial({ map: waterTexture}), // водав
             new THREE.MeshBasicMaterial({ color: 0x1fad6d }), // тент
             new THREE.MeshLambertMaterial({map: grassTexture}), // трава
-            new THREE.MeshBasicMaterial({color: 0x000, transparent: true, opacity: 0.5, clipIntersection: false }),
+            new THREE.MeshBasicMaterial({
+                color: 0x000, 
+                transparent: true, 
+                opacity: 0.5, 
+            }),
         ];
 
         let uniforms = {};
-        uniforms.resolution = {type:'v2',value:new THREE.Vector2(window.innerWidth,window.innerHeight)};
-        uniforms.tex = {type: 't', value: shadowTexture};
-        this.shadowMatrial = new THREE.ShaderMaterial({fragmentShader: shadowShader, uniforms: uniforms, transparent: true, alphaTest: 0.3, opacity: 0.5});
+        uniforms.uBaseColor = { value: new THREE.Color(0,0,0) },
+        uniforms.uBaseVertRatio = { value: new THREE.Vector2(0.50,0.50) },
+        uniforms.opacity = { value: 0.5 }
+        this.shadowMatrial = new THREE.ShaderMaterial({fragmentShader: shadowShader, uniforms: uniforms, transparent: true, opacity: 0.5});
 
         this.bulletOrigin;
         this.player1TankMesh; 
@@ -346,7 +351,7 @@ export default class ThreeManager {
         base.add(b1);
 
         // Тень
-        let shadow = new THREE.Mesh(this.shadowGeometry, this.materials[8]);
+        let shadow = new THREE.Mesh(this.shadowGeometry, this.shadowMatrial);
         shadow.position.set(posX, 0.001, posZ);
         base.add(shadow);
         
