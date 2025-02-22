@@ -3,6 +3,7 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import * as BufferGeometryUtils from "three/examples/jsm/utils/BufferGeometryUtils.js";
 import { idToCoordinates, coordinatesToId } from "./general.js";
 import { shadowShader } from './shaders.js';
+import { MyMaterial } from "./myMaterial.js";
 
 export default class ThreeManager {
     constructor(uiFields, config){
@@ -133,12 +134,11 @@ export default class ThreeManager {
             new THREE.MeshLambertMaterial({ map: waterTexture}), // водав
             new THREE.MeshBasicMaterial({ color: 0x1fad6d }), // тент
             new THREE.MeshLambertMaterial({map: grassTexture}), // трава
-            new THREE.MeshBasicMaterial({
+            new MyMaterial({
                 color: 0x000, 
                 transparent: true, 
                 opacity: 0.5,
-                transmission: 0.5,
-                thickness: 1,
+                depthWrite: false
             }),
         ];
 
@@ -351,7 +351,7 @@ export default class ThreeManager {
         // Кирпич
         let b1 = new THREE.Mesh(this.brick.geometry, this.brick.material);
         b1.position.set(posX, posY, posZ);
-        //base.add(b1);
+        base.add(b1);
 
         // Тень
         let shadow = new THREE.Mesh(this.shadowGeometry, this.materials[8]);
