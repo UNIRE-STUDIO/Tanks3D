@@ -15,6 +15,7 @@ export default class ThreeManager {
             canvas,
             alpha: true,
         });
+        this.renderer.sortObjects = false;
         this.renderer.setSize(window.innerWidth, window.innerHeight);
         this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         // const context = this.renderer.getContext();
@@ -135,7 +136,9 @@ export default class ThreeManager {
             new THREE.MeshBasicMaterial({
                 color: 0x000, 
                 transparent: true, 
-                opacity: 0.5, 
+                opacity: 0.5,
+                transmission: 0.5,
+                thickness: 1,
             }),
         ];
 
@@ -348,11 +351,32 @@ export default class ThreeManager {
         // Кирпич
         let b1 = new THREE.Mesh(this.brick.geometry, this.brick.material);
         b1.position.set(posX, posY, posZ);
-        base.add(b1);
+        //base.add(b1);
 
         // Тень
-        let shadow = new THREE.Mesh(this.shadowGeometry, this.shadowMatrial);
-        shadow.position.set(posX, 0.001, posZ);
+        let shadow = new THREE.Mesh(this.shadowGeometry, this.materials[8]);
+
+        if (posZ % 2 === 0) // Расставляем тени в шахматном порядке
+        {
+            if (posX % 2 === 0){
+                shadow.position.set(posX, 0.01, posZ);
+                shadow.renderOrder = 1;
+            }else{
+                shadow.position.set(posX, 0.001, posZ);
+                shadow.renderOrder = 0;
+            }
+        }
+        else
+        {
+            if (posX % 2 === 0){
+                shadow.position.set(posX, 0.001, posZ);
+                shadow.renderOrder = 0;
+            }else{
+                shadow.position.set(posX, 0.01, posZ);
+                shadow.renderOrder = 1;
+            }
+        }
+        
         base.add(shadow);
         
         this.bricks3D.add(base);
