@@ -15,6 +15,7 @@ export default class ThreeManager {
             antialias: true,
             canvas,
             alpha: true,
+            //logarithmicDepthBuffer: true
         });
         //this.renderer.sortObjects = false;
         this.renderer.setSize(window.innerWidth, window.innerHeight);
@@ -26,9 +27,9 @@ export default class ThreeManager {
         ////
 
         this.camera = new THREE.PerspectiveCamera(
-            60,
+            50,
             window.innerWidth / window.innerHeight,
-            10,
+            12,
             40
         );
         this.camera.position.set(this.config.viewSize.x / 2, 18, 20);
@@ -134,8 +135,8 @@ export default class ThreeManager {
             new THREE.MeshLambertMaterial({ map: waterTexture}), // водав
             new THREE.MeshBasicMaterial({ color: 0x1fad6d }), // тент
             new THREE.MeshLambertMaterial({map: grassTexture}), // трава
-            new THREE.MeshBasicMaterial({color: 0x000, transparent: true, opacity: 0.5, depthWrite: false, colorWrite: true}),
-            new THREE.MeshBasicMaterial({color: 0x000, transparent: true, opacity: 0.5, depthWrite: false, colorWrite: false}),
+            new THREE.MeshBasicMaterial({color: 0x000, transparent: true, opacity: 0.5, colorWrite: true,}),
+            new THREE.MeshBasicMaterial({color: 0x000, transparent: true, opacity: 0.5, colorWrite: false}),
         ];
 
         let uniforms = {};
@@ -354,9 +355,9 @@ export default class ThreeManager {
         let shadow2 = new THREE.Mesh(this.shadowGeometry, this.materials[9]);
 
         shadow.position.set(posX, 0.001, posZ);
-        shadow2.position.set(posX, 0.01, posZ);
+        shadow2.position.set(posX, 0.001, posZ);
 
-        shadow.renderOrder = 1;
+        shadow.renderOrder = 2;
         shadow2.renderOrder = 1;
 
         // if ((posZ-0.5) % 2 === 0) // Расставляем тени в шахматном порядке
