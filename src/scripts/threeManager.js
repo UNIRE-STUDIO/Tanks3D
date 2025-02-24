@@ -16,7 +16,7 @@ export default class ThreeManager {
             canvas,
             alpha: true,
         });
-        this.renderer.sortObjects = false;
+        //this.renderer.sortObjects = false;
         this.renderer.setSize(window.innerWidth, window.innerHeight);
         this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         // const context = this.renderer.getContext();
@@ -134,12 +134,8 @@ export default class ThreeManager {
             new THREE.MeshLambertMaterial({ map: waterTexture}), // водав
             new THREE.MeshBasicMaterial({ color: 0x1fad6d }), // тент
             new THREE.MeshLambertMaterial({map: grassTexture}), // трава
-            new MyMaterial({
-                color: 0x000, 
-                transparent: true, 
-                opacity: 0.5,
-                depthWrite: false
-            }),
+            new THREE.MeshBasicMaterial({color: 0x000, transparent: true, opacity: 0.5, depthWrite: false, colorWrite: true}),
+            new THREE.MeshBasicMaterial({color: 0x000, transparent: true, opacity: 0.5, depthWrite: false, colorWrite: false}),
         ];
 
         let uniforms = {};
@@ -355,29 +351,41 @@ export default class ThreeManager {
 
         // Тень
         let shadow = new THREE.Mesh(this.shadowGeometry, this.materials[8]);
+        let shadow2 = new THREE.Mesh(this.shadowGeometry, this.materials[9]);
 
-        if (posZ % 2 === 0) // Расставляем тени в шахматном порядке
-        {
-            if (posX % 2 === 0){
-                shadow.position.set(posX, 0.01, posZ);
-                shadow.renderOrder = 1;
-            }else{
-                shadow.position.set(posX, 0.001, posZ);
-                shadow.renderOrder = 0;
-            }
-        }
-        else
-        {
-            if (posX % 2 === 0){
-                shadow.position.set(posX, 0.001, posZ);
-                shadow.renderOrder = 0;
-            }else{
-                shadow.position.set(posX, 0.01, posZ);
-                shadow.renderOrder = 1;
-            }
-        }
+        shadow.position.set(posX, 0.001, posZ);
+        shadow2.position.set(posX, 0.01, posZ);
+
+        shadow.renderOrder = 1;
+        shadow2.renderOrder = 1;
+
+        // if ((posZ-0.5) % 2 === 0) // Расставляем тени в шахматном порядке
+        // {
+        //     if ((posX-0.5) % 2 === 0){
+        //         shadow.position.set(posX, 0.01, posZ);
+        //         shadow.renderOrder = 0;
+        //         // shadow.material = this.materials[9];
+        //         shadow.material.colorWrite = true;
+        //     }else{
+        //         shadow.position.set(posX, 0.001, posZ);
+        //         shadow.renderOrder = 1;
+        //         shadow.material.colorWrite = true;
+        //     }
+        // }
+        // else
+        // {
+        //     if ((posX-0.5) % 2 === 0){
+        //         shadow.position.set(posX, 0.01, posZ);
+        //         shadow.renderOrder = 1;
+        //     }else{
+        //         shadow.position.set(posX, 0.001, posZ);
+        //         shadow.renderOrder = 0;
+        //         // shadow.material = this.materials[9];
+        //     }
+        // }
         
         base.add(shadow);
+        base.add(shadow2);
         
         this.bricks3D.add(base);
     }
