@@ -185,7 +185,7 @@ export default class NpcTank extends Tank {
         let dirs = [];
 
         if (this.dirY != 0) {
-            let rightX = Math.round((this.position.x + this.config.grid * 2) / this.config.grid);
+            let rightX = Math.round((this.position.x + this.config.grid2) / this.config.grid);
             let rightY = Math.round(this.position.y / this.config.grid);
 
             let leftX = Math.round((this.position.x - this.config.grid) / this.config.grid);
@@ -477,8 +477,8 @@ export default class NpcTank extends Tank {
     shoot() {
         if (this.isPause || !this.isUse || this.isDead) return;
         let centerPos = {
-            x: this.position.x + this.config.grid2 / 2 + (this.config.grid2 / 2 * this.dirX),
-            y: this.position.y + this.config.grid2 / 2 + (this.config.grid2 / 2 * this.dirY)
+            x: this.position.x + this.config.grid/2 + (this.config.grid/2) * this.dirX,
+            y: this.position.y + this.config.grid/2 + (this.config.grid/2) * this.dirX
         };
         this.spawnBullet(centerPos, { x: this.dirX, y: this.dirY }, false, this.npcId);
     }
@@ -511,7 +511,6 @@ export default class NpcTank extends Tank {
 
     update(lag) {
         if (!this.isUse || this.isDead) return;
-        super.update(lag)
         this.moveX = this.dirX;
         this.moveY = this.dirY;
         if (this.drivingMode === 0) 
@@ -522,7 +521,6 @@ export default class NpcTank extends Tank {
         {
             this.movingTowardsTheGoal(lag);
         }
-        this.model.position.x = this.position.x + this.config.grid
-        this.model.position.z = this.position.y + this.config.grid
+        super.update(lag);
     }
 }

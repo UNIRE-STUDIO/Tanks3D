@@ -81,6 +81,8 @@ export default class LevelManager {
 
         input.movePlayer2Event = this.players[1].setDirection.bind(this.players[1]);
         input.shootPlayer2Event = this.players[1].shoot.bind(this.players[1]);
+
+        input.moveCameraEvent = this.threeManager.setCameraMove.bind(this.threeManager);
     }
 
     start(playersMode = 0) {
@@ -245,6 +247,7 @@ export default class LevelManager {
         if (this.uiFields.playersMode === 1) this.players[1].update(lag);
         this.bulletPool.update(lag);
         this.npcPool.update(lag);
+        this.threeManager.update(lag);
         // this.bangPool.update(lag);
     }
 

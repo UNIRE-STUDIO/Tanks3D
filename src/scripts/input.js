@@ -17,6 +17,8 @@ export default class Input {
         this.movePlayer1Event
         this.shootPlayer1Event
 
+        this.moveCameraEvent;
+
         this.dirX1 = 0
         this.dirY1 = 0
 
@@ -32,6 +34,12 @@ export default class Input {
         this.isDown2 = false
         this.isRight2 = false
         this.isLeft2 = false
+
+        this.cameraMoveAxis = 0;
+
+        this.isForward = false;
+        this.isBack = false;
+
     }
 
     backButton_click() {
@@ -51,49 +59,58 @@ export default class Input {
     }
 
     setKeydown(e) {
-        if (e.code === 'Slash') {
+        this.movePlayerDown(e.code);
+        this.moveCameraDown(e.code);
+    }
+
+    setKeyup(e) {
+        this.movePlayerUp(e.code);
+    }
+
+    movePlayerDown(key){
+        if (key === 'Slash') {
             this.shootPlayer1Event()
         }
-        if (e.code === 'ArrowRight') {
+        if (key === 'ArrowRight') {
             this.dirY1 = 0
             this.dirX1 = 1
             this.isRight1 = true
         }
-        if (e.code === 'ArrowLeft') {
+        if (key === 'ArrowLeft') {
             this.dirY1 = 0
             this.dirX1 = -1
             this.isLeft1 = true
         }
-        if (e.code === 'ArrowUp') {
+        if (key === 'ArrowUp') {
             this.dirX1 = 0
             this.dirY1 = -1
             this.isUp1 = true
         }
-        if (e.code === 'ArrowDown') {
+        if (key === 'ArrowDown') {
             this.dirX1 = 0
             this.dirY1 = 1
             this.isDown1 = true
         }
 
-        if (e.code === 'Space') {
+        if (key === 'Space') {
             this.shootPlayer2Event()
         }
-        if (e.code === 'KeyD') {
+        if (key === 'KeyD') {
             this.dirY2 = 0
             this.dirX2 = 1
             this.isRight2 = true
         }
-        if (e.code === 'KeyA') {
+        if (key === 'KeyA') {
             this.dirY2 = 0
             this.dirX2 = -1
             this.isLeft2 = true
         }
-        if (e.code === 'KeyW') {
+        if (key === 'KeyW') {
             this.dirX2 = 0
             this.dirY2 = -1
             this.isUp2 = true
         }
-        if (e.code === 'KeyS') {
+        if (key === 'KeyS') {
             this.dirX2 = 0
             this.dirY2 = 1
             this.isDown2 = true
@@ -103,37 +120,37 @@ export default class Input {
         this.movePlayer1Event(this.dirX1, this.dirY1)
     }
 
-    setKeyup(e) {
-        if (e.code === 'ArrowRight') {
+    movePlayerUp(key){
+        if (key === 'ArrowRight') {
             this.dirX1 = 0
             this.isRight1 = false
         }
-        if (e.code === 'ArrowLeft') {
+        if (key === 'ArrowLeft') {
             this.dirX1 = 0
             this.isLeft1 = false
         }
-        if (e.code === 'ArrowUp') {
+        if (key === 'ArrowUp') {
             this.dirY1 = 0
             this.isUp1 = false
         }
-        if (e.code === 'ArrowDown') {
+        if (key === 'ArrowDown') {
             this.dirY1 = 0
             this.isDown1 = false
         }
 
-        if (e.code === 'KeyD') {
+        if (key === 'KeyD') {
             this.dirX2 = 0
             this.isRight2 = false
         }
-        if (e.code === 'KeyA') {
+        if (key === 'KeyA') {
             this.dirX2 = 0
             this.isLeft2 = false
         }
-        if (e.code === 'KeyW') {
+        if (key === 'KeyW') {
             this.dirY2 = 0
             this.isUp2 = false
         }
-        if (e.code === 'KeyS') {
+        if (key === 'KeyS') {
             this.dirY2 = 0
             this.isDown2 = false
         }
@@ -153,5 +170,19 @@ export default class Input {
 
         this.movePlayer1Event(this.dirX1, this.dirY1)
         this.movePlayer2Event(this.dirX2, this.dirY2);
+    }
+
+    moveCameraDown(key){
+        if (key === 'keyE') {
+            this.cameraMoveAxis = 1;
+            this.isForward = true;
+        }
+
+        if (key === 'keyQ') {
+            this.cameraMoveAxis = -1;
+            this.isBack = true;
+        }
+
+        this.moveCameraEvent(this.cameraMoveAxis);
     }
 }

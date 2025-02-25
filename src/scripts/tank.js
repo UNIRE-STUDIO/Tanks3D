@@ -32,8 +32,8 @@ export default class Tank {
 
     create(currentMap, pos) {
         this.currentMap = currentMap
-        this.position.x = pos.x * this.config.grid
-        this.position.y = pos.y * this.config.grid
+        this.position.x = pos.x
+        this.position.y = pos.y
         this.otherCollisionObject = []
         this.isUse = true
         this.threeManager.scene.add(this.model)
@@ -50,11 +50,11 @@ export default class Tank {
         // Если поворачиваем
         if (this.dirX != 0 && dirY != 0) 
         {
-            this.position.x = Math.round(this.position.x / this.config.grid) * this.config.grid
+            this.position.x = Math.round(this.position.x)
         } 
         else if (this.dirY != 0 && dirX != 0) 
         {
-            this.position.y = Math.round(this.position.y / this.config.grid) * this.config.grid
+            this.position.y = Math.round(this.position.y)
         }
         this.moveX = dirX
         this.moveY = dirY
@@ -101,8 +101,8 @@ export default class Tank {
     }
 
     checkCollisionWithObject(objPos) {
-        let tX = Math.round((this.position.x + (this.config.grid / 2) * this.moveX) / this.config.grid)
-        let tY = Math.round((this.position.y + (this.config.grid / 2) * this.moveY) / this.config.grid)
+        let tX = Math.round((this.position.x * this.moveX) / this.config.grid)
+        let tY = Math.round((this.position.y * this.moveY) / this.config.grid)
 
         let oX = Math.round(objPos.x / this.config.grid)
         let oY = Math.round(objPos.y / this.config.grid)
@@ -143,5 +143,7 @@ export default class Tank {
         let q = new THREE.Quaternion(0, 1 * Math.sin(halfAngle), 0, Math.cos(halfAngle))
         this.model.quaternion.slerp(q, lag * this.speedRotation)
         
+        this.model.position.x = this.position.x + this.config.grid/2;
+        this.model.position.z = this.position.y + this.config.grid/2;
     }
 }

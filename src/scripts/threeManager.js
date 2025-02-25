@@ -32,7 +32,7 @@ export default class ThreeManager {
             12,
             40
         );
-        this.camera.position.set(this.config.viewSize.x / 2, 18, 20);
+        this.camera.position.set(this.config.viewSize.x / 2, 18, 16); // z = 20
         this.camera.lookAt(
             new THREE.Vector3(
                 this.config.viewSize.x / 2,
@@ -40,6 +40,10 @@ export default class ThreeManager {
                 this.config.viewSize.y / 2
             )
         );
+        this.сameraMaxСlamp = 20;
+        this.cameraMinClamp = 16;
+        this.speedCamera = 0.01;
+        this.axisCamera = 0;
 
         window.addEventListener("resize", () => {
             this.updateCameraFov();
@@ -304,7 +308,7 @@ export default class ThreeManager {
         if (left) p.rotateY((90 * Math.PI) / 180);
         else if (right) p.rotateY((-90 * Math.PI) / 180);
         p.scale(1, 0.8, 1);
-        p.translate(posX, posY, posZ);
+        p.translate(posX, posY, posZ + this.config.grid);
         this.wallsForWaters.push(p);
     }
 
@@ -386,6 +390,14 @@ export default class ThreeManager {
         this.blocks3D.clear();
         this.bricks3D.clear();
         this.floors3D.clear();
+    }
+
+    setCameraMove(axis){
+        this.axisCamera = axis;
+    }
+    
+    update(lag){
+        this.camera.position.z =+ this.axisCamera * this.speedCamera * lag;
     }
 
     render(){
