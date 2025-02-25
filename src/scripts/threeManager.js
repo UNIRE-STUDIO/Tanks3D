@@ -135,8 +135,7 @@ export default class ThreeManager {
             new THREE.MeshLambertMaterial({ map: waterTexture}), // водав
             new THREE.MeshBasicMaterial({ color: 0x1fad6d }), // тент
             new THREE.MeshLambertMaterial({map: grassTexture}), // трава
-            new THREE.MeshBasicMaterial({color: 0x000, transparent: true, opacity: 0.5, colorWrite: true,}),
-            new THREE.MeshBasicMaterial({color: 0x000, transparent: true, opacity: 0.5, colorWrite: false}),
+            new THREE.MeshBasicMaterial({color: 0x000, transparent: true, opacity: 0.5}),
         ];
 
         let uniforms = {};
@@ -233,26 +232,25 @@ export default class ThreeManager {
     {
         let borders = [];
         function create(posX, posY, posZ, clone){
-            clone.translate(posX, posY, posZ);
+            clone.translate(posX - 0.5, posY, posZ + 0.5); // Убавляем/прибавляем половину сетки так-как блок 2на2
             borders.push(clone);
         }
         let size = this.config.grid2;
-        let halfSize = this.config.grid;
         // Верх
-        for (let i = -halfSize; i < this.config.viewSize.x + size; i=i+size) {
-            create(i, 0.7, -halfSize, this.border.geometry.clone());
+        for (let i = -this.config.grid; i < this.config.viewSize.x + size; i=i+size) {
+            create(i, 0.7, -size, this.border.geometry.clone());
         }
         // Лево
-        for (let i = halfSize; i < this.config.viewSize.y + size; i=i+size) {
-            create(-halfSize, 0.7, i, this.border.geometry.clone());
+        for (let i = 0; i < this.config.viewSize.y + size; i=i+size) {
+            create(-this.config.grid, 0.7, i, this.border.geometry.clone());
         }
         // Низ
-        for (let i = halfSize; i < this.config.viewSize.x + size; i=i+size) {
-            create(i, 0.7, this.config.viewSize.y + halfSize, this.border.geometry.clone());
+        for (let i = -this.config.grid; i < this.config.viewSize.x + size; i=i+size) {
+            create(i, 0.7, this.config.viewSize.y, this.border.geometry.clone());
         }
-        // Лево
-        for (let i = halfSize; i < this.config.viewSize.y; i=i+size) {
-            create(this.config.viewSize.x + halfSize, 0.7, i, this.border.geometry.clone());
+        // Право
+        for (let i = 0; i < this.config.viewSize.y; i=i+size) {
+            create(this.config.viewSize.x+1, 0.7, i, this.border.geometry.clone());
         }
 
         let bordersMerge = BufferGeometryUtils.mergeGeometries(borders);
@@ -265,9 +263,9 @@ export default class ThreeManager {
         let abroadGeomnetries = [];
         let sizeMapX = this.config.viewSize.x/2;
         let sizeMapY = this.config.viewSize.y/2;
-        checki: for (let i = -width + 0.5; i <= sizeMapY; i++) 
+        checki: for (let i = -width; i <= sizeMapY; i++) 
         {
-            checkj: for (let j = -width + 0.5; j <= sizeMapX + width; j++) 
+            checkj: for (let j = -width; j <= sizeMapX + width; j++) 
             {
                 if (j >= -1 && j < sizeMapX + 1 && i >= -1 && i < sizeMapY + 1)
                 {
@@ -313,25 +311,7 @@ export default class ThreeManager {
     createFloor(posX, posY, posZ){
         let p = this.planeGeometry.clone(); // Плоскости
         p.translate(posX, posY, posZ);
-        posX -= 0.5;
-        posZ += 0.5;
         this.floors1.push(p);
-        // if (posX % 2 === 0 && posZ % 2 === 0)  // 0, 0
-        // {
-        //     this.floors1.push(p);
-        // }
-        // else if (posX % 2 === 0 && posZ % 2 === 1) // 0, 1
-        // {
-        //     this.floors2.push(p);
-        // }
-        // else if (posX % 2 === 1 && posZ % 2 === 1) // 1, 1
-        // {
-        //     this.floors3.push(p);
-        // }
-        // else {
-        //     this.floors4.push(p);
-        // }
-        
     }
 
     createCover(posX, posY, posZ){
@@ -352,41 +332,8 @@ export default class ThreeManager {
 
         // Тень
         let shadow = new THREE.Mesh(this.shadowGeometry, this.materials[8]);
-        let shadow2 = new THREE.Mesh(this.shadowGeometry, this.materials[9]);
-
         shadow.position.set(posX, 0.001, posZ);
-        shadow2.position.set(posX, 0.001, posZ);
-
-        shadow.renderOrder = 2;
-        shadow2.renderOrder = 1;
-
-        // if ((posZ-0.5) % 2 === 0) // Расставляем тени в шахматном порядке
-        // {
-        //     if ((posX-0.5) % 2 === 0){
-        //         shadow.position.set(posX, 0.01, posZ);
-        //         shadow.renderOrder = 0;
-        //         // shadow.material = this.materials[9];
-        //         shadow.material.colorWrite = true;
-        //     }else{
-        //         shadow.position.set(posX, 0.001, posZ);
-        //         shadow.renderOrder = 1;
-        //         shadow.material.colorWrite = true;
-        //     }
-        // }
-        // else
-        // {
-        //     if ((posX-0.5) % 2 === 0){
-        //         shadow.position.set(posX, 0.01, posZ);
-        //         shadow.renderOrder = 1;
-        //     }else{
-        //         shadow.position.set(posX, 0.001, posZ);
-        //         shadow.renderOrder = 0;
-        //         // shadow.material = this.materials[9];
-        //     }
-        // }
-        
         base.add(shadow);
-        base.add(shadow2);
         
         this.bricks3D.add(base);
     }
