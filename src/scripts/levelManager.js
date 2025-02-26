@@ -105,19 +105,19 @@ export default class LevelManager {
                     this.threeManager.createWater(posX, -waterDepth, posZ);
                     if (this.currentMap[i + 1] === undefined || this.currentMap[i + 1][j] !== 3)    // Ниже блока воды
                     {
-                        this.threeManager.createWallForWater(posX, -waterDepth/2, posZ);
+                        this.threeManager.createWallForWater(posX, -waterDepth/2, posZ+this.config.grid/2);
                     }
                     if (this.currentMap[i - 1] === undefined || this.currentMap[i - 1][j] !== 3)   // Выше блока воды
                     {
-                        this.threeManager.createWallForWater(posX, -waterDepth/2, posZ);
+                        this.threeManager.createWallForWater(posX, -waterDepth/2, posZ-this.config.grid/2);
                     }
                     if (this.currentMap[i][j + 1] !== 3)                                           // Правее блока воды
                     {
-                        this.threeManager.createWallForWater(posX, -waterDepth/2, posZ, false, true);
+                        this.threeManager.createWallForWater(posX+this.config.grid/2, -waterDepth/2, posZ, false, true);
                     }
                     if (this.currentMap[i][j - 1] !== 3)                                           // Левее блока воды
                     {
-                        this.threeManager.createWallForWater(posX, -waterDepth/2, posZ, true);
+                        this.threeManager.createWallForWater(posX-this.config.grid/2, -waterDepth/2, posZ, true);
                     }
                     continue;
                 }

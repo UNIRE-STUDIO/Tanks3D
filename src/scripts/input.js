@@ -174,12 +174,12 @@ export default class Input {
     }
 
     moveCameraDown(key){
-        if (key === 'keyE') {
+        if (key === 'KeyE') {
             this.cameraMoveAxis = 1;
             this.isForward = true;
         }
 
-        if (key === 'keyQ') {
+        if (key === 'KeyQ') {
             this.cameraMoveAxis = -1;
             this.isBack = true;
         }
@@ -188,12 +188,12 @@ export default class Input {
     }
 
     moveCameraUp(key){
-        if (key === 'keyE') {
+        if (key === 'KeyE') {
             this.cameraMoveAxis = 0;
             this.isForward = false;
         }
 
-        if (key === 'keyQ') {
+        if (key === 'KeyQ') {
             this.cameraMoveAxis = 0;
             this.isBack = false;
         }

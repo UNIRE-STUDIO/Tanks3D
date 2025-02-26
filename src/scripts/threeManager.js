@@ -4,6 +4,7 @@ import * as BufferGeometryUtils from "three/examples/jsm/utils/BufferGeometryUti
 import { idToCoordinates, coordinatesToId } from "./general.js";
 import { shadowShader } from './shaders.js';
 import { MyMaterial } from "./myMaterial.js";
+import { ShadowPool } from "./shadowPool.js";
 
 export default class ThreeManager {
     constructor(uiFields, config){
@@ -33,16 +34,9 @@ export default class ThreeManager {
             40
         );
         this.camera.position.set(this.config.viewSize.x / 2, 18, 20); // z = 20
-        this.camera.lookAt(
-            new THREE.Vector3(
-                this.config.viewSize.x / 2,
-                0,
-                this.config.viewSize.y / 2
-            )
-        );
-        this.cameraMaxClamp = 20;
+        this.cameraMaxClamp = 21;
         this.cameraMinClamp = 16;
-        this.speedCamera = 0.001;
+        this.speedCamera = 0.003;
         this.axisCamera = 0;
 
         window.addEventListener("resize", () => {
@@ -72,19 +66,7 @@ export default class ThreeManager {
 
         this.boxGeometry = new THREE.BoxGeometry(1, 1.4, 1);
 
-        // ТЕНЬ ----------------------------------------------------------------------
-        let gr = this.config.grid;
-        const shape = new THREE.Shape();
-        shape.moveTo(-gr/2, gr/2);
-        shape.lineTo(0, 1.25);
-        shape.lineTo(1, 1.25);
-        shape.lineTo(1, 0);
-        shape.lineTo(0.5, -0.5);
 
-        this.shadowGeometry = new THREE.ShapeGeometry(shape);
-        this.shadowGeometry.rotateX((270 * Math.PI) / 180);
-
-        // ----------------------------------------------------------------------
 
         this.brick;
         this.gltfLoader = new GLTFLoader();
@@ -105,18 +87,8 @@ export default class ThreeManager {
 
         let textureLoader = new THREE.TextureLoader();
         let floor1Texture = textureLoader.load('/sprites/floor1.jpg');
-        // let floor2Texture = textureLoader.load('/sprites/floor2.jpg');
-        // let floor3Texture = textureLoader.load('/sprites/floor3.jpg');
-        // let floor4Texture = textureLoader.load('/sprites/floor4.jpg');
         floor1Texture.colorSpace = THREE.SRGBColorSpace;
-        // floor2Texture.colorSpace = THREE.SRGBColorSpace;
-        // floor3Texture.colorSpace = THREE.SRGBColorSpace;
-        // floor4Texture.colorSpace = THREE.SRGBColorSpace;
-
         let floor1NormalTexture = textureLoader.load('/sprites/floor1-normalMap.jpg');
-        // let floor2NormalTexture = textureLoader.load('/sprites/floor2-normalMap.jpg');
-        // let floor3NormalTexture = textureLoader.load('/sprites/floor3-normalMap.jpg');
-        // let floor4NormalTexture = textureLoader.load('/sprites/floor4-normalMap.jpg');
 
         let waterTexture = textureLoader.load('/sprites/water.jpg');
         waterTexture.wrapS = THREE.RepeatWrapping;
@@ -127,8 +99,6 @@ export default class ThreeManager {
 
         let grassTexture = textureLoader.load('/sprites/grass128.jpg');
         grassTexture.colorSpace = THREE.SRGBColorSpace;
-
-        let shadowTexture = textureLoader.load('/sprites/shadow.png');
 
         this.materials = [
             new THREE.MeshLambertMaterial({ map: floor1Texture, normalMap:  floor1NormalTexture}), // пол
@@ -147,6 +117,22 @@ export default class ThreeManager {
         uniforms.uBaseVertRatio = { value: new THREE.Vector2(0.50,0.50) },
         uniforms.opacity = { value: 0.5 }
         this.shadowMatrial = new THREE.ShaderMaterial({fragmentShader: shadowShader, uniforms: uniforms, transparent: true, opacity: 0.5});
+
+        // ТЕНЬ ----------------------------------------------------------------------
+        this.shadowPool = new ShadowPool();
+
+        let gr = this.config.grid;
+        const shape = new THREE.Shape();
+        shape.moveTo(-gr/2, gr/2);
+        shape.lineTo(0, 1.25);
+        shape.lineTo(1, 1.25);
+        shape.lineTo(1, 0);
+        shape.lineTo(0.5, -0.5);
+
+        this.shadowGeometry = new THREE.ShapeGeometry(shape);
+        this.shadowGeometry.rotateX((270 * Math.PI) / 180);
+
+        // ----------------------------------------------------------------------
 
         this.bulletOrigin;
         this.player1TankMesh; 
@@ -308,7 +294,7 @@ export default class ThreeManager {
         if (left) p.rotateY((90 * Math.PI) / 180);
         else if (right) p.rotateY((-90 * Math.PI) / 180);
         p.scale(1, 0.8, 1);
-        p.translate(posX, posY, posZ + this.config.grid);
+        p.translate(posX, posY, posZ);
         this.wallsForWaters.push(p);
     }
 
@@ -333,11 +319,6 @@ export default class ThreeManager {
         let b1 = new THREE.Mesh(this.brick.geometry, this.brick.material);
         b1.position.set(posX, posY, posZ);
         base.add(b1);
-
-        // Тень
-        let shadow = new THREE.Mesh(this.shadowGeometry, this.materials[8]);
-        shadow.position.set(posX, 0.001, posZ);
-        base.add(shadow);
         
         this.bricks3D.add(base);
     }
@@ -354,7 +335,7 @@ export default class ThreeManager {
         return new THREE.Mesh(this.bulletOrigin.geometry, this.bulletOrigin.material);
     }
 
-    addToScene(){
+    addToScene(){ // Работает при старте уровня
         let floorMerge1 = BufferGeometryUtils.mergeGeometries([...this.floors1]);
         // let floorMerge2 = BufferGeometryUtils.mergeGeometries([...this.floors2]);
         // let floorMerge3 = BufferGeometryUtils.mergeGeometries([...this.floors3]);
@@ -400,7 +381,14 @@ export default class ThreeManager {
         let inc = this.axisCamera * this.speedCamera * lag;
         console.log(inc);
         if (this.camera.position.z + inc > this.cameraMaxClamp || this.camera.position.z + inc < this.cameraMinClamp) return;
-        this.camera.position.z =+ inc;
+        this.camera.position.z += inc;
+        this.camera.lookAt(
+            new THREE.Vector3(
+                this.config.viewSize.x / 2,
+                0,
+                this.config.viewSize.y / 2 + 1.5
+            )
+        );
     }
 
     render(){
