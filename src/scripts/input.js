@@ -9,13 +9,13 @@ export default class Input {
             }
         });
 
-        document.addEventListener('keydown', (e) => this.setKeydown(e))
-        document.addEventListener('keyup', (e) => this.setKeyup(e))
+        document.addEventListener('keydown', (e) => this.setKeydown(e));
+        document.addEventListener('keyup', (e) => this.setKeyup(e));
 
-        this.changeScreenEvent
+        this.changeScreenEvent;
 
-        this.movePlayer1Event
-        this.shootPlayer1Event
+        this.movePlayer1Event;
+        this.shootPlayer1Event;
 
         this.moveCameraEvent;
 
@@ -65,6 +65,7 @@ export default class Input {
 
     setKeyup(e) {
         this.movePlayerUp(e.code);
+        this.moveCameraUp(e.code);
     }
 
     movePlayerDown(key){
@@ -181,6 +182,20 @@ export default class Input {
         if (key === 'keyQ') {
             this.cameraMoveAxis = -1;
             this.isBack = true;
+        }
+
+        this.moveCameraEvent(this.cameraMoveAxis);
+    }
+
+    moveCameraUp(key){
+        if (key === 'keyE') {
+            this.cameraMoveAxis = 0;
+            this.isForward = false;
+        }
+
+        if (key === 'keyQ') {
+            this.cameraMoveAxis = 0;
+            this.isBack = false;
         }
 
         this.moveCameraEvent(this.cameraMoveAxis);

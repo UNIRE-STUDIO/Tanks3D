@@ -32,7 +32,7 @@ export default class ThreeManager {
             12,
             40
         );
-        this.camera.position.set(this.config.viewSize.x / 2, 18, 16); // z = 20
+        this.camera.position.set(this.config.viewSize.x / 2, 18, 20); // z = 20
         this.camera.lookAt(
             new THREE.Vector3(
                 this.config.viewSize.x / 2,
@@ -40,9 +40,9 @@ export default class ThreeManager {
                 this.config.viewSize.y / 2
             )
         );
-        this.сameraMaxСlamp = 20;
+        this.cameraMaxClamp = 20;
         this.cameraMinClamp = 16;
-        this.speedCamera = 0.01;
+        this.speedCamera = 0.001;
         this.axisCamera = 0;
 
         window.addEventListener("resize", () => {
@@ -397,7 +397,10 @@ export default class ThreeManager {
     }
     
     update(lag){
-        this.camera.position.z =+ this.axisCamera * this.speedCamera * lag;
+        let inc = this.axisCamera * this.speedCamera * lag;
+        console.log(inc);
+        if (this.camera.position.z + inc > this.cameraMaxClamp || this.camera.position.z + inc < this.cameraMinClamp) return;
+        this.camera.position.z =+ inc;
     }
 
     render(){
