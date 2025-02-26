@@ -114,8 +114,6 @@ export default class ThreeManager {
         this.shadowMatrial = new THREE.ShaderMaterial({fragmentShader: shadowShader, uniforms: uniforms, transparent: true, opacity: 0.5});
 
         // ТЕНЬ ----------------------------------------------------------------------
-        this.shadowPool = new ShadowPool();
-
         let gr = this.config.grid;
         const shape = new THREE.Shape();
         shape.moveTo(-gr/2, gr/2);
@@ -124,8 +122,14 @@ export default class ThreeManager {
         shape.lineTo(1, 0);
         shape.lineTo(0.5, -0.5);
 
-        this.shadowGeometry = new THREE.ShapeGeometry(shape);
-        this.shadowGeometry.rotateX((270 * Math.PI) / 180);
+        let shadowGeometry = new THREE.ShapeGeometry(shape);
+        shadowGeometry.rotateX((270 * Math.PI) / 180);
+
+        this.shadowPool = new ShadowPool(
+            new THREE.Mesh(shadowGeometry, this.materials[8]),
+            new THREE.Mesh(shadowGeometry, this.materials[8]),
+            this.scene,
+            this.config);
 
         // ----------------------------------------------------------------------
 
@@ -138,11 +142,8 @@ export default class ThreeManager {
         this.blocks3D = new THREE.Object3D();
         this.bricks3D = new THREE.Object3D();
         this.bricks3D.name = 'bricks';
+        
         this.floors1 = []; //Массив с плоскостями пола, затем преобразовываем в единый объект
-        this.floors2 = [];
-        this.floors3 = [];
-        this.floors4 = [];
-
         this.floors3D = new THREE.Object3D();
 
         this.waters = []
