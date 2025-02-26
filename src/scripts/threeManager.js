@@ -34,7 +34,7 @@ export default class ThreeManager {
             40
         );
         this.camera.position.set(this.config.viewSize.x / 2, 18, 20); // z = 20
-        this.cameraMaxClamp = 21;
+        this.cameraMaxClamp = 23;
         this.cameraMinClamp = 16;
         this.speedCamera = 0.003;
         this.axisCamera = 0;
@@ -64,10 +64,6 @@ export default class ThreeManager {
         this.planeGeometry = new THREE.PlaneGeometry(1, 1, 1);
         this.planeGeometry.rotateX((270 * Math.PI) / 180);
 
-        this.boxGeometry = new THREE.BoxGeometry(1, 1.4, 1);
-
-
-
         this.brick;
         this.gltfLoader = new GLTFLoader();
         this.gltfLoader.load("/models/brick2.glb", (gltf) => {
@@ -81,7 +77,6 @@ export default class ThreeManager {
             this.block = gltf.scene.children[0];
             this.block.material.map.minFilter = THREE.LinearMipMapLinearFilter;
             this.block.material.map.magFilter = THREE.LinearFilter;
-            this.block.scale.set(1, 1.4, 1);
         });
         this.border; // -> в Async
 
@@ -222,25 +217,26 @@ export default class ThreeManager {
     {
         let borders = [];
         function create(posX, posY, posZ, clone){
-            clone.translate(posX - 0.5, posY, posZ + 0.5); // Убавляем/прибавляем половину сетки так-как блок 2на2
+            clone.translate(posX, posY, posZ); // Убавляем/прибавляем половину сетки так-как блок 2на2
             borders.push(clone);
         }
         let size = this.config.grid2;
+        let halfSize = this.config.grid;
         // Верх
-        for (let i = -this.config.grid; i < this.config.viewSize.x + size; i=i+size) {
-            create(i, 0.7, -size, this.border.geometry.clone());
+        for (let i = -halfSize; i < this.config.viewSize.x + size; i=i+size) {
+            create(i, 0.7, -halfSize, this.border.geometry.clone());
         }
         // Лево
-        for (let i = 0; i < this.config.viewSize.y + size; i=i+size) {
-            create(-this.config.grid, 0.7, i, this.border.geometry.clone());
+        for (let i = halfSize; i < this.config.viewSize.y + size; i=i+size) {
+            create(-halfSize, 0.7, i, this.border.geometry.clone());
         }
         // Низ
-        for (let i = -this.config.grid; i < this.config.viewSize.x + size; i=i+size) {
-            create(i, 0.7, this.config.viewSize.y, this.border.geometry.clone());
+        for (let i = halfSize; i < this.config.viewSize.x + size; i=i+size) {
+            create(i, 0.7, this.config.viewSize.y + halfSize, this.border.geometry.clone());
         }
         // Право
-        for (let i = 0; i < this.config.viewSize.y; i=i+size) {
-            create(this.config.viewSize.x+1, 0.7, i, this.border.geometry.clone());
+        for (let i = halfSize; i < this.config.viewSize.y; i=i+size) {
+            create(this.config.viewSize.x + halfSize, 0.7, i, this.border.geometry.clone());
         }
 
         let bordersMerge = BufferGeometryUtils.mergeGeometries(borders);
@@ -253,9 +249,9 @@ export default class ThreeManager {
         let abroadGeomnetries = [];
         let sizeMapX = this.config.viewSize.x/2;
         let sizeMapY = this.config.viewSize.y/2;
-        checki: for (let i = -width; i <= sizeMapY; i++) 
+        checki: for (let i = -width + this.config.grid / 2; i <= sizeMapY + 3; i++)
         {
-            checkj: for (let j = -width; j <= sizeMapX + width; j++) 
+            checkj: for (let j = -width + this.config.grid / 2; j <= sizeMapX + width; j++) 
             {
                 if (j >= -1 && j < sizeMapX + 1 && i >= -1 && i < sizeMapY + 1)
                 {
@@ -337,17 +333,9 @@ export default class ThreeManager {
 
     addToScene(){ // Работает при старте уровня
         let floorMerge1 = BufferGeometryUtils.mergeGeometries([...this.floors1]);
-        // let floorMerge2 = BufferGeometryUtils.mergeGeometries([...this.floors2]);
-        // let floorMerge3 = BufferGeometryUtils.mergeGeometries([...this.floors3]);
-        // let floorMerge4 = BufferGeometryUtils.mergeGeometries([...this.floors4]);
+
         this.floors1 = [];
-        // this.floors2 = [];
-        // this.floors3 = [];
-        // this.floors4 = [];
         this.floors3D.add(new THREE.Mesh(floorMerge1, this.materials[0]));
-        // this.floors3D.add(new THREE.Mesh(floorMerge2, this.materials[1]));
-        // this.floors3D.add(new THREE.Mesh(floorMerge3, this.materials[2]));
-        // this.floors3D.add(new THREE.Mesh(floorMerge4, this.materials[3]));
 
         let waterMerge = BufferGeometryUtils.mergeGeometries([...this.waters]);
         this.waters = [];
@@ -379,7 +367,6 @@ export default class ThreeManager {
     
     update(lag){
         let inc = this.axisCamera * this.speedCamera * lag;
-        console.log(inc);
         if (this.camera.position.z + inc > this.cameraMaxClamp || this.camera.position.z + inc < this.cameraMinClamp) return;
         this.camera.position.z += inc;
         this.camera.lookAt(

@@ -3,7 +3,7 @@ import Tank from "./tank.js";
 import Timer from "./timer.js";
 
 export default class NpcTank extends Tank {
-    constructor(config, spawnBullet, players, deadNpcEvent, id, threeManager) {
+    constructor(config, spawnBullet, players, deadNpcEvent, id) {
         super(config, spawnBullet, id);
         this.npcId = id;
         this.dirY = 1;
@@ -46,7 +46,7 @@ export default class NpcTank extends Tank {
         this.type = 0;
     }
 
-    create(currentMap, pos, basePos, playersMode, type, originModel) {
+    create(currentMap, pos, basePos, playersMode, type) {
         this.model = this.threeManager.createNpcTank();
         super.create(currentMap, pos);
         this.type = type;
@@ -477,8 +477,8 @@ export default class NpcTank extends Tank {
     shoot() {
         if (this.isPause || !this.isUse || this.isDead) return;
         let centerPos = {
-            x: this.position.x + this.config.grid/2 + (this.config.grid/2) * this.dirX,
-            y: this.position.y + this.config.grid/2 + (this.config.grid/2) * this.dirX
+            x: this.position.x + this.config.grid + (this.config.grid) * this.dirX,
+            y: this.position.y + this.config.grid + (this.config.grid) * this.dirY
         };
         this.spawnBullet(centerPos, { x: this.dirX, y: this.dirY }, false, this.npcId);
     }
