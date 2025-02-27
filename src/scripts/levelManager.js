@@ -98,6 +98,8 @@ export default class LevelManager {
         let floor1 = [];
         for (let i = 0; i < this.config.viewSize.y; i++) {
             for (let j = 0; j < this.config.viewSize.x; j++) { 
+                let toRight = this.currentMap[i][j + 1];
+                let above = i - 1 < 0 ? -1 : this.currentMap[i - 1][j];
                 if (this.currentMap[i][j] === 3) { // Вода
                     let waterDepth = 0.8;
                     this.threeManager.createWater(j, -waterDepth, i);
@@ -105,29 +107,35 @@ export default class LevelManager {
                     // {
                     //     this.threeManager.createWallForWater(j, 0, i + this.config.grid);
                     // }
-                    if (this.currentMap[i - 1] === undefined || this.currentMap[i - 1][j] !== 3)   // Выше блока воды
+                    if ((i - 1) < 0 || above !== 3)                                                    // Выше блока воды
                     {
                         this.threeManager.createWallForWater(j, 0, i);
                     }
-                    if (this.currentMap[i][j + 1] !== 3)                                           // Правее блока воды
+                    if (toRight !== 3)                                                                      // Правее блока воды
                     {
                         this.threeManager.createWallForWater(j + this.config.grid, 0, i, false, true);
                     }
-                    if (this.currentMap[i][j - 1] !== 3)                                           // Левее блока воды
+                    if (j - 1 < 0 || this.currentMap[i][j - 1] !== 3)                                           // Левее блока воды
                     {
                         this.threeManager.createWallForWater(j, 0, i + this.config.grid, true);
                     }
                     continue;
                 }
-                this.threeManager.createFloor(j, 0, i); // Пол
-                if (this.currentMap[i][j] === 4) { // Маскировка
+                this.threeManager.createFloor(j, 0, i);             // Пол
+                if (this.currentMap[i][j] === 4) {                  // Маскировка
                     this.threeManager.createCover(j, 1.4, i);
                     continue;
                 }
-                if (this.currentMap[i][j] === 1) { // Кирпич
-                    this.threeManager.createBrick(j, 0, i, this.currentMap[0].length);
-                } else if (this.currentMap[i][j] === 2) { // Блок
-                    this.threeManager.createBlock(j, 0, i, this.currentMap[0].length);
+                if (this.currentMap[i][j] === 1) {                  // Кирпич
+                    this.threeManager.createBrick(j, 0, i, this.currentMap[0].length,
+                        (toRight !== undefined && (toRight === 0 || toRight === 3)),   // Если нет препятствий справа то ставим тень
+                        ((i - 1) >= 0 && (above === 0 || above === 3))               // Если нет препятствий сверху то ставим тень
+                    );
+                } else if (this.currentMap[i][j] === 2) {           // Блок
+                    this.threeManager.createBlock(j, 0, i, this.currentMap[0].length,
+                        (toRight !== undefined && (toRight === 0 || toRight === 3)),   // Если нет препятствий справа то ставим тень
+                        ((i - 1) >= 0 && (above === 0 || above === 3))               // Если нет препятствий сверху то ставим тень
+                    );
                 }
             }
         }

@@ -35,7 +35,7 @@ export default class ThreeManager {
         );
         this.camera.position.set(this.config.viewSize.x / 2, 18, 20); // z = 20
         this.cameraMaxClamp = 23;
-        this.cameraMinClamp = 16;
+        this.cameraMinClamp = 20;
         this.speedCamera = 0.003;
         this.axisCamera = 0;
 
@@ -118,22 +118,32 @@ export default class ThreeManager {
 
         // ТЕНЬ ----------------------------------------------------------------------
         let gr = this.config.grid;
-        const shape = new THREE.Shape();
-        shape.moveTo(-gr/2, gr/2);
-        shape.lineTo(0, 1.25);
-        shape.lineTo(1, 1.25);
-        shape.lineTo(1, 0);
-        shape.lineTo(0.5, -0.5);
+        const shapeAbove = new THREE.Shape();
+        shapeAbove.moveTo(0, 0);
+        shapeAbove.lineTo(0.5, 0.5);
+        shapeAbove.lineTo(1.5, 0.5);
+        shapeAbove.lineTo(1, 0);
 
-        let shadowGeometry = new THREE.ShapeGeometry(shape);
-        shadowGeometry.rotateX((270 * Math.PI) / 180);
+        const shapeRight = new THREE.Shape();
+        shapeRight.moveTo(1, -1);
+        shapeRight.lineTo(1, 0);
+        shapeRight.lineTo(1.5, 0.5);
+        shapeRight.lineTo(1.5, -0.5);
 
-        this.shadowPool = new ShadowPool(
-            new THREE.Mesh(shadowGeometry, this.materials[8]),
-            new THREE.Mesh(shadowGeometry, this.materials[8]),
-            this.scene,
-            this.config);
+        let shadowRightGeometry = new THREE.ShapeGeometry(shapeRight);
+        shadowRightGeometry.rotateX((270 * Math.PI) / 180);
 
+        let shadowAboveGeometry = new THREE.ShapeGeometry(shapeAbove);
+        shadowAboveGeometry.rotateX((270 * Math.PI) / 180);
+
+        this.shadows3D = new THREE.Object3D();
+
+        this.shadowPool = new ShadowPool(this.shadows3D,
+            new THREE.Mesh(shadowRightGeometry, this.materials[8]),
+            new THREE.Mesh(shadowAboveGeometry, this.materials[8]));
+
+        
+        
         // ----------------------------------------------------------------------
 
         this.bulletOrigin;
@@ -169,6 +179,7 @@ export default class ThreeManager {
         this.scene.add(this.floors3D);
         this.scene.add(this.borders3D);
         this.scene.add(this.abroad3D);
+        this.scene.add(this.shadows3D);
     }
 
     async initAsync(){
@@ -311,7 +322,7 @@ export default class ThreeManager {
         this.covers3D.add(p);
     }
 
-    createBrick(posX, posY, posZ, length){
+    createBrick(posX, posY, posZ, length, shadowRight, shadowAbove){
         let base = new THREE.Object3D();
         base.name = coordinatesToId(posX, posZ, length);
 
@@ -321,13 +332,27 @@ export default class ThreeManager {
         base.add(b1);
         
         this.bricks3D.add(base);
+
+        if (shadowAbove){
+            this.shadowPool.createAbove(posX, 0.001, posZ, this.config.viewSize.x);
+        }
+        if (shadowRight){
+            this.shadowPool.createRight(posX, 0.001, posZ, this.config.viewSize.x);
+        }
     }
 
-    createBlock(posX, posY, posZ, length){
+    createBlock(posX, posY, posZ, length, shadowRight, shadowAbove){
         let b = new THREE.Mesh(this.block.geometry, this.block.material);
         b.name = coordinatesToId(posX, posY, length);
         b.position.set(posX, posY, posZ);
         this.blocks3D.add(b);
+
+        if (shadowAbove){
+            this.shadowPool.createAbove(posX, 0.001, posZ, this.config.viewSize.x);
+        }
+        if (shadowRight){
+            this.shadowPool.createRight(posX, 0.001, posZ, this.config.viewSize.x);
+        }
     }
 
     createBullet(){
@@ -379,6 +404,7 @@ export default class ThreeManager {
                 this.config.viewSize.y / 2 + 1.5
             )
         );
+        
     }
 
     render(){
