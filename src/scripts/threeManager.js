@@ -63,6 +63,7 @@ export default class ThreeManager {
 
         this.planeGeometry = new THREE.PlaneGeometry(1, 1, 1);
         this.planeGeometry.rotateX((270 * Math.PI) / 180);
+        this.planeGeometry.translate(0.5,0,0.5);
 
         this.brick;
         this.gltfLoader = new GLTFLoader();
@@ -70,6 +71,7 @@ export default class ThreeManager {
             this.brick = gltf.scene.children[0];
             this.brick.material.map.minFilter = THREE.LinearMipMapLinearFilter;
             this.brick.material.map.magFilter = THREE.LinearFilter;
+            this.brick.geometry.translate(0.5, 0.7, 0.5);
             //this.brick.material.map.colorSpace = THREE.SRGBColorSpace;
         });
         this.block;
@@ -77,6 +79,7 @@ export default class ThreeManager {
             this.block = gltf.scene.children[0];
             this.block.material.map.minFilter = THREE.LinearMipMapLinearFilter;
             this.block.material.map.magFilter = THREE.LinearFilter;
+            this.block.geometry.translate(0.5, 0.7, 0.5);
         });
         this.border; // -> в Async
 
@@ -250,9 +253,9 @@ export default class ThreeManager {
         let abroadGeomnetries = [];
         let sizeMapX = this.config.viewSize.x/2;
         let sizeMapY = this.config.viewSize.y/2;
-        checki: for (let i = -width + this.config.grid / 2; i <= sizeMapY + 3; i++)
+        checki: for (let i = -width; i <= sizeMapY + 3; i++)
         {
-            checkj: for (let j = -width + this.config.grid / 2; j <= sizeMapX + width; j++) 
+            checkj: for (let j = -width; j <= sizeMapX + width; j++) 
             {
                 if (j >= -1 && j < sizeMapX + 1 && i >= -1 && i < sizeMapY + 1)
                 {
@@ -308,9 +311,9 @@ export default class ThreeManager {
         this.covers3D.add(p);
     }
 
-    createBrick(posX, posY, posZ, j, i, length){
+    createBrick(posX, posY, posZ, length){
         let base = new THREE.Object3D();
-        base.name = coordinatesToId(j, i, length);
+        base.name = coordinatesToId(posX, posZ, length);
 
         // Кирпич
         let b1 = new THREE.Mesh(this.brick.geometry, this.brick.material);
@@ -320,10 +323,9 @@ export default class ThreeManager {
         this.bricks3D.add(base);
     }
 
-    createBlock(posX, posY, posZ, j, i, length){
+    createBlock(posX, posY, posZ, length){
         let b = new THREE.Mesh(this.block.geometry, this.block.material);
-        b.scale.set(1, 1.4, 1);
-        b.name = coordinatesToId(j, i, length);
+        b.name = coordinatesToId(posX, posY, length);
         b.position.set(posX, posY, posZ);
         this.blocks3D.add(b);
     }

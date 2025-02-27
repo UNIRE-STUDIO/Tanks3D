@@ -98,38 +98,36 @@ export default class LevelManager {
         let floor1 = [];
         for (let i = 0; i < this.config.viewSize.y; i++) {
             for (let j = 0; j < this.config.viewSize.x; j++) { 
-                let posX = j * this.config.grid + 0.5;
-                let posZ = i * this.config.grid + 0.5;
                 if (this.currentMap[i][j] === 3) { // Вода
                     let waterDepth = 0.8;
-                    this.threeManager.createWater(posX, -waterDepth, posZ);
-                    if (this.currentMap[i + 1] === undefined || this.currentMap[i + 1][j] !== 3)    // Ниже блока воды
-                    {
-                        this.threeManager.createWallForWater(posX, -waterDepth/2, posZ + this.config.grid/2);
-                    }
+                    this.threeManager.createWater(j, -waterDepth, i);
+                    // if (this.currentMap[i + 1] === undefined || this.currentMap[i + 1][j] !== 3)    // Ниже блока воды
+                    // {
+                    //     this.threeManager.createWallForWater(j, 0, i + this.config.grid);
+                    // }
                     if (this.currentMap[i - 1] === undefined || this.currentMap[i - 1][j] !== 3)   // Выше блока воды
                     {
-                        this.threeManager.createWallForWater(posX, -waterDepth/2, posZ - this.config.grid/2);
+                        this.threeManager.createWallForWater(j, 0, i);
                     }
                     if (this.currentMap[i][j + 1] !== 3)                                           // Правее блока воды
                     {
-                        this.threeManager.createWallForWater(posX + this.config.grid/2, -waterDepth/2, posZ, false, true);
+                        this.threeManager.createWallForWater(j + this.config.grid, 0, i, false, true);
                     }
                     if (this.currentMap[i][j - 1] !== 3)                                           // Левее блока воды
                     {
-                        this.threeManager.createWallForWater(posX - this.config.grid/2, -waterDepth/2, posZ, true);
+                        this.threeManager.createWallForWater(j, 0, i + this.config.grid, true);
                     }
                     continue;
                 }
-                this.threeManager.createFloor(posX, 0, posZ); // Пол
+                this.threeManager.createFloor(j, 0, i); // Пол
                 if (this.currentMap[i][j] === 4) { // Маскировка
-                    this.threeManager.createCover(posX, 1.4, posZ);
+                    this.threeManager.createCover(j, 1.4, i);
                     continue;
                 }
-                if (this.currentMap[i][j] === 1) { 
-                    this.threeManager.createBrick(posX, 0.7, posZ, j, i, this.currentMap[0].length);
-                } else if (this.currentMap[i][j] === 2) {
-                    this.threeManager.createBlock(posX, 0.7, posZ, j, i, this.currentMap[0].length);
+                if (this.currentMap[i][j] === 1) { // Кирпич
+                    this.threeManager.createBrick(j, 0, i, this.currentMap[0].length);
+                } else if (this.currentMap[i][j] === 2) { // Блок
+                    this.threeManager.createBlock(j, 0, i, this.currentMap[0].length);
                 }
             }
         }

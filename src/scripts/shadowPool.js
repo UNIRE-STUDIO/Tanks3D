@@ -22,7 +22,7 @@ export class ShadowPool {
         let shadow = this.shadowsHor.splice(this.shadowsHor.length-1, 1);
         this.usedList.set(coordinatesToId(posX, posY, this.config.viewSize.x), shadow);
         
-        shadow.
+        shadow.position.set(posX, posY, posZ);
     }
 }
 
