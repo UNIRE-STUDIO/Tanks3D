@@ -128,13 +128,13 @@ export default class LevelManager {
                 }
                 if (this.currentMap[i][j] === 1) {                  // Кирпич
                     this.threeManager.createBrick(j, 0, i, this.currentMap[0].length,
-                        (toRight !== undefined && (toRight === 0 || toRight === 3)),   // Если нет препятствий справа то ставим тень
-                        ((i - 1) >= 0 && (above === 0 || above === 3))               // Если нет препятствий сверху то ставим тень
+                        (toRight !== undefined && (toRight === 0 || toRight === 3 || toRight === 4)),   // Если нет препятствий справа то ставим тень
+                        ((i - 1) >= 0 && (above === 0 || above === 3 || above === 4))               // Если нет препятствий сверху то ставим тень
                     );
                 } else if (this.currentMap[i][j] === 2) {           // Блок
                     this.threeManager.createBlock(j, 0, i, this.currentMap[0].length,
-                        (toRight !== undefined && (toRight === 0 || toRight === 3)),   // Если нет препятствий справа то ставим тень
-                        ((i - 1) >= 0 && (above === 0 || above === 3))               // Если нет препятствий сверху то ставим тень
+                        (toRight !== undefined && (toRight === 0 || toRight === 3 || toRight === 4)),   // Если нет препятствий справа то ставим тень
+                        ((i - 1) >= 0 && (above === 0 || above === 3 || above === 4))               // Если нет препятствий сверху то ставим тень
                     );
                 }
             }
