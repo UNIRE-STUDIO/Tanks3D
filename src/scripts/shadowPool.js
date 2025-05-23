@@ -1,11 +1,12 @@
 import {coordinatesToId, idToCoordinates} from "./general.js";
 
 export class ShadowPool {
-    constructor(container, modelRight, modelAbove) {
+    constructor(container, modelRight, modelAbove, viewSizeX) {
         this.container = container;
         this.modelAbove = modelAbove;
         this.modelRight = modelRight;
-        const pool_size = 55;
+        this.viewSizeX = viewSizeX;
+        const pool_size = 72;
         this.shadowsAbove = [];
         this.shadowsRight = [];
 
@@ -25,7 +26,10 @@ export class ShadowPool {
 
     
 
-    createAbove(posX, posY = 0.001, posZ, viewSizeX){
+    createAbove(posX, posY = 0.001, posZ){
+        if (this.usedAboveList.has(coordinatesToId(posX, posZ, this.viewSizeX))){
+            return;
+        }
         if (this.shadowsAbove.length === 0) {
             this.shadowsAbove.push(this.modelAbove.clone());
             this.shadowsAbove[0].visible = false;
@@ -33,12 +37,15 @@ export class ShadowPool {
             console.log("Добавляем дополнительный объект в ShadowPool");
         }
         let shadow = this.shadowsAbove.splice(this.shadowsAbove.length-1, 1)[0];
-        this.usedAboveList.set(coordinatesToId(posX, posY, viewSizeX), shadow);
+        this.usedAboveList.set(coordinatesToId(posX, posZ, this.viewSizeX), shadow);
         shadow.position.set(posX, posY, posZ);
         shadow.visible = true;
     }
 
-    createRight(posX, posY = 0.001, posZ, viewSizeX){
+    createRight(posX, posY = 0.001, posZ){
+        if (this.usedRightList.has(coordinatesToId(posX, posZ, this.viewSizeX))){
+            return;
+        }
         if (this.shadowsRight.length === 0) {
             this.shadowsRight.push(this.modelRight.clone());
             this.shadowsRight[0].visible = false;
@@ -46,9 +53,27 @@ export class ShadowPool {
             console.log("Добавляем дополнительный объект в ShadowPool");
         }
         let shadow = this.shadowsRight.splice(this.shadowsRight.length-1, 1)[0];
-        this.usedRightList.set(coordinatesToId(posX, posY, viewSizeX), shadow);
+        this.usedRightList.set(coordinatesToId(posX, posZ, this.viewSizeX), shadow);
         shadow.position.set(posX, posY, posZ);
         shadow.visible = true;
+    }
+
+    remove(posX, posZ){
+        let shadowRight = this.usedRightList.get(coordinatesToId(posX, posZ, this.viewSizeX));
+        let shadowAbove = this.usedAboveList.get(coordinatesToId(posX, posZ, this.viewSizeX));
+
+        if (shadowRight) {
+            this.usedRightList.delete(coordinatesToId(posX, posZ, this.viewSizeX));
+            shadowRight.visible = false;
+            this.shadowsRight.push(shadowRight);
+        }
+
+        if (shadowAbove) {
+            this.usedAboveList.delete(coordinatesToId(posX, posZ, this.viewSizeX));
+            shadowAbove.visible = false;
+            this.shadowsAbove.push(shadowAbove);
+        }
+        
     }
 }
 

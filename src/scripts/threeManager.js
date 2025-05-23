@@ -140,7 +140,8 @@ export default class ThreeManager {
 
         this.shadowPool = new ShadowPool(this.shadows3D,
             new THREE.Mesh(shadowRightGeometry, this.materials[8]),
-            new THREE.Mesh(shadowAboveGeometry, this.materials[8]));
+            new THREE.Mesh(shadowAboveGeometry, this.materials[8]),
+            this.config.viewSize.x);
 
         
         
@@ -322,7 +323,7 @@ export default class ThreeManager {
         this.covers3D.add(p);
     }
 
-    createBrick(posX, posY, posZ, length, shadowRight, shadowAbove){
+    createBrick(posX, posY, posZ, length){
         let base = new THREE.Object3D();
         base.name = coordinatesToId(posX, posZ, length);
 
@@ -332,31 +333,25 @@ export default class ThreeManager {
         base.add(b1);
         
         this.bricks3D.add(base);
-
-        if (shadowAbove){
-            this.shadowPool.createAbove(posX, 0.001, posZ, this.config.viewSize.x);
-        }
-        if (shadowRight){
-            this.shadowPool.createRight(posX, 0.001, posZ, this.config.viewSize.x);
-        }
     }
 
-    createBlock(posX, posY, posZ, length, shadowRight, shadowAbove){
+    createBlock(posX, posY, posZ, length){
         let b = new THREE.Mesh(this.block.geometry, this.block.material);
         b.name = coordinatesToId(posX, posY, length);
         b.position.set(posX, posY, posZ);
         this.blocks3D.add(b);
-
-        if (shadowAbove){
-            this.shadowPool.createAbove(posX, 0.001, posZ, this.config.viewSize.x);
-        }
-        if (shadowRight){
-            this.shadowPool.createRight(posX, 0.001, posZ, this.config.viewSize.x);
-        }
     }
 
     createBullet(){
         return new THREE.Mesh(this.bulletOrigin.geometry, this.bulletOrigin.material);
+    }
+
+    createShadowAbove(posX, posZ){
+        this.shadowPool.createAbove(posX, 0.001, posZ);
+    }
+
+    createShadowRight(posX, posZ){
+        this.shadowPool.createRight(posX, 0.001, posZ);
     }
 
     addToScene(){ // Работает при старте уровня
@@ -378,6 +373,7 @@ export default class ThreeManager {
         let nameObj = this.scene.getObjectByName(
             coordinatesToId(posX, posY, length)
         );
+        this.shadowPool.remove(posX, posY);
         this.scene.getObjectByName('bricks').remove(nameObj);
     }
 

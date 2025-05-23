@@ -127,15 +127,29 @@ export default class LevelManager {
                     continue;
                 }
                 if (this.currentMap[i][j] === 1) {                  // Кирпич
-                    this.threeManager.createBrick(j, 0, i, this.currentMap[0].length,
-                        (toRight !== undefined && (toRight === 0 || toRight === 3 || toRight === 4)),   // Если нет препятствий справа то ставим тень
-                        ((i - 1) >= 0 && (above === 0 || above === 3 || above === 4))               // Если нет препятствий сверху то ставим тень
-                    );
+                    this.threeManager.createBrick(j, 0, i, this.currentMap[0].length);
+
+                    // Если нет препятствий справа то ставим тень
+                    if (toRight !== undefined && (toRight === 0 || toRight === 3 || toRight === 4)) { 
+                        this.threeManager.createShadowRight(j, i);
+                    }
+
+                    // Если нет препятствий сверху то ставим тень
+                    if (above >= 0 && (above === 0 || above === 3 || above === 4)) { 
+                        this.threeManager.createShadowAbove(j, i);
+                    }
                 } else if (this.currentMap[i][j] === 2) {           // Блок
-                    this.threeManager.createBlock(j, 0, i, this.currentMap[0].length,
-                        (toRight !== undefined && (toRight === 0 || toRight === 3 || toRight === 4)),   // Если нет препятствий справа то ставим тень
-                        ((i - 1) >= 0 && (above === 0 || above === 3 || above === 4))               // Если нет препятствий сверху то ставим тень
-                    );
+                    this.threeManager.createBlock(j, 0, i, this.currentMap[0].length);
+
+                    // Если нет препятствий справа то ставим тень
+                    if (toRight !== undefined && (toRight === 0 || toRight === 3 || toRight === 4)) { 
+                        this.threeManager.createShadowRight(j, i);
+                    }
+
+                    // Если нет препятствий сверху то ставим тень
+                    if (above >= 0 && (above === 0 || above === 3 || above === 4)) { 
+                        this.threeManager.createShadowAbove(j, i);
+                    }
                 }
             }
         }
@@ -171,6 +185,19 @@ export default class LevelManager {
     removeTile(posX, posY) {
         this.currentMap[posY][posX] = 0;
         this.threeManager.removeBlock(posX, posY, this.currentMap[0].length)
+        
+        let toLeft = posX - 1;
+        // Если слева есть блок то создаём от него тень
+        if (toLeft === 1 || toLeft === 2) { 
+            this.threeManager.createShadowRight(posX, posY);
+        }
+
+        let below = posY + 1;
+
+        // Если снизу есть блок то создаём от него тень  остановился тут <-------------------
+        if (below === 1 || below === 2) { 
+            this.threeManager.createShadowAbove(posX, posY);
+        }
     }
 
     setPause() {
