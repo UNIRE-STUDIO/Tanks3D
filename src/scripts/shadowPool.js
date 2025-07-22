@@ -6,7 +6,7 @@ export class ShadowPool {
         this.modelAbove = modelAbove;
         this.modelRight = modelRight;
         this.viewSizeX = viewSizeX;
-        const pool_size = 72;
+        const pool_size = 110;
         this.shadowsAbove = [];
         this.shadowsRight = [];
 

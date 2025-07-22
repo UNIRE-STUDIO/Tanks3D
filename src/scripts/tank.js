@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import { BuildBlocks as BB } from './config';
 
 export default class Tank {
     constructor(config, spawnBullet, threeManager) {
@@ -75,8 +76,8 @@ export default class Tank {
         else if (this.moveX != 0) extraY += 1
 
         return (
-            (this.currentMap[tileY][tileX] !== 0 && this.currentMap[tileY][tileX] !== 4) ||
-            (this.currentMap[extraY][extraX] !== 0 && this.currentMap[extraY][extraX] !== 4)
+            (this.currentMap[tileY][tileX] !== BB.FLOOR && this.currentMap[tileY][tileX] !== BB.COVER) ||
+            (this.currentMap[extraY][extraX] !== BB.FLOOR && this.currentMap[extraY][extraX] !== BB.COVER)
         )
     }
 

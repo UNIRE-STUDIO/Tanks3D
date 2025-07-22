@@ -74,12 +74,12 @@ export default class ThreeManager {
             this.brick.geometry.translate(0.5, 0.7, 0.5);
             //this.brick.material.map.colorSpace = THREE.SRGBColorSpace;
         });
-        this.block;
-        this.gltfLoader.load("/models/block.glb", (gltf) => {
-            this.block = gltf.scene.children[0];
-            this.block.material.map.minFilter = THREE.LinearMipMapLinearFilter;
-            this.block.material.map.magFilter = THREE.LinearFilter;
-            this.block.geometry.translate(0.5, 0.7, 0.5);
+        this.stone;
+        this.gltfLoader.load("/models/stone.glb", (gltf) => {
+            this.stone = gltf.scene.children[0];
+            this.stone.material.map.minFilter = THREE.LinearMipMapLinearFilter;
+            this.stone.material.map.magFilter = THREE.LinearFilter;
+            this.stone.geometry.translate(0.5, 0.7, 0.5);
         });
         this.border; // -> в Async
 
@@ -153,7 +153,7 @@ export default class ThreeManager {
         this.npc1TankOrigin;
 
         this.covers3D = new THREE.Object3D();
-        this.blocks3D = new THREE.Object3D();
+        this.stones3D = new THREE.Object3D();
         this.bricks3D = new THREE.Object3D();
         this.bricks3D.name = 'bricks';
         
@@ -175,7 +175,7 @@ export default class ThreeManager {
         this.scene.add(this.wallsForWater3D);
         this.scene.add(this.waters3D);
         this.scene.add(this.covers3D);
-        this.scene.add(this.blocks3D);
+        this.scene.add(this.stones3D);
         this.scene.add(this.bricks3D);
         this.scene.add(this.floors3D);
         this.scene.add(this.borders3D);
@@ -200,10 +200,6 @@ export default class ThreeManager {
         this.border = (await this.gltfLoader.loadAsync('/models/border.glb')).scene.children[0];
         this.border.material.map.minFilter = THREE.LinearMipMapLinearFilter;
         this.border.material.map.magFilter = THREE.LinearFilter;
-
-        this.createBorders();
-        
-        this.createAbroad();
     }
     
 
@@ -227,61 +223,6 @@ export default class ThreeManager {
         this.camera.updateProjectionMatrix();
         this.renderer.setSize(window.innerWidth, window.innerHeight);
         this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    }
-
-    createBorders()
-    {
-        let borders = [];
-        function create(posX, posY, posZ, clone){
-            clone.translate(posX, posY, posZ); // Убавляем/прибавляем половину сетки так-как блок 2на2
-            borders.push(clone);
-        }
-        let size = this.config.grid2;
-        let halfSize = this.config.grid;
-        // Верх
-        for (let i = -halfSize; i < this.config.viewSize.x + size; i=i+size) {
-            create(i, 0.7, -halfSize, this.border.geometry.clone());
-        }
-        // Лево
-        for (let i = halfSize; i < this.config.viewSize.y + size; i=i+size) {
-            create(-halfSize, 0.7, i, this.border.geometry.clone());
-        }
-        // Низ
-        for (let i = halfSize; i < this.config.viewSize.x + size; i=i+size) {
-            create(i, 0.7, this.config.viewSize.y + halfSize, this.border.geometry.clone());
-        }
-        // Право
-        for (let i = halfSize; i < this.config.viewSize.y; i=i+size) {
-            create(this.config.viewSize.x + halfSize, 0.7, i, this.border.geometry.clone());
-        }
-
-        let bordersMerge = BufferGeometryUtils.mergeGeometries(borders);
-        this.borders3D.add(new THREE.Mesh(bordersMerge, this.border.material));
-    }
-
-    createAbroad()
-    {
-        let width = 10; // Рамка вокруг карты
-        let abroadGeomnetries = [];
-        let sizeMapX = this.config.viewSize.x/2;
-        let sizeMapY = this.config.viewSize.y/2;
-        checki: for (let i = -width; i <= sizeMapY + 3; i++)
-        {
-            checkj: for (let j = -width; j <= sizeMapX + width; j++) 
-            {
-                if (j >= -1 && j < sizeMapX + 1 && i >= -1 && i < sizeMapY + 1)
-                {
-                    continue checkj;
-                } 
-                let p = this.planeGeometry.clone();    // Плоскости
-                p.translate(j, 0, i);
-                p.scale(2, 1, 2);
-                abroadGeomnetries.push(p);
-            }
-        }
-
-        let abroadsMerge = BufferGeometryUtils.mergeGeometries([...abroadGeomnetries]);
-        this.abroad3D.add(new THREE.Mesh(abroadsMerge, this.materials[7]));
     }
 
     createPlayerTank()
@@ -335,11 +276,11 @@ export default class ThreeManager {
         this.bricks3D.add(base);
     }
 
-    createBlock(posX, posY, posZ, length){
-        let b = new THREE.Mesh(this.block.geometry, this.block.material);
+    createStone(posX, posY, posZ, length){
+        let b = new THREE.Mesh(this.stone.geometry, this.stone.material);
         b.name = coordinatesToId(posX, posY, length);
         b.position.set(posX, posY, posZ);
-        this.blocks3D.add(b);
+        this.stones3D.add(b);
     }
 
     createBullet(){
@@ -380,7 +321,7 @@ export default class ThreeManager {
     reset(){
         this.waters3D.clear();
         this.covers3D.clear();
-        this.blocks3D.clear();
+        this.stones3D.clear();
         this.bricks3D.clear();
         this.floors3D.clear();
     }

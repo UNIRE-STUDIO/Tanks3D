@@ -1,6 +1,7 @@
 import { randomRange, coordinatesToId, idToCoordinates } from "./general.js";
 import Tank from "./tank.js";
 import Timer from "./timer.js";
+import { BuildBlocks as BB } from "./config.js";
 
 export default class NpcTank extends Tank {
     constructor(config, spawnBullet, players, deadNpcEvent, id) {
@@ -132,15 +133,15 @@ export default class NpcTank extends Tank {
             if (this.currentMap[rightY] !== undefined  // поворот направо
                 && this.currentMap[rightY][rightX] !== undefined
                 && this.currentMap[rightY + 1] !== undefined
-                && (this.currentMap[rightY][rightX] === 0 || this.currentMap[rightY][rightX] === 4)
-                && (this.currentMap[rightY + 1][rightX] === 0 || this.currentMap[rightY + 1][rightX] === 4)) {
+                && (this.currentMap[rightY][rightX] === BB.FLOOR || this.currentMap[rightY][rightX] === BB.COVER)
+                && (this.currentMap[rightY + 1][rightX] === BB.FLOOR || this.currentMap[rightY + 1][rightX] === BB.COVER)) {
                 dirs.push([1, 0]);
             }
             if (this.currentMap[leftY] !== undefined // поворот налево
                 && this.currentMap[leftY][leftX] !== undefined
                 && this.currentMap[leftY + 1] !== undefined
-                && (this.currentMap[leftY][leftX] === 0 || this.currentMap[leftY][leftX] === 4)
-                && (this.currentMap[leftY + 1][leftX] === 0 || this.currentMap[leftY + 1][leftX] === 4)) {
+                && (this.currentMap[leftY][leftX] === BB.FLOOR || this.currentMap[leftY][leftX] === BB.COVER)
+                && (this.currentMap[leftY + 1][leftX] === BB.FLOOR || this.currentMap[leftY + 1][leftX] === BB.COVER)) {
                 dirs.push([-1, 0]);
             }
         }
@@ -154,15 +155,15 @@ export default class NpcTank extends Tank {
             if (this.currentMap[downY] !== undefined  // поворот вниз
                 && this.currentMap[downY][downX] !== undefined
                 && this.currentMap[downY][downX + 1] !== undefined
-                && (this.currentMap[downY][downX] === 0 || this.currentMap[downY][downX] === 4)
-                && (this.currentMap[downY][downX + 1] === 0 || this.currentMap[downY][downX + 1] === 4)) {
+                && (this.currentMap[downY][downX] === BB.FLOOR || this.currentMap[downY][downX] === BB.COVER)
+                && (this.currentMap[downY][downX + 1] === BB.FLOOR || this.currentMap[downY][downX + 1] === BB.COVER)) {
                 dirs.push([0, 1]);
             }
             if (this.currentMap[upY] !== undefined  // поворот вверх
                 && this.currentMap[upY][upX] !== undefined
                 && this.currentMap[upY][upX + 1] !== undefined
-                && (this.currentMap[upY][upY] === 0 || this.currentMap[upY][upY] === 4)
-                && (this.currentMap[upY][upY + 1] === 0 || this.currentMap[upY][upY + 1] === 4)) {
+                && (this.currentMap[upY][upY] === BB.FLOOR || this.currentMap[upY][upY] === BB.COVER)
+                && (this.currentMap[upY][upY + 1] === BB.FLOOR || this.currentMap[upY][upY + 1] === BB.COVER)) {
                 dirs.push([0, -1]);
             }
         }
@@ -425,10 +426,10 @@ export default class NpcTank extends Tank {
                 && this.currentMap[y][x] !== undefined
                 && this.currentMap[y + 1] !== undefined
                 && this.currentMap[y + 1][x + 1] !== undefined
-                && (this.currentMap[y][x] === 0 || this.currentMap[y][x] == 4) // Можно изменять карту саму карту для NPC 4 = 0
-                && (this.currentMap[y][x + 1] === 0 || this.currentMap[y][x + 1] === 4)
-                && (this.currentMap[y + 1][x] === 0 || this.currentMap[y + 1][x] === 4)
-                && (this.currentMap[y + 1][x + 1] === 0 || this.currentMap[y + 1][x + 1] === 4)
+                && (this.currentMap[y][x] === BB.FLOOR || this.currentMap[y][x] == BB.COVER) // Можно изменять карту саму карту для NPC 4 = 0
+                && (this.currentMap[y][x + 1] === BB.FLOOR || this.currentMap[y][x + 1] === BB.COVER)
+                && (this.currentMap[y + 1][x] === BB.FLOOR || this.currentMap[y + 1][x] === BB.COVER)
+                && (this.currentMap[y + 1][x + 1] === BB.FLOOR || this.currentMap[y + 1][x + 1] === BB.COVER)
                 && !this.visited.includes(getId)) {
                 if (!this.stack.includes(getId)) // Если клетка НЕ находится в очереди ставим её в приоритет
                 {
@@ -495,10 +496,10 @@ export default class NpcTank extends Tank {
                     && this.currentMap[posY + 1] !== undefined
                     && this.currentMap[posY][posX] !== undefined
                     && this.currentMap[posY][posX + 1] !== undefined
-                    && (this.currentMap[posY][posX] === 0 || this.currentMap[posY][posX] === 4)
-                    && (this.currentMap[posY][posX + 1] === 0 || this.currentMap[posY][posX + 1] === 4)
-                    && (this.currentMap[posY + 1][posX] === 0 || this.currentMap[posY + 1][posX] === 4)
-                    && (this.currentMap[posY + 1][posX + 1] === 0 || this.currentMap[posY + 1][posX + 1] === 4)) {
+                    && (this.currentMap[posY][posX] === BB.FLOOR || this.currentMap[posY][posX] === BB.COVER)
+                    && (this.currentMap[posY][posX + 1] === BB.FLOOR || this.currentMap[posY][posX + 1] === BB.COVER)
+                    && (this.currentMap[posY + 1][posX] === BB.FLOOR || this.currentMap[posY + 1][posX] === BB.COVER)
+                    && (this.currentMap[posY + 1][posX + 1] === BB.FLOOR || this.currentMap[posY + 1][posX + 1] === BB.COVER)) {
                     dirs.push([posX, posY]);
                 }
             }

@@ -1,5 +1,6 @@
 import { drawImage, drawRect, isInside } from "./general.js";
 import * as THREE from "three";
+import { BuildBlocks as BB } from "./config.js";
 
 export default class Bullet {
     constructor(config, removeTile, destructionOfTheBaseEvent, id, bangCreateEvent, uiFields, threeManager, model) 
@@ -71,25 +72,28 @@ export default class Bullet {
 
         let isCollision = false;
         let tile = this.currentMap[tileY][tileX];
-        if (tile === 1 || tile === 2) {
-            // Проверяем основным датчиком
-            if (tile === 1) this.removeTile(tileX, tileY);
+        let leftTile = this.currentMap[tileY][tileX - 1];
+        let aboveTile = this.currentMap[tileY - 1][tileX];  // <----- Надо использовать эти переменные, что бы оптимизировать тут всё
+        if (tile === BB.BRICK) {
+            this.removeTile(tileX, tileY);
             isCollision = true;
         }
-        if (this.dirY != 0 && this.currentMap[0][tileX - 1] !== undefined && (this.currentMap[tileY][tileX - 1] === 1 || this.currentMap[tileY][tileX - 1] === 2)) 
+        if (tile === BB.STONE){
+            isCollision = true;
+        }
+        if (this.dirY != 0 && this.currentMap[0][tileX - 1] !== undefined && (leftTile === BB.BRICK || leftTile === BB.STONE)) 
         {
             // Проверяем соседний блок по горизонтале
-            if (this.currentMap[tileY][tileX - 1] === 1)
-                this.removeTile(tileX - 1, tileY);
+            if (leftTile === 1) this.removeTile(tileX - 1, tileY);
             isCollision = true;
         } else if (
             this.dirX != 0 &&
             this.currentMap[tileY - 1] !== undefined &&
-            (this.currentMap[tileY - 1][tileX] === 1 ||
-                this.currentMap[tileY - 1][tileX] === 2)
+            (this.currentMap[tileY - 1][tileX] === BB.BRICK ||
+                this.currentMap[tileY - 1][tileX] === BB.STONE)
         ) {
             // Проверяем соседний блок по вертикали
-            if (this.currentMap[tileY - 1][tileX] === 1)
+            if (this.currentMap[tileY - 1][tileX] === BB.BRICK)
                 this.removeTile(tileX, tileY - 1);
             isCollision = true;
         }

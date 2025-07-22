@@ -5,6 +5,7 @@ import levels from "./levels.json";
 import NpcPool from "./npcPool.js";
 import PlayerTank from "./playerTank.js";
 //import BangPool from "./bangPool.js";
+import { BuildBlocks as BB} from "./config.js";
 
 export default class LevelManager {
     constructor(input, config, uiFields) {
@@ -100,54 +101,54 @@ export default class LevelManager {
             for (let j = 0; j < this.config.viewSize.x; j++) { 
                 let toRight = this.currentMap[i][j + 1];
                 let above = i - 1 < 0 ? -1 : this.currentMap[i - 1][j];
-                if (this.currentMap[i][j] === 3) { // Вода
+                if (this.currentMap[i][j] === BB.WATER) { // Вода
                     let waterDepth = 0.8;
                     this.threeManager.createWater(j, -waterDepth, i);
                     // if (this.currentMap[i + 1] === undefined || this.currentMap[i + 1][j] !== 3)    // Ниже блока воды
                     // {
                     //     this.threeManager.createWallForWater(j, 0, i + this.config.grid);
                     // }
-                    if ((i - 1) < 0 || above !== 3)                                                    // Выше блока воды
+                    if ((i - 1) < 0 || above !== BB.WATER)                                                    // Выше блока воды
                     {
                         this.threeManager.createWallForWater(j, 0, i);
                     }
-                    if (toRight !== 3)                                                                      // Правее блока воды
+                    if (toRight !== BB.WATER)                                                                      // Правее блока воды
                     {
                         this.threeManager.createWallForWater(j + this.config.grid, 0, i, false, true);
                     }
-                    if (j - 1 < 0 || this.currentMap[i][j - 1] !== 3)                                           // Левее блока воды
+                    if (j - 1 < 0 || this.currentMap[i][j - 1] !== BB.WATER)                                           // Левее блока воды
                     {
                         this.threeManager.createWallForWater(j, 0, i + this.config.grid, true);
                     }
                     continue;
                 }
                 this.threeManager.createFloor(j, 0, i);             // Пол
-                if (this.currentMap[i][j] === 4) {                  // Маскировка
+                if (this.currentMap[i][j] === BB.COVER) {                  // Маскировка
                     this.threeManager.createCover(j, 1.4, i);
                     continue;
                 }
-                if (this.currentMap[i][j] === 1) {                  // Кирпич
+                if (this.currentMap[i][j] === BB.BRICK) {                  // Кирпич
                     this.threeManager.createBrick(j, 0, i, this.currentMap[0].length);
 
                     // Если нет препятствий справа то ставим тень
-                    if (toRight !== undefined && (toRight === 0 || toRight === 3 || toRight === 4)) { 
+                    if (toRight !== undefined && (toRight === BB.FLOOR || toRight === BB.WATER || toRight === BB.COVER)) { 
                         this.threeManager.createShadowRight(j, i);
                     }
 
                     // Если нет препятствий сверху то ставим тень
-                    if (above >= 0 && (above === 0 || above === 3 || above === 4)) { 
+                    if (above === BB.FLOOR || above === BB.WATER || above === BB.COVER) { 
                         this.threeManager.createShadowAbove(j, i);
                     }
                 } else if (this.currentMap[i][j] === 2) {           // Блок
-                    this.threeManager.createBlock(j, 0, i, this.currentMap[0].length);
+                    this.threeManager.createStone(j, 0, i, this.currentMap[0].length);
 
                     // Если нет препятствий справа то ставим тень
-                    if (toRight !== undefined && (toRight === 0 || toRight === 3 || toRight === 4)) { 
+                    if (toRight !== undefined && (toRight === BB.FLOOR || toRight === BB.WATER || toRight === BB.COVER)) { 
                         this.threeManager.createShadowRight(j, i);
                     }
 
                     // Если нет препятствий сверху то ставим тень
-                    if (above >= 0 && (above === 0 || above === 3 || above === 4)) { 
+                    if (above === BB.FLOOR || above === BB.WATER || above === BB.COVER) { 
                         this.threeManager.createShadowAbove(j, i);
                     }
                 }
@@ -186,17 +187,18 @@ export default class LevelManager {
         this.currentMap[posY][posX] = 0;
         this.threeManager.removeBlock(posX, posY, this.currentMap[0].length)
         
-        let toLeft = posX - 1;
+        let toLeft = this.currentMap[posY][posX - 1];
+        
         // Если слева есть блок то создаём от него тень
-        if (toLeft === 1 || toLeft === 2) { 
-            this.threeManager.createShadowRight(posX, posY);
+        if (toLeft === BB.BRICK || toLeft === BB.STONE) { 
+            this.threeManager.createShadowRight(posX - 1, posY);
         }
 
-        let below = posY + 1;
+        let below = this.currentMap[posY + 1] === undefined ? undefined : this.currentMap[posY + 1][posX];
 
         // Если снизу есть блок то создаём от него тень  остановился тут <-------------------
-        if (below === 1 || below === 2) { 
-            this.threeManager.createShadowAbove(posX, posY);
+        if (below === BB.BRICK || below === BB.STONE) { 
+            this.threeManager.createShadowAbove(posX, posY + 1);
         }
     }
 

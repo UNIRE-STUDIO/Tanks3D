@@ -1,3 +1,8 @@
 this.model.visible = false; // Отключение видимости
 
 git mv -f src/scripts/ThreeManager.js src/scripts/threeManager.js  
+
+Задания:
+22.07.2025
+- Нужно построить карты вместе с границами и фоном
+- Сделать два массива (карты) для отрисовки и для просчёта
