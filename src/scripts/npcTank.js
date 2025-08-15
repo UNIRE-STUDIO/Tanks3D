@@ -1,7 +1,7 @@
 import { randomRange, coordinatesToId, idToCoordinates } from "./general.js";
 import Tank from "./tank.js";
 import Timer from "./timer.js";
-import { BuildBlocks as BB } from "./config.js";
+import { VisualBlocks as BB } from "./config.js";
 
 export default class NpcTank extends Tank {
     constructor(config, spawnBullet, players, deadNpcEvent, id) {
@@ -28,9 +28,9 @@ export default class NpcTank extends Tank {
         this.currentPosOnPath = 0; // Позиция на пути к цели
 
         this.sides = [[-2, 0], // слева
-                      [0, -2], // сверху
-                      [2, 0],  // справа
-                      [0, 2]]; // снизу
+        [0, -2], // сверху
+        [2, 0],  // справа
+        [0, 2]]; // снизу
 
         this.timerDrivingMode = new Timer(this.timeOfModeChange, this.changeMode.bind(this));
 
@@ -231,10 +231,9 @@ export default class NpcTank extends Tank {
         this.setDirection(dirs[rand][0], dirs[rand][1]);
     }
 
-    checkCollisionWithPlayers()
-    {
+    checkCollisionWithPlayers() {
         return this.players[0].isUse && this.checkCollisionWithObject(this.players[0].position)
-        || (this.playersMode === 1 && this.players[1].isUse && this.checkCollisionWithObject(this.players[1].position))
+            || (this.playersMode === 1 && this.players[1].isUse && this.checkCollisionWithObject(this.players[1].position))
     }
 
     randomMove(lag) {
@@ -278,10 +277,8 @@ export default class NpcTank extends Tank {
 
         if (Math.floor((this.position.x - incrementX) / this.config.grid2) != Math.floor(this.position.x / this.config.grid2)
             || Math.floor((this.position.y - incrementY) / this.config.grid2) != Math.floor(this.position.y / this.config.grid2)
-            && !this.isBlockTurn) 
-        {
-            if (randomRange(0, 8) === 0) 
-            {
+            && !this.isBlockTurn) {
+            if (randomRange(0, 8) === 0) {
                 this.tryTurnAnywhere();
             }
             else {
@@ -298,7 +295,7 @@ export default class NpcTank extends Tank {
     }
 
     movingTowardsTheGoal(lag) {
-        let accuracy = this.config.grid/2; // Точность
+        let accuracy = this.config.grid / 2; // Точность
         let posOnPath = idToCoordinates(this.path[this.currentPosOnPath], this.currentMap[0].length);
         posOnPath.x *= this.config.grid;
         posOnPath.y *= this.config.grid;
@@ -307,16 +304,14 @@ export default class NpcTank extends Tank {
         let newDirX = distX > 0 ? 1 : (distX < 0 ? -1 : 0);
         let newDirY = distY > 0 ? 1 : (distY < 0 ? -1 : 0);
 
-        if (this.dirX != this.newDirX || this.dirY != this.newDirY) 
-        {
+        if (this.dirX != this.newDirX || this.dirY != this.newDirY) {
             this.setDirection(newDirX, newDirY);
         }
 
         let incrementX = this.dirX * lag * this.speed;
         let incrementY = this.dirY * lag * this.speed;
 
-        if (this.sortOtherTanks()) 
-        {
+        if (this.sortOtherTanks()) {
             this.timerOfJamming += lag;
             if (this.timerOfJamming >= 1000) // Если мы застряли дольше определенного времени
             {
@@ -326,8 +321,7 @@ export default class NpcTank extends Tank {
             return;
         }
 
-        if (this.checkCollisionWithPlayers()) 
-        {
+        if (this.checkCollisionWithPlayers()) {
             this.timerOfJamming += lag;
             if (this.timerOfJamming >= 1500) this.tryShoot(); // Если мы застряли дольше определенного времени
             if (this.timerOfJamming >= 2000) // Если мы застряли дольше определенного времени
@@ -514,12 +508,10 @@ export default class NpcTank extends Tank {
         if (!this.isUse || this.isDead) return;
         this.moveX = this.dirX;
         this.moveY = this.dirY;
-        if (this.drivingMode === 0) 
-        {
+        if (this.drivingMode === 0) {
             this.randomMove(lag);
         }
-        else 
-        {
+        else {
             this.movingTowardsTheGoal(lag);
         }
         super.update(lag);

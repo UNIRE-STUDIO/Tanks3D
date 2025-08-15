@@ -1,10 +1,9 @@
 import { drawImage, drawRect, isInside } from "./general.js";
 import * as THREE from "three";
-import { BuildBlocks as BB } from "./config.js";
+import { VisualBlocks as BB } from "./config.js";
 
 export default class Bullet {
-    constructor(config, removeTile, destructionOfTheBaseEvent, id, bangCreateEvent, uiFields, threeManager, model) 
-    {
+    constructor(config, removeTile, destructionOfTheBaseEvent, id, bangCreateEvent, uiFields, threeManager, model) {
         this.config = config;
         this.threeManager = threeManager;
         this.posX = 0;
@@ -78,11 +77,10 @@ export default class Bullet {
             this.removeTile(tileX, tileY);
             isCollision = true;
         }
-        if (tile === BB.STONE){
+        if (tile === BB.STONE) {
             isCollision = true;
         }
-        if (this.dirY != 0 && this.currentMap[0][tileX - 1] !== undefined && (leftTile === BB.BRICK || leftTile === BB.STONE)) 
-        {
+        if (this.dirY != 0 && this.currentMap[0][tileX - 1] !== undefined && (leftTile === BB.BRICK || leftTile === BB.STONE)) {
             // Проверяем соседний блок по горизонтале
             if (leftTile === 1) this.removeTile(tileX - 1, tileY);
             isCollision = true;
@@ -156,8 +154,7 @@ export default class Bullet {
         this.model.visible = false;
     }
 
-    checkerUpdatePos()
-    {
+    checkerUpdatePos() {
         let halfSize = this.size / 2;
         let dirAbsX = Math.abs(this.dirX);
         let dirAbsY = Math.abs(this.dirY);
@@ -167,7 +164,7 @@ export default class Bullet {
         //   *        *     ##   /\   
         // ====>    <====  *##  *##
         //                  \/   ##
-        
+
         this.checkerExtraX = this.checkerX + this.size * dirAbsY;
         this.checkerExtraY = this.checkerY + this.size * dirAbsX;
     }
@@ -185,9 +182,8 @@ export default class Bullet {
             return;
         }
 
-        if (isInside({ x: this.checkerX, y: this.checkerY}, { x: this.basePos.x, y: this.basePos.y }, this.config.grid2, this.config.grid2) ||
-            isInside({ x: this.checkerExtraX, y: this.checkerExtraY },{ x: this.basePos.x, y: this.basePos.y }, this.config.grid2, this.config.grid2)) 
-        {
+        if (isInside({ x: this.checkerX, y: this.checkerY }, { x: this.basePos.x, y: this.basePos.y }, this.config.grid2, this.config.grid2) ||
+            isInside({ x: this.checkerExtraX, y: this.checkerExtraY }, { x: this.basePos.x, y: this.basePos.y }, this.config.grid2, this.config.grid2)) {
             this.destroy();
             this.destructionOfTheBaseEvent();
             return;

@@ -5,7 +5,7 @@ import levels from "./levels.json";
 import NpcPool from "./npcPool.js";
 import PlayerTank from "./playerTank.js";
 //import BangPool from "./bangPool.js";
-import { BuildBlocks as BB} from "./config.js";
+import { VisualBlocks as BB } from "./config.js";
 
 export default class LevelManager {
     constructor(input, config, uiFields) {
@@ -23,7 +23,8 @@ export default class LevelManager {
         this.saveManager;
 
         this.uiFields.currentLevel = 0;
-        this.currentMap = null;
+        this.physicalCurrentMap = null;
+        this.visualCurrentMap = null;
         this.config = config;
         this.threeManager = new ThreeManager(uiFields, config);
         this.initAsync(input);
@@ -31,8 +32,7 @@ export default class LevelManager {
         this.timerStart;
     }
 
-    async initAsync(input)
-    {
+    async initAsync(input) {
         await this.threeManager.initAsync();
         //this.bangPool = new BangPool(this.config)
         // this.bulletPool = new BulletPool(
@@ -66,7 +66,7 @@ export default class LevelManager {
             1,
             this.threeManager,
             this.threeManager.player2TankMesh);
-            
+
         this.npcPool = new NpcPool(this.config, this.bulletPool.create.bind(this.bulletPool), this.players, this.win.bind(this), this.uiFields, this.threeManager);
 
         this.players[0].otherTanks.push(...this.npcPool.tanks);
@@ -90,18 +90,21 @@ export default class LevelManager {
         this.uiFields.playersMode = playersMode;
         this.uiFields.reset();
         this.reset();
-        this.currentMap = [];
+        this.physicalCurrentMap = [];
+        this.visualCurrentMap = [];
 
         // Поскольку Object.assign делает только поверхностную копию мы присваиваем каждую полосу отдельно
         for (let i = 0; i < levels[this.uiFields.currentLevel].map.length; i++) {
-            this.currentMap.push(levels[this.uiFields.currentLevel].map[i].slice());
+            this.visualCurrentMap.push(levels[this.uiFields.currentLevel].map[i].slice());
+            for (let j = 0; j < levels[this.uiFields.currentLevel].map[i].length; j++) {
+                // Создать физическую карту на основе визуальной
+            }
         }
-        let floor1 = [];
         for (let i = 0; i < this.config.viewSize.y; i++) {
-            for (let j = 0; j < this.config.viewSize.x; j++) { 
-                let toRight = this.currentMap[i][j + 1];
-                let above = i - 1 < 0 ? -1 : this.currentMap[i - 1][j];
-                if (this.currentMap[i][j] === BB.WATER) { // Вода
+            for (let j = 0; j < this.config.viewSize.x; j++) {
+                let toRight = this.physicalCurrentMap[i][j + 1];
+                let above = i - 1 < 0 ? -1 : this.physicalCurrentMap[i - 1][j];
+                if (this.physicalCurrentMap[i][j] === BB.WATER) { // Вода
                     let waterDepth = 0.8;
                     this.threeManager.createWater(j, -waterDepth, i);
                     // if (this.currentMap[i + 1] === undefined || this.currentMap[i + 1][j] !== 3)    // Ниже блока воды
@@ -116,39 +119,39 @@ export default class LevelManager {
                     {
                         this.threeManager.createWallForWater(j + this.config.grid, 0, i, false, true);
                     }
-                    if (j - 1 < 0 || this.currentMap[i][j - 1] !== BB.WATER)                                           // Левее блока воды
+                    if (j - 1 < 0 || this.physicalCurrentMap[i][j - 1] !== BB.WATER)                                           // Левее блока воды
                     {
                         this.threeManager.createWallForWater(j, 0, i + this.config.grid, true);
                     }
                     continue;
                 }
-                this.threeManager.createFloor(j, 0, i);             // Пол
-                if (this.currentMap[i][j] === BB.COVER) {                  // Маскировка
+                this.threeManager.createFloor(j, 0, i);                    // Пол
+                if (this.physicalCurrentMap[i][j] === BB.COVER) {                  // Маскировка
                     this.threeManager.createCover(j, 1.4, i);
                     continue;
                 }
-                if (this.currentMap[i][j] === BB.BRICK) {                  // Кирпич
-                    this.threeManager.createBrick(j, 0, i, this.currentMap[0].length);
+                if (this.physicalCurrentMap[i][j] === BB.BRICK) {                  // Кирпич
+                    this.threeManager.createBrick(j, 0, i, this.physicalCurrentMap[0].length);
 
                     // Если нет препятствий справа то ставим тень
-                    if (toRight !== undefined && (toRight === BB.FLOOR || toRight === BB.WATER || toRight === BB.COVER)) { 
+                    if (toRight !== undefined && (toRight === BB.FLOOR || toRight === BB.WATER || toRight === BB.COVER)) {
                         this.threeManager.createShadowRight(j, i);
                     }
 
                     // Если нет препятствий сверху то ставим тень
-                    if (above === BB.FLOOR || above === BB.WATER || above === BB.COVER) { 
+                    if (above === BB.FLOOR || above === BB.WATER || above === BB.COVER) {
                         this.threeManager.createShadowAbove(j, i);
                     }
-                } else if (this.currentMap[i][j] === 2) {           // Блок
-                    this.threeManager.createStone(j, 0, i, this.currentMap[0].length);
+                } else if (this.physicalCurrentMap[i][j] === 2) {           // Блок
+                    this.threeManager.createStone(j, 0, i, this.physicalCurrentMap[0].length);
 
                     // Если нет препятствий справа то ставим тень
-                    if (toRight !== undefined && (toRight === BB.FLOOR || toRight === BB.WATER || toRight === BB.COVER)) { 
+                    if (toRight !== undefined && (toRight === BB.FLOOR || toRight === BB.WATER || toRight === BB.COVER)) {
                         this.threeManager.createShadowRight(j, i);
                     }
 
                     // Если нет препятствий сверху то ставим тень
-                    if (above === BB.FLOOR || above === BB.WATER || above === BB.COVER) { 
+                    if (above === BB.FLOOR || above === BB.WATER || above === BB.COVER) {
                         this.threeManager.createShadowAbove(j, i);
                     }
                 }
@@ -166,46 +169,45 @@ export default class LevelManager {
             x: levels[this.uiFields.currentLevel].basePos.x * this.config.grid,
             y: levels[this.uiFields.currentLevel].basePos.y * this.config.grid,
         };
-        this.bulletPool.init(this.currentMap, base);
+        this.bulletPool.init(this.physicalCurrentMap, base);
         this.isPause = false;
-        this.players[0].create(this.currentMap, levels[this.uiFields.currentLevel].playerSpawnsPos[0]);
+        this.players[0].create(this.physicalCurrentMap, levels[this.uiFields.currentLevel].playerSpawnsPos[0]);
 
         this.players[0].setOtherCollisionObject(base);
         this.players[0].isPause = false;
         if (this.uiFields.playersMode === 1) {
             this.players[1].create(
-                this.currentMap,
+                this.physicalCurrentMap,
                 levels[this.uiFields.currentLevel].playerSpawnsPos[1]);
             this.players[1].setOtherCollisionObject(base);
             this.players[1].isPause = false;
         }
-        this.npcPool.init(this.currentMap, base);
+        this.npcPool.init(this.physicalCurrentMap, base);
         this.isPlay = true; // Для того что-бы коректно ставить на паузу до появления игроков
     }
 
     removeTile(posX, posY) {
-        this.currentMap[posY][posX] = 0;
-        this.threeManager.removeBlock(posX, posY, this.currentMap[0].length)
-        
-        let toLeft = this.currentMap[posY][posX - 1];
-        
+        this.physicalCurrentMap[posY][posX] = 0;
+        this.threeManager.removeBlock(posX, posY, this.physicalCurrentMap[0].length)
+
+        let toLeft = this.physicalCurrentMap[posY][posX - 1];
+
         // Если слева есть блок то создаём от него тень
-        if (toLeft === BB.BRICK || toLeft === BB.STONE) { 
+        if (toLeft === BB.BRICK || toLeft === BB.STONE) {
             this.threeManager.createShadowRight(posX - 1, posY);
         }
 
-        let below = this.currentMap[posY + 1] === undefined ? undefined : this.currentMap[posY + 1][posX];
+        let below = this.physicalCurrentMap[posY + 1] === undefined ? undefined : this.physicalCurrentMap[posY + 1][posX];
 
         // Если снизу есть блок то создаём от него тень  остановился тут <-------------------
-        if (below === BB.BRICK || below === BB.STONE) { 
+        if (below === BB.BRICK || below === BB.STONE) {
             this.threeManager.createShadowAbove(posX, posY + 1);
         }
     }
 
     setPause() {
         this.isPause = true;
-        if (!this.isPlay)
-        {
+        if (!this.isPlay) {
             clearTimeout(this.timerStart);
             return;
         }
@@ -216,8 +218,7 @@ export default class LevelManager {
 
     setResume() {
         this.isPause = false;
-        if (!this.isPlay)
-        {
+        if (!this.isPlay) {
             this.delayedSpawn();
             return;
         }
@@ -254,15 +255,13 @@ export default class LevelManager {
     playerDead(playerId) {
         this.uiFields.playersHealth[playerId]--;
         if (this.uiFields.playersHealth[0] === 0
-            && (this.uiFields.playersHealth[1] === 0 || this.uiFields.playersMode === 0))
-        {
+            && (this.uiFields.playersHealth[1] === 0 || this.uiFields.playersMode === 0)) {
             this.gameOver();
             return;
         }
         if (this.uiFields.playersHealth[playerId] === 0) return;
-        setTimeout(() =>
-        {
-            this.players[playerId].create(this.currentMap, levels[this.uiFields.currentLevel].playerSpawnsPos[playerId]);
+        setTimeout(() => {
+            this.players[playerId].create(this.physicalCurrentMap, levels[this.uiFields.currentLevel].playerSpawnsPos[playerId]);
         }, 2000);
     }
 
