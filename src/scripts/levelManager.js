@@ -5,7 +5,8 @@ import levels from "./levels.json";
 import NpcPool from "./npcPool.js";
 import PlayerTank from "./playerTank.js";
 //import BangPool from "./bangPool.js";
-import { VisualBlocks as BB } from "./config.js";
+import { VisualBlocks as VB } from "./config.js";
+import { VisualAndPhysics } from "./config.js";
 
 export default class LevelManager {
     constructor(input, config, uiFields) {
@@ -96,62 +97,68 @@ export default class LevelManager {
         // Поскольку Object.assign делает только поверхностную копию мы присваиваем каждую полосу отдельно
         for (let i = 0; i < levels[this.uiFields.currentLevel].map.length; i++) {
             this.visualCurrentMap.push(levels[this.uiFields.currentLevel].map[i].slice());
+
+            // Создаём физическую карту на основе визуальной
+            this.physicalCurrentMap.push([]);
             for (let j = 0; j < levels[this.uiFields.currentLevel].map[i].length; j++) {
-                // Создать физическую карту на основе визуальной
+                // Получаем физический тип блока по сопоставлению VisualAndPhysics
+                let physicalBlock = VisualAndPhysics[levels[this.uiFields.currentLevel].map[i][j]]
+                this.physicalCurrentMap[i].push(physicalBlock)
+                console.log(physicalBlock)
             }
         }
         for (let i = 0; i < this.config.viewSize.y; i++) {
             for (let j = 0; j < this.config.viewSize.x; j++) {
                 let toRight = this.physicalCurrentMap[i][j + 1];
                 let above = i - 1 < 0 ? -1 : this.physicalCurrentMap[i - 1][j];
-                if (this.physicalCurrentMap[i][j] === BB.WATER) { // Вода
+                if (this.physicalCurrentMap[i][j] === VB.WATER) { // Вода
                     let waterDepth = 0.8;
                     this.threeManager.createWater(j, -waterDepth, i);
                     // if (this.currentMap[i + 1] === undefined || this.currentMap[i + 1][j] !== 3)    // Ниже блока воды
                     // {
                     //     this.threeManager.createWallForWater(j, 0, i + this.config.grid);
                     // }
-                    if ((i - 1) < 0 || above !== BB.WATER)                                                    // Выше блока воды
+                    if ((i - 1) < 0 || above !== VB.WATER)                                                    // Выше блока воды
                     {
                         this.threeManager.createWallForWater(j, 0, i);
                     }
-                    if (toRight !== BB.WATER)                                                                      // Правее блока воды
+                    if (toRight !== VB.WATER)                                                                      // Правее блока воды
                     {
                         this.threeManager.createWallForWater(j + this.config.grid, 0, i, false, true);
                     }
-                    if (j - 1 < 0 || this.physicalCurrentMap[i][j - 1] !== BB.WATER)                                           // Левее блока воды
+                    if (j - 1 < 0 || this.physicalCurrentMap[i][j - 1] !== VB.WATER)                                           // Левее блока воды
                     {
                         this.threeManager.createWallForWater(j, 0, i + this.config.grid, true);
                     }
                     continue;
                 }
                 this.threeManager.createFloor(j, 0, i);                    // Пол
-                if (this.physicalCurrentMap[i][j] === BB.COVER) {                  // Маскировка
+                if (this.physicalCurrentMap[i][j] === VB.COVER) {                  // Маскировка
                     this.threeManager.createCover(j, 1.4, i);
                     continue;
                 }
-                if (this.physicalCurrentMap[i][j] === BB.BRICK) {                  // Кирпич
+                if (this.physicalCurrentMap[i][j] === VB.BRICK) {                  // Кирпич
                     this.threeManager.createBrick(j, 0, i, this.physicalCurrentMap[0].length);
 
                     // Если нет препятствий справа то ставим тень
-                    if (toRight !== undefined && (toRight === BB.FLOOR || toRight === BB.WATER || toRight === BB.COVER)) {
+                    if (toRight !== undefined && (toRight === VB.FLOOR || toRight === VB.WATER || toRight === VB.COVER)) {
                         this.threeManager.createShadowRight(j, i);
                     }
 
                     // Если нет препятствий сверху то ставим тень
-                    if (above === BB.FLOOR || above === BB.WATER || above === BB.COVER) {
+                    if (above === VB.FLOOR || above === VB.WATER || above === VB.COVER) {
                         this.threeManager.createShadowAbove(j, i);
                     }
                 } else if (this.physicalCurrentMap[i][j] === 2) {           // Блок
                     this.threeManager.createStone(j, 0, i, this.physicalCurrentMap[0].length);
 
                     // Если нет препятствий справа то ставим тень
-                    if (toRight !== undefined && (toRight === BB.FLOOR || toRight === BB.WATER || toRight === BB.COVER)) {
+                    if (toRight !== undefined && (toRight === VB.FLOOR || toRight === VB.WATER || toRight === VB.COVER)) {
                         this.threeManager.createShadowRight(j, i);
                     }
 
                     // Если нет препятствий сверху то ставим тень
-                    if (above === BB.FLOOR || above === BB.WATER || above === BB.COVER) {
+                    if (above === VB.FLOOR || above === VB.WATER || above === VB.COVER) {
                         this.threeManager.createShadowAbove(j, i);
                     }
                 }
@@ -193,14 +200,14 @@ export default class LevelManager {
         let toLeft = this.physicalCurrentMap[posY][posX - 1];
 
         // Если слева есть блок то создаём от него тень
-        if (toLeft === BB.BRICK || toLeft === BB.STONE) {
+        if (toLeft === VB.BRICK || toLeft === VB.STONE) {
             this.threeManager.createShadowRight(posX - 1, posY);
         }
 
         let below = this.physicalCurrentMap[posY + 1] === undefined ? undefined : this.physicalCurrentMap[posY + 1][posX];
 
         // Если снизу есть блок то создаём от него тень  остановился тут <-------------------
-        if (below === BB.BRICK || below === BB.STONE) {
+        if (below === VB.BRICK || below === VB.STONE) {
             this.threeManager.createShadowAbove(posX, posY + 1);
         }
     }
