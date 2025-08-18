@@ -109,9 +109,10 @@ export default class LevelManager {
         }
         for (let i = 0; i < this.config.viewSize.y; i++) {
             for (let j = 0; j < this.config.viewSize.x; j++) {
+                let currentBlock = this.visualCurrentMap[i][j];
                 let toRight = this.physicalCurrentMap[i][j + 1];
                 let above = i - 1 < 0 ? -1 : this.physicalCurrentMap[i - 1][j];
-                if (this.physicalCurrentMap[i][j] === VB.WATER) { // Вода
+                if (currentBlock === VB.WATER) { // Вода
                     let waterDepth = 0.8;
                     this.threeManager.createWater(j, -waterDepth, i);
                     // if (this.currentMap[i + 1] === undefined || this.currentMap[i + 1][j] !== 3)    // Ниже блока воды
@@ -133,11 +134,10 @@ export default class LevelManager {
                     continue;
                 }
                 this.threeManager.createFloor(j, 0, i);                    // Пол
-                if (this.physicalCurrentMap[i][j] === VB.COVER) {                  // Маскировка
+                if (currentBlock === VB.COVER) {                  // Маскировка
                     this.threeManager.createCover(j, 1.4, i);
-                    continue;
-                }
-                if (this.physicalCurrentMap[i][j] === VB.BRICK) {                  // Кирпич
+                } 
+                else if (currentBlock === VB.BRICK) {                  // Кирпич
                     this.threeManager.createBrick(j, 0, i, this.physicalCurrentMap[0].length);
 
                     // Если нет препятствий справа то ставим тень
@@ -149,7 +149,8 @@ export default class LevelManager {
                     if (above === VB.FLOOR || above === VB.WATER || above === VB.COVER) {
                         this.threeManager.createShadowAbove(j, i);
                     }
-                } else if (this.physicalCurrentMap[i][j] === 2) {           // Блок
+                } 
+                else if (currentBlock === VB.STONE) {           // Камень
                     this.threeManager.createStone(j, 0, i, this.physicalCurrentMap[0].length);
 
                     // Если нет препятствий справа то ставим тень
@@ -161,6 +162,9 @@ export default class LevelManager {
                     if (above === VB.FLOOR || above === VB.WATER || above === VB.COVER) {
                         this.threeManager.createShadowAbove(j, i);
                     }
+                }
+                else if (currentBlock === VB.BORDER){
+                    this.threeManager.createBorder(j, 0, i, this.physicalCurrentMap[0].length)
                 }
             }
         }

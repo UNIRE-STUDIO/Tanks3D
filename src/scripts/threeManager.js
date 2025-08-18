@@ -81,7 +81,14 @@ export default class ThreeManager {
             this.stone.material.map.magFilter = THREE.LinearFilter;
             this.stone.geometry.translate(0.5, 0.7, 0.5);
         });
-        this.border; // -> в Async
+        this.border;
+        this.gltfLoader.load('/models/border.glb', (gltf) => {
+            this.border = gltf.scene.children[0];
+            this.border.material.map.minFilter = THREE.LinearMipMapLinearFilter;
+            this.border.material.map.magFilter = THREE.LinearFilter;
+            this.border.geometry.translate(0.5, 0.7, 0.5);
+        });
+        
 
         let textureLoader = new THREE.TextureLoader();
         let floor1Texture = textureLoader.load('/sprites/floor1.jpg');
@@ -196,10 +203,6 @@ export default class ThreeManager {
     
         this.npc1TankOrigin = (await this.gltfLoader.loadAsync(this.urlNpcTankModels[0])).scene.children[0];
         this.npc1TankOrigin.material.map.minFilter = THREE.LinearFilter;
-
-        this.border = (await this.gltfLoader.loadAsync('/models/border.glb')).scene.children[0];
-        this.border.material.map.minFilter = THREE.LinearMipMapLinearFilter;
-        this.border.material.map.magFilter = THREE.LinearFilter;
     }
     
 
@@ -283,6 +286,13 @@ export default class ThreeManager {
         this.stones3D.add(b);
     }
 
+    createBorder(posX, posY, posZ, length){
+        let b = new THREE.Mesh(this.border.geometry, this.border.material);
+        b.name = coordinatesToId(posX, posY, length);
+        b.position.set(posX, posY, posZ);
+        this.borders3D.add(b);
+    }
+
     createBullet(){
         return new THREE.Mesh(this.bulletOrigin.geometry, this.bulletOrigin.material);
     }
@@ -324,6 +334,7 @@ export default class ThreeManager {
         this.stones3D.clear();
         this.bricks3D.clear();
         this.floors3D.clear();
+        this.borders3D.clear();
     }
 
     setCameraMove(axis){

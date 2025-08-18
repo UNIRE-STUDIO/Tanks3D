@@ -70,9 +70,9 @@ export default class Bullet {
         }
 
         let isCollision = false;
-        let tile = this.currentMap[tileY][tileX];
+        let tile = this.currentMap[0][tileX - 1] === undefined ? -1 : this.currentMap[tileY][tileX];
         let leftTile = this.currentMap[tileY][tileX - 1];
-        let aboveTile = this.currentMap[tileY - 1][tileX];  // <----- Надо использовать эти переменные, что бы оптимизировать тут всё
+        let aboveTile = this.currentMap[tileY - 1] === undefined ? -1 : this.currentMap[tileY - 1][tileX];  // <----- Надо использовать эти переменные, что бы оптимизировать тут всё
         if (tile === BB.BRICK) {
             this.removeTile(tileX, tileY);
             isCollision = true;
@@ -80,19 +80,17 @@ export default class Bullet {
         if (tile === BB.STONE) {
             isCollision = true;
         }
-        if (this.dirY != 0 && this.currentMap[0][tileX - 1] !== undefined && (leftTile === BB.BRICK || leftTile === BB.STONE)) {
+        if (this.dirY != 0 && (leftTile === BB.BRICK || leftTile === BB.STONE)) {
             // Проверяем соседний блок по горизонтале
             if (leftTile === 1) this.removeTile(tileX - 1, tileY);
             isCollision = true;
-        } else if (
-            this.dirX != 0 &&
-            this.currentMap[tileY - 1] !== undefined &&
-            (this.currentMap[tileY - 1][tileX] === BB.BRICK ||
-                this.currentMap[tileY - 1][tileX] === BB.STONE)
-        ) {
+        } else if (this.dirX != 0 && (aboveTile === BB.BRICK || aboveTile === BB.STONE)) {
+            
             // Проверяем соседний блок по вертикали
-            if (this.currentMap[tileY - 1][tileX] === BB.BRICK)
+            if (aboveTile === BB.BRICK){
                 this.removeTile(tileX, tileY - 1);
+            }
+                
             isCollision = true;
         }
         return isCollision;
