@@ -93,18 +93,19 @@ export default class LevelManager {
         this.reset();
         this.physicalCurrentMap = [];
         this.visualCurrentMap = [];
+        this.config.viewSize.y = levels[this.uiFields.currentLevel].map.length;
+        this.config.viewSize.x = levels[this.uiFields.currentLevel].map[0].length;
 
         // Поскольку Object.assign делает только поверхностную копию мы присваиваем каждую полосу отдельно
-        for (let i = 0; i < levels[this.uiFields.currentLevel].map.length; i++) {
-            this.visualCurrentMap.push(levels[this.uiFields.currentLevel].map[i].slice());
+        for (let y = 0; y < this.config.viewSize.y; y++) {
+            this.visualCurrentMap.push(levels[this.uiFields.currentLevel].map[y].slice());
 
             // Создаём физическую карту на основе визуальной
             this.physicalCurrentMap.push([]);
-            for (let j = 0; j < levels[this.uiFields.currentLevel].map[i].length; j++) {
+            for (let x = 0; x < this.config.viewSize.x; x++) {
                 // Получаем физический тип блока по сопоставлению VisualAndPhysics
-                let physicalBlock = VisualAndPhysics[levels[this.uiFields.currentLevel].map[i][j]]
-                this.physicalCurrentMap[i].push(physicalBlock)
-                console.log(physicalBlock)
+                let physicalBlock = VisualAndPhysics[levels[this.uiFields.currentLevel].map[y][x]]
+                this.physicalCurrentMap[y].push(physicalBlock)
             }
         }
         for (let i = 0; i < this.config.viewSize.y; i++) {
@@ -163,8 +164,11 @@ export default class LevelManager {
                         this.threeManager.createShadowAbove(j, i);
                     }
                 }
-                else if (currentBlock === VB.BORDER){
-                    this.threeManager.createBorder(j, 0, i, this.physicalCurrentMap[0].length)
+                else if (currentBlock === VB.BORDER1){
+                    this.threeManager.createBorder(j, 0, i, this.physicalCurrentMap[0].length, 1)
+                }
+                else if (currentBlock === VB.BORDER2){
+                    this.threeManager.createBorder(j, 0, i, this.physicalCurrentMap[0].length, 2)
                 }
             }
         }

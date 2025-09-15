@@ -34,8 +34,8 @@ export default class ThreeManager {
             40
         );
         this.camera.position.set(this.config.viewSize.x / 2, 18, 20); // z = 20
-        this.cameraMaxClamp = 23;
-        this.cameraMinClamp = 20;
+        this.cameraMaxClamp = 23; //23
+        this.cameraMinClamp = 20; //20
         this.speedCamera = 0.003;
         this.axisCamera = 0;
 
@@ -81,12 +81,19 @@ export default class ThreeManager {
             this.stone.material.map.magFilter = THREE.LinearFilter;
             this.stone.geometry.translate(0.5, 0.7, 0.5);
         });
-        this.border;
-        this.gltfLoader.load('/models/border.glb', (gltf) => {
-            this.border = gltf.scene.children[0];
-            this.border.material.map.minFilter = THREE.LinearMipMapLinearFilter;
-            this.border.material.map.magFilter = THREE.LinearFilter;
-            this.border.geometry.translate(0.5, 0.7, 0.5);
+        this.border1;
+        this.gltfLoader.load('/models/border-1.glb', (gltf) => {
+            this.border1 = gltf.scene.children[0];
+            this.border1.material.map.minFilter = THREE.LinearMipMapLinearFilter;
+            this.border1.material.map.magFilter = THREE.LinearFilter;
+            this.border1.geometry.translate(0.5, 0, 0.5);
+        });
+        this.border2;
+        this.gltfLoader.load('/models/border-2.glb', (gltf) => {
+            this.border2 = gltf.scene.children[0];
+            this.border2.material.map.minFilter = THREE.LinearMipMapLinearFilter;
+            this.border2.material.map.magFilter = THREE.LinearFilter;
+            this.border2.geometry.translate(0.5, 0, 0.5);
         });
         
 
@@ -286,8 +293,14 @@ export default class ThreeManager {
         this.stones3D.add(b);
     }
 
-    createBorder(posX, posY, posZ, length){
-        let b = new THREE.Mesh(this.border.geometry, this.border.material);
+    createBorder(posX, posY, posZ, length, type){
+        let b
+        if (type === 1){
+            b = new THREE.Mesh(this.border1.geometry, this.border1.material);
+        }else{
+            b = new THREE.Mesh(this.border2.geometry, this.border2.material);
+        }
+        
         b.name = coordinatesToId(posX, posY, length);
         b.position.set(posX, posY, posZ);
         this.borders3D.add(b);
