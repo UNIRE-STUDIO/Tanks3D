@@ -15,9 +15,13 @@ export default class Config {
     constructor() {
         this.grid = 1
         this.grid2 = 2
-        this.viewSize = {
-            x: 38, // 34
-            y: 24     // 20
+        this.arenaSize = {
+            x: 34,    // 34
+            y: 20     // 20
+        }
+        this.mapSize = {
+            x: 0,
+            y: 0
         }
 
     }

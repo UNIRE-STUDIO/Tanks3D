@@ -93,23 +93,23 @@ export default class LevelManager {
         this.reset();
         this.physicalCurrentMap = [];
         this.visualCurrentMap = [];
-        this.config.viewSize.y = levels[this.uiFields.currentLevel].map.length;
-        this.config.viewSize.x = levels[this.uiFields.currentLevel].map[0].length;
+        this.config.mapSize.y = levels[this.uiFields.currentLevel].map.length;
+        this.config.mapSize.x = levels[this.uiFields.currentLevel].map[0].length;
 
         // Поскольку Object.assign делает только поверхностную копию мы присваиваем каждую полосу отдельно
-        for (let y = 0; y < this.config.viewSize.y; y++) {
+        for (let y = 0; y < this.config.mapSize.y; y++) {
             this.visualCurrentMap.push(levels[this.uiFields.currentLevel].map[y].slice());
 
             // Создаём физическую карту на основе визуальной
             this.physicalCurrentMap.push([]);
-            for (let x = 0; x < this.config.viewSize.x; x++) {
+            for (let x = 0; x < this.config.mapSize.x; x++) {
                 // Получаем физический тип блока по сопоставлению VisualAndPhysics
                 let physicalBlock = VisualAndPhysics[levels[this.uiFields.currentLevel].map[y][x]]
                 this.physicalCurrentMap[y].push(physicalBlock)
             }
         }
-        for (let i = 0; i < this.config.viewSize.y; i++) {
-            for (let j = 0; j < this.config.viewSize.x; j++) {
+        for (let i = 0; i < this.config.mapSize.y; i++) {
+            for (let j = 0; j < this.config.mapSize.x; j++) {
                 let currentBlock = this.visualCurrentMap[i][j];
                 let toRight = this.physicalCurrentMap[i][j + 1];
                 let above = i - 1 < 0 ? -1 : this.physicalCurrentMap[i - 1][j];
@@ -132,6 +132,10 @@ export default class LevelManager {
                     {
                         this.threeManager.createWallForWater(j, 0, i + this.config.grid, true);
                     }
+                    continue;
+                }
+                else if (currentBlock === VB.GRASS){
+                    this.threeManager.createGrass(j, 0, i);
                     continue;
                 }
                 this.threeManager.createFloor(j, 0, i);                    // Пол

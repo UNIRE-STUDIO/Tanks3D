@@ -11,11 +11,12 @@ export default class ThreeManager {
         this.uiFields = uiFields;
         this.config = config;
         this.scene = new THREE.Scene();
+        this.scene.background = new THREE.Color(0x687549); // Фон 0x6794AD
         const canvas = document.querySelector(".canvas");
         this.renderer = new THREE.WebGLRenderer({
             antialias: true,
             canvas,
-            alpha: true,
+            alpha: false,
             //logarithmicDepthBuffer: true
         });
         //this.renderer.sortObjects = false;
@@ -31,11 +32,10 @@ export default class ThreeManager {
             50,
             window.innerWidth / window.innerHeight,
             12,
-            40
+            60
         );
-        this.camera.position.set(this.config.viewSize.x / 2, 18, 20); // z = 20
-        this.cameraMaxClamp = 23; //23
-        this.cameraMinClamp = 20; //20
+        this.cameraMaxClamp = 0;
+        this.cameraMinClamp = 0;
         this.speedCamera = 0.003;
         this.axisCamera = 0;
 
@@ -102,6 +102,9 @@ export default class ThreeManager {
         floor1Texture.colorSpace = THREE.SRGBColorSpace;
         let floor1NormalTexture = textureLoader.load('/sprites/floor1-normalMap.jpg');
 
+        let grassTexture = textureLoader.load('/sprites/grass.jpg');
+        grassTexture.colorSpace = THREE.SRGBColorSpace;
+
         let waterTexture = textureLoader.load('/sprites/water.jpg');
         waterTexture.wrapS = THREE.RepeatWrapping;
         waterTexture.wrapT = THREE.RepeatWrapping;
@@ -109,18 +112,15 @@ export default class ThreeManager {
         waterNormalTexture.wrapS = THREE.RepeatWrapping;
         waterNormalTexture.wrapT = THREE.RepeatWrapping;
 
-        let grassTexture = textureLoader.load('/sprites/grass128.jpg');
-        grassTexture.colorSpace = THREE.SRGBColorSpace;
-
         this.materials = [
             new THREE.MeshLambertMaterial({ map: floor1Texture, normalMap:  floor1NormalTexture}), // пол
             new THREE.MeshLambertMaterial({ map: floor1Texture }), // пол
             new THREE.MeshLambertMaterial({ map: floor1Texture }), // пол
             new THREE.MeshLambertMaterial({ map: floor1Texture }), // пол
-            new THREE.MeshLambertMaterial({ color: 0x3F4141	 }), // стены окружающие воду
-            new THREE.MeshLambertMaterial({ map: waterTexture}), // водав
-            new THREE.MeshBasicMaterial({ color: 0x1fad6d }), // тент
-            new THREE.MeshLambertMaterial({map: grassTexture}), // трава
+            new THREE.MeshLambertMaterial({ color: 0x3F4141	 }),  // стены окружающие воду
+            new THREE.MeshLambertMaterial({ map: waterTexture}),  // водав
+            new THREE.MeshBasicMaterial({ color: 0x1fad6d }),     // тент
+            new THREE.MeshLambertMaterial({map: grassTexture}),   // трава
             new THREE.MeshBasicMaterial({color: 0x000, transparent: true, opacity: 0.5}),
         ];
 
@@ -155,7 +155,7 @@ export default class ThreeManager {
         this.shadowPool = new ShadowPool(this.shadows3D,
             new THREE.Mesh(shadowRightGeometry, this.materials[8]),
             new THREE.Mesh(shadowAboveGeometry, this.materials[8]),
-            this.config.viewSize.x);
+            this.config.arenaSize.x);
 
         
         
@@ -173,6 +173,9 @@ export default class ThreeManager {
         
         this.floors1 = []; //Массив с плоскостями пола, затем преобразовываем в единый объект
         this.floors3D = new THREE.Object3D();
+
+        this.grass = []; //Массив с плоскостями пола, затем преобразовываем в единый объект
+        this.grass3D = new THREE.Object3D();
 
         this.waters = []
         this.waters3D = new THREE.Object3D();
@@ -192,6 +195,7 @@ export default class ThreeManager {
         this.scene.add(this.stones3D);
         this.scene.add(this.bricks3D);
         this.scene.add(this.floors3D);
+        this.scene.add(this.grass3D);
         this.scene.add(this.borders3D);
         this.scene.add(this.abroad3D);
         this.scene.add(this.shadows3D);
@@ -266,6 +270,12 @@ export default class ThreeManager {
         p.translate(posX, posY, posZ);
         this.floors1.push(p);
     }
+    
+    createGrass(posX, posY, posZ){
+        let p = this.planeGeometry.clone(); // Плоскости
+        p.translate(posX, posY, posZ);
+        this.grass.push(p);
+    }
 
     createCover(posX, posY, posZ){
         let p = new THREE.Mesh(this.planeGeometry, this.materials[6]);
@@ -319,10 +329,17 @@ export default class ThreeManager {
     }
 
     addToScene(){ // Работает при старте уровня
+        this.camera.position.set(this.config.mapSize.x / 2, 18, this.config.mapSize.y - 4); // z = 20
+        this.cameraMaxClamp = this.config.mapSize.y + 1; //23
+        this.cameraMinClamp = this.config.mapSize.y - 4; //20
+
         let floorMerge1 = BufferGeometryUtils.mergeGeometries([...this.floors1]);
 
         this.floors1 = [];
         this.floors3D.add(new THREE.Mesh(floorMerge1, this.materials[0]));
+
+        let grassMerge = BufferGeometryUtils.mergeGeometries([...this.grass])
+        this.grass3D.add(new THREE.Mesh(grassMerge, this.materials[7]))
 
         let waterMerge = BufferGeometryUtils.mergeGeometries([...this.waters]);
         this.waters = [];
@@ -347,6 +364,7 @@ export default class ThreeManager {
         this.stones3D.clear();
         this.bricks3D.clear();
         this.floors3D.clear();
+        this.grass3D.clear();
         this.borders3D.clear();
     }
 
@@ -360,9 +378,9 @@ export default class ThreeManager {
         this.camera.position.z += inc;
         this.camera.lookAt(
             new THREE.Vector3(
-                this.config.viewSize.x / 2,
+                this.config.mapSize.x / 2,
                 0,
-                this.config.viewSize.y / 2 + 1.5
+                this.config.mapSize.y - (this.config.arenaSize.y/2) - 2
             )
         );
         
