@@ -79,7 +79,7 @@ export default class ThreeManager {
             this.stone = gltf.scene.children[0];
             this.stone.material.map.minFilter = THREE.LinearMipMapLinearFilter;
             this.stone.material.map.magFilter = THREE.LinearFilter;
-            this.stone.geometry.translate(0.5, 0.7, 0.5);
+            this.stone.geometry.translate(0.5, 0, 0.5);
         });
         this.border1;
         this.gltfLoader.load('/models/border-1.glb', (gltf) => {

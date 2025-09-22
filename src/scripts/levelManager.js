@@ -170,9 +170,29 @@ export default class LevelManager {
                 }
                 else if (currentBlock === VB.BORDER1){
                     this.threeManager.createBorder(j, 0, i, this.physicalCurrentMap[0].length, 1)
+
+                    // Если нет препятствий справа то ставим тень
+                    if (toRight !== undefined && (toRight === VB.FLOOR || toRight === VB.WATER || toRight === VB.COVER)) {
+                        this.threeManager.createShadowRight(j, i);
+                    }
+
+                    // Если нет препятствий сверху то ставим тень
+                    if (above === VB.FLOOR || above === VB.WATER || above === VB.COVER) {
+                        this.threeManager.createShadowAbove(j, i);
+                    }
                 }
                 else if (currentBlock === VB.BORDER2){
                     this.threeManager.createBorder(j, 0, i, this.physicalCurrentMap[0].length, 2)
+
+                    // Если нет препятствий справа то ставим тень
+                    if (toRight !== undefined && (toRight === VB.FLOOR || toRight === VB.WATER || toRight === VB.COVER)) {
+                        this.threeManager.createShadowRight(j, i);
+                    }
+
+                    // Если нет препятствий сверху то ставим тень
+                    if (above === VB.FLOOR || above === VB.WATER || above === VB.COVER) {
+                        this.threeManager.createShadowAbove(j, i);
+                    }
                 }
             }
         }
