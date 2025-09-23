@@ -144,55 +144,33 @@ export default class LevelManager {
                 } 
                 else if (currentBlock === VB.BRICK) {                  // Кирпич
                     this.threeManager.createBrick(j, 0, i, this.physicalCurrentMap[0].length);
-
-                    // Если нет препятствий справа то ставим тень
-                    if (toRight !== undefined && (toRight === VB.FLOOR || toRight === VB.WATER || toRight === VB.COVER)) {
-                        this.threeManager.createShadowRight(j, i);
-                    }
-
-                    // Если нет препятствий сверху то ставим тень
-                    if (above === VB.FLOOR || above === VB.WATER || above === VB.COVER) {
-                        this.threeManager.createShadowAbove(j, i);
-                    }
                 } 
                 else if (currentBlock === VB.STONE) {           // Камень
                     this.threeManager.createStone(j, 0, i, this.physicalCurrentMap[0].length);
-
-                    // Если нет препятствий справа то ставим тень
-                    if (toRight !== undefined && (toRight === VB.FLOOR || toRight === VB.WATER || toRight === VB.COVER)) {
-                        this.threeManager.createShadowRight(j, i);
-                    }
-
-                    // Если нет препятствий сверху то ставим тень
-                    if (above === VB.FLOOR || above === VB.WATER || above === VB.COVER) {
-                        this.threeManager.createShadowAbove(j, i);
-                    }
                 }
                 else if (currentBlock === VB.BORDER1){
                     this.threeManager.createBorder(j, 0, i, this.physicalCurrentMap[0].length, 1)
-
-                    // Если нет препятствий справа то ставим тень
-                    if (toRight !== undefined && (toRight === VB.FLOOR || toRight === VB.WATER || toRight === VB.COVER)) {
-                        this.threeManager.createShadowRight(j, i);
-                    }
-
-                    // Если нет препятствий сверху то ставим тень
-                    if (above === VB.FLOOR || above === VB.WATER || above === VB.COVER) {
-                        this.threeManager.createShadowAbove(j, i);
-                    }
                 }
                 else if (currentBlock === VB.BORDER2){
                     this.threeManager.createBorder(j, 0, i, this.physicalCurrentMap[0].length, 2)
+                }
 
-                    // Если нет препятствий справа то ставим тень
-                    if (toRight !== undefined && (toRight === VB.FLOOR || toRight === VB.WATER || toRight === VB.COVER)) {
-                        this.threeManager.createShadowRight(j, i);
-                    }
+                // Выставляем тени
+                switch (currentBlock) {
+                    case VB.BRICK:
+                    case VB.STONE:
+                    case VB.BORDER1:
+                    case VB.BORDER2:
+                        // Если нет препятствий справа то ставим тень
+                        if (toRight !== undefined && (toRight === VB.FLOOR || toRight === VB.WATER || toRight === VB.COVER)) {
+                            this.threeManager.createShadowRight(j, i);
+                        }
 
-                    // Если нет препятствий сверху то ставим тень
-                    if (above === VB.FLOOR || above === VB.WATER || above === VB.COVER) {
-                        this.threeManager.createShadowAbove(j, i);
-                    }
+                        // Если нет препятствий сверху то ставим тень
+                        if (above === VB.FLOOR || above === VB.WATER || above === VB.COVER) {
+                            this.threeManager.createShadowAbove(j, i);
+                        }
+                        break;
                 }
             }
         }
@@ -226,7 +204,7 @@ export default class LevelManager {
     }
 
     removeTile(posX, posY) {
-        this.physicalCurrentMap[posY][posX] = 0;
+        this.physicalCurrentMap[posY][posX] = VB.FLOOR;
         this.threeManager.removeBlock(posX, posY, this.physicalCurrentMap[0].length)
 
         let toLeft = this.physicalCurrentMap[posY][posX - 1];

@@ -5,6 +5,7 @@ import { idToCoordinates, coordinatesToId } from "./general.js";
 import { shadowShader } from './shaders.js';
 import { MyMaterial } from "./myMaterial.js";
 import { ShadowPool } from "./shadowPool.js";
+import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
 
 export default class ThreeManager {
     constructor(uiFields, config){
@@ -157,8 +158,6 @@ export default class ThreeManager {
             new THREE.Mesh(shadowAboveGeometry, this.materials[8]),
             this.config.arenaSize.x);
 
-        
-        
         // ----------------------------------------------------------------------
 
         this.bulletOrigin;
@@ -199,6 +198,16 @@ export default class ThreeManager {
         this.scene.add(this.borders3D);
         this.scene.add(this.abroad3D);
         this.scene.add(this.shadows3D);
+
+
+        // Для дебага
+        // Создаем CSS2D рендерер для текста
+        this.labelRenderer = new CSS2DRenderer();
+        this.labelRenderer.setSize(window.innerWidth, window.innerHeight);
+        this.labelRenderer.domElement.style.position = 'absolute';
+        this.labelRenderer.domElement.style.top = '0px';
+        this.labelRenderer.domElement.style.pointerEvents = 'none'; // Важно! Пропускает события мыши
+        document.body.appendChild(this.labelRenderer.domElement);
     }
 
     async initAsync(){
@@ -326,6 +335,23 @@ export default class ThreeManager {
 
     createShadowRight(posX, posZ){
         this.shadowPool.createRight(posX, 0.001, posZ);
+        this.createLabel(posX, posZ);
+    }
+
+    createLabel(posX, posZ) {
+        const labelDiv = document.createElement('div');
+        labelDiv.className = 'label';
+        labelDiv.textContent = posX + " " + posZ;
+        labelDiv.style.backgroundColor = 'rgba(0, 0, 0, 0.3)';
+        labelDiv.style.color = 'white';
+        labelDiv.style.padding = '5px';
+        labelDiv.style.borderRadius = '3px';
+        labelDiv.style.fontSize = '10px';
+        labelDiv.style.pointerEvents = 'none';
+        
+        const label = new CSS2DObject(labelDiv);
+        label.position.set(posX + 0.5, 1.2, posZ + 0.5); // Над объектом
+        this.scene.add(label);
     }
 
     addToScene(){ // Работает при старте уровня
@@ -388,6 +414,7 @@ export default class ThreeManager {
 
     render(){
         this.renderer.render(this.scene, this.camera);
+        this.labelRenderer.render(this.scene, this.camera);
         this.temp1 += 0.003;
         if (this.temp1 >= 2 * Math.PI) this.temp1 = 0;
         this.waters3D.children[0].material.map.offset.set(Math.sin(this.temp1), Math.cos(this.temp1));

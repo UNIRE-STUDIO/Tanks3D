@@ -69,7 +69,7 @@ export function drawImage(ctx, image, pos, scale) {
 }
 
 export function coordinatesToId(x, y, length) {
-    return x + y + length * y - 1 * y
+    return x + (length * y)
 }
 
 export function idToCoordinates(id, length) {
