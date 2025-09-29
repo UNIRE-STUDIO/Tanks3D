@@ -1,12 +1,11 @@
 import {coordinatesToId, idToCoordinates} from "./general.js";
 
 export class ShadowPool {
-    constructor(container, modelRight, modelAbove, arenaSizeX) {
+    constructor(container, modelRight, modelAbove) {
         this.container = container;
         this.modelAbove = modelAbove;
         this.modelRight = modelRight;
-        this.arenaSizeX = arenaSizeX;
-        const pool_size = 110;
+        const pool_size = 180;
         this.shadowsAbove = [];
         this.shadowsRight = [];
 
@@ -26,8 +25,8 @@ export class ShadowPool {
 
     
 
-    createAbove(posX, posY = 0.001, posZ){
-        if (this.usedAboveList.has(coordinatesToId(posX, posZ, this.arenaSizeX))){
+    createAbove(posX, posY = 0.001, posZ, mapWidth){
+        if (this.usedAboveList.has(coordinatesToId(posX, posZ, mapWidth))){
             return;
         }
         if (this.shadowsAbove.length === 0) {
@@ -37,13 +36,13 @@ export class ShadowPool {
             console.log("Добавляем дополнительный объект в ShadowPool");
         }
         let shadow = this.shadowsAbove.splice(this.shadowsAbove.length-1, 1)[0];
-        this.usedAboveList.set(coordinatesToId(posX, posZ, this.arenaSizeX), shadow);
+        this.usedAboveList.set(coordinatesToId(posX, posZ, mapWidth), shadow);
         shadow.position.set(posX, posY, posZ);
         shadow.visible = true;
     }
 
-    createRight(posX, posY = 0.001, posZ){
-        if (this.usedRightList.has(coordinatesToId(posX, posZ, this.arenaSizeX))){
+    createRight(posX, posY = 0.001, posZ, mapWidth){
+        if (this.usedRightList.has(coordinatesToId(posX, posZ, mapWidth))){
             return;
         }
         if (this.shadowsRight.length === 0) {
@@ -53,23 +52,24 @@ export class ShadowPool {
             console.log("Добавляем дополнительный объект в ShadowPool");
         }
         let shadow = this.shadowsRight.splice(this.shadowsRight.length-1, 1)[0];
-        this.usedRightList.set(coordinatesToId(posX, posZ, this.arenaSizeX), shadow);
+        this.usedRightList.set(coordinatesToId(posX, posZ, mapWidth), shadow);
         shadow.position.set(posX, posY, posZ);
         shadow.visible = true;
     }
 
-    remove(posX, posZ){
-        let shadowRight = this.usedRightList.get(coordinatesToId(posX, posZ, this.arenaSizeX));
-        let shadowAbove = this.usedAboveList.get(coordinatesToId(posX, posZ, this.arenaSizeX));
+    remove(posX, posZ, mapWidth){
+        let shadowRight = this.usedRightList.get(coordinatesToId(posX, posZ, mapWidth));
+        let shadowAbove = this.usedAboveList.get(coordinatesToId(posX, posZ, mapWidth));
 
         if (shadowRight) {
-            this.usedRightList.delete(coordinatesToId(posX, posZ, this.arenaSizeX));
+            console.log("Уничтожаем с ID" + coordinatesToId(posX, posZ, mapWidth))
+            this.usedRightList.delete(coordinatesToId(posX, posZ, mapWidth));
             shadowRight.visible = false;
             this.shadowsRight.push(shadowRight);
         }
 
         if (shadowAbove) {
-            this.usedAboveList.delete(coordinatesToId(posX, posZ, this.arenaSizeX));
+            this.usedAboveList.delete(coordinatesToId(posX, posZ, mapWidth));
             shadowAbove.visible = false;
             this.shadowsAbove.push(shadowAbove);
         }

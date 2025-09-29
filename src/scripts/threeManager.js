@@ -156,7 +156,7 @@ export default class ThreeManager {
         this.shadowPool = new ShadowPool(this.shadows3D,
             new THREE.Mesh(shadowRightGeometry, this.materials[8]),
             new THREE.Mesh(shadowAboveGeometry, this.materials[8]),
-            this.config.arenaSize.x);
+            this.config.mapSize.x);
 
         // ----------------------------------------------------------------------
 
@@ -199,15 +199,14 @@ export default class ThreeManager {
         this.scene.add(this.abroad3D);
         this.scene.add(this.shadows3D);
 
-
         // Для дебага
         // Создаем CSS2D рендерер для текста
-        this.labelRenderer = new CSS2DRenderer();
-        this.labelRenderer.setSize(window.innerWidth, window.innerHeight);
-        this.labelRenderer.domElement.style.position = 'absolute';
-        this.labelRenderer.domElement.style.top = '0px';
-        this.labelRenderer.domElement.style.pointerEvents = 'none'; // Важно! Пропускает события мыши
-        document.body.appendChild(this.labelRenderer.domElement);
+        // this.labelRenderer = new CSS2DRenderer();
+        // this.labelRenderer.setSize(window.innerWidth, window.innerHeight);
+        // this.labelRenderer.domElement.style.position = 'absolute';
+        // this.labelRenderer.domElement.style.top = '0px';
+        // this.labelRenderer.domElement.style.pointerEvents = 'none'; // Важно! Пропускает события мыши
+        // document.body.appendChild(this.labelRenderer.domElement);
     }
 
     async initAsync(){
@@ -330,18 +329,18 @@ export default class ThreeManager {
     }
 
     createShadowAbove(posX, posZ){
-        this.shadowPool.createAbove(posX, 0.001, posZ);
+        this.shadowPool.createAbove(posX, 0.001, posZ, this.config.mapSize.x);
     }
 
     createShadowRight(posX, posZ){
-        this.shadowPool.createRight(posX, 0.001, posZ);
-        this.createLabel(posX, posZ);
+        this.shadowPool.createRight(posX, 0.001, posZ, this.config.mapSize.x);
+        // this.createLabel(posX, posZ, coordinatesToId(posX, posZ, this.config.mapSize.x));
     }
 
-    createLabel(posX, posZ) {
+    createLabel(posX, posZ, id) {
         const labelDiv = document.createElement('div');
         labelDiv.className = 'label';
-        labelDiv.textContent = posX + " " + posZ;
+        labelDiv.textContent = id + "";
         labelDiv.style.backgroundColor = 'rgba(0, 0, 0, 0.3)';
         labelDiv.style.color = 'white';
         labelDiv.style.padding = '5px';
@@ -376,11 +375,11 @@ export default class ThreeManager {
         this.wallsForWater3D.add(new THREE.Mesh(wallForWaterMerge, this.materials[4]));
     }
 
-    removeBlock(posX, posY, length){
+    removeBlock(posX, posY, width){
         let nameObj = this.scene.getObjectByName(
-            coordinatesToId(posX, posY, length)
+            coordinatesToId(posX, posY, width)
         );
-        this.shadowPool.remove(posX, posY);
+        this.shadowPool.remove(posX, posY, width);
         this.scene.getObjectByName('bricks').remove(nameObj);
     }
 
@@ -414,7 +413,7 @@ export default class ThreeManager {
 
     render(){
         this.renderer.render(this.scene, this.camera);
-        this.labelRenderer.render(this.scene, this.camera);
+        //this.labelRenderer.render(this.scene, this.camera);
         this.temp1 += 0.003;
         if (this.temp1 >= 2 * Math.PI) this.temp1 = 0;
         this.waters3D.children[0].material.map.offset.set(Math.sin(this.temp1), Math.cos(this.temp1));

@@ -96,6 +96,8 @@ export default class LevelManager {
         this.config.mapSize.y = levels[this.uiFields.currentLevel].map.length;
         this.config.mapSize.x = levels[this.uiFields.currentLevel].map[0].length;
 
+        console.log("sizeMap: " + this.config.mapSize.x + " " + this.config.mapSize.y);
+
         // Поскольку Object.assign делает только поверхностную копию мы присваиваем каждую полосу отдельно
         for (let y = 0; y < this.config.mapSize.y; y++) {
             this.visualCurrentMap.push(levels[this.uiFields.currentLevel].map[y].slice());
@@ -143,16 +145,16 @@ export default class LevelManager {
                     this.threeManager.createCover(j, 1.4, i);
                 } 
                 else if (currentBlock === VB.BRICK) {                  // Кирпич
-                    this.threeManager.createBrick(j, 0, i, this.physicalCurrentMap[0].length);
+                    this.threeManager.createBrick(j, 0, i, this.config.mapSize.x);
                 } 
                 else if (currentBlock === VB.STONE) {           // Камень
-                    this.threeManager.createStone(j, 0, i, this.physicalCurrentMap[0].length);
+                    this.threeManager.createStone(j, 0, i, this.config.mapSize.x);
                 }
                 else if (currentBlock === VB.BORDER1){
-                    this.threeManager.createBorder(j, 0, i, this.physicalCurrentMap[0].length, 1)
+                    this.threeManager.createBorder(j, 0, i, this.config.mapSize.x, 1)
                 }
                 else if (currentBlock === VB.BORDER2){
-                    this.threeManager.createBorder(j, 0, i, this.physicalCurrentMap[0].length, 2)
+                    this.threeManager.createBorder(j, 0, i, this.config.mapSize.x, 2)
                 }
 
                 // Выставляем тени
