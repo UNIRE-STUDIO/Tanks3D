@@ -140,14 +140,14 @@ export default class LevelManager {
                     this.threeManager.createGrass(j, 0, i);
                     continue;
                 }
-                this.threeManager.createFloor(j, 0, i);                    // Пол
-                if (currentBlock === VB.COVER) {                  // Маскировка
+                this.threeManager.createFloor(j, 0, i);                // Пол
+                if (currentBlock === VB.COVER) {                       // Маскировка
                     this.threeManager.createCover(j, 1.4, i);
                 } 
                 else if (currentBlock === VB.BRICK) {                  // Кирпич
                     this.threeManager.createBrick(j, 0, i, this.config.mapSize.x);
                 } 
-                else if (currentBlock === VB.STONE) {           // Камень
+                else if (currentBlock === VB.STONE) {                  // Камень
                     this.threeManager.createStone(j, 0, i, this.config.mapSize.x);
                 }
                 else if (currentBlock === VB.BORDER1){

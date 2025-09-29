@@ -66,9 +66,11 @@ export default class ThreeManager {
         this.planeGeometry.rotateX((270 * Math.PI) / 180);
         this.planeGeometry.translate(0.5,0,0.5);
 
+
+        // 3Д объекты ----------------------------------------------------------------------------------------
         this.brick;
         this.gltfLoader = new GLTFLoader();
-        this.gltfLoader.load("/models/brick2.glb", (gltf) => {
+        this.gltfLoader.load("/models/brick.glb", (gltf) => {
             this.brick = gltf.scene.children[0];
             this.brick.material.map.minFilter = THREE.LinearMipMapLinearFilter;
             this.brick.material.map.magFilter = THREE.LinearFilter;
@@ -83,25 +85,32 @@ export default class ThreeManager {
             this.stone.geometry.translate(0.5, 0, 0.5);
         });
         this.border1;
-        this.gltfLoader.load('/models/border-1.glb', (gltf) => {
+        this.gltfLoader.load('/models/border1.glb', (gltf) => {
             this.border1 = gltf.scene.children[0];
             this.border1.material.map.minFilter = THREE.LinearMipMapLinearFilter;
             this.border1.material.map.magFilter = THREE.LinearFilter;
             this.border1.geometry.translate(0.5, 0, 0.5);
         });
         this.border2;
-        this.gltfLoader.load('/models/border-2.glb', (gltf) => {
+        this.gltfLoader.load('/models/border2.glb', (gltf) => {
             this.border2 = gltf.scene.children[0];
             this.border2.material.map.minFilter = THREE.LinearMipMapLinearFilter;
             this.border2.material.map.magFilter = THREE.LinearFilter;
             this.border2.geometry.translate(0.5, 0, 0.5);
         });
-        
+
+        this.cover;
+        this.gltfLoader.load('/models/cover.glb', (gltf) => {
+            this.cover = gltf.scene.children[0];
+            this.cover.material.map.minFilter = THREE.LinearMipMapLinearFilter;
+            this.cover.material.map.magFilter = THREE.LinearFilter;
+            this.cover.geometry.translate(0.5, 0, 0.5);
+        });
 
         let textureLoader = new THREE.TextureLoader();
-        let floor1Texture = textureLoader.load('/sprites/floor1.jpg');
+        let floor1Texture = textureLoader.load('/sprites/floor.jpg');
         floor1Texture.colorSpace = THREE.SRGBColorSpace;
-        let floor1NormalTexture = textureLoader.load('/sprites/floor1-normalMap.jpg');
+        let floor1NormalTexture = textureLoader.load('/sprites/floor-normalMap.jpg');
 
         let grassTexture = textureLoader.load('/sprites/grass.jpg');
         grassTexture.colorSpace = THREE.SRGBColorSpace;
@@ -286,9 +295,8 @@ export default class ThreeManager {
     }
 
     createCover(posX, posY, posZ){
-        let p = new THREE.Mesh(this.planeGeometry, this.materials[6]);
-        p.position.set(posX, posY, posZ);
-        p.rotation.x = (-90 * Math.PI) / 180;
+        let p = new THREE.Mesh(this.cover.geometry, this.cover.material);
+        p.position.set(posX, 0, posZ)
         this.covers3D.add(p);
     }
 
