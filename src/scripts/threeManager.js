@@ -235,6 +235,10 @@ export default class ThreeManager {
     
 
     updateCameraFov() {
+        this.camera.position.set(this.config.mapSize.x / 2, 18, this.config.mapSize.y - 4); // z = 20
+        this.cameraMaxClamp = this.config.mapSize.y + 1; //23
+        this.cameraMinClamp = this.config.mapSize.y - 4; //20
+        
         let hw = window.innerHeight / window.innerWidth;
         let wh = window.innerWidth / window.innerHeight;
         this.camera.aspect = wh;
@@ -362,9 +366,17 @@ export default class ThreeManager {
     }
 
     addToScene(){ // Работает при старте уровня
-        this.camera.position.set(this.config.mapSize.x / 2, 18, this.config.mapSize.y - 4); // z = 20
         this.cameraMaxClamp = this.config.mapSize.y + 1; //23
-        this.cameraMinClamp = this.config.mapSize.y - 4; //20
+        this.cameraMinClamp = this.config.mapSize.y - 4; //20     //  Если Z камеры меньше минимума, то мы понимаем, что камера только создана и расположена на нужном месте
+                                                                  //  Выставляем в крайнее положение. Если камера уже имеет нужную позицию то оставляем 
+        this.camera.position.set(this.config.mapSize.x / 2, 18, this.camera.position.z < this.cameraMinClamp ? this.cameraMinClamp : this.camera.position.z); // z = 20
+        this.camera.lookAt(
+            new THREE.Vector3(
+                this.config.mapSize.x / 2,
+                0,
+                this.config.mapSize.y - (this.config.arenaSize.y/2) - 2
+            )
+        );
 
         let floorMerge1 = BufferGeometryUtils.mergeGeometries([...this.floors1]);
 
