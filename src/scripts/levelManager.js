@@ -97,6 +97,7 @@ export default class LevelManager {
         this.config.mapSize.x = levels[this.uiFields.currentLevel].map[0].length;
 
         console.log("sizeMap: " + this.config.mapSize.x + " " + this.config.mapSize.y);
+        let grasses = [];
 
         // Поскольку Object.assign делает только поверхностную копию мы присваиваем каждую полосу отдельно
         for (let y = 0; y < this.config.mapSize.y; y++) {
@@ -137,7 +138,7 @@ export default class LevelManager {
                     continue;
                 }
                 else if (currentBlock === VB.GRASS){
-                    this.threeManager.createGrass(j, 0, i);
+                    grasses.push({x: j, y: 0, z: i}); // Собираем координаты всех плоскостей с травой
                     continue;
                 }
                 this.threeManager.createFloor(j, 0, i);                // Пол
@@ -176,6 +177,7 @@ export default class LevelManager {
                 }
             }
         }
+        this.threeManager.createGrasses(grasses);
         this.threeManager.addToScene();
 
         this.timerStart = setTimeout(() => {

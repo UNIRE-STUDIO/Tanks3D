@@ -6,6 +6,7 @@ import { shadowShader } from './shaders.js';
 import { MyMaterial } from "./myMaterial.js";
 import { ShadowPool } from "./shadowPool.js";
 import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
+import BlockPool from "./blockPool.js";
 
 export default class ThreeManager {
     constructor(uiFields, config){
@@ -62,12 +63,12 @@ export default class ThreeManager {
             '/models/npcTank1.glb'
         ]
 
+
+        // 3Д объекты ----------------------------------------------------------------------------------------
         this.planeGeometry = new THREE.PlaneGeometry(1, 1, 1);
         this.planeGeometry.rotateX((270 * Math.PI) / 180);
         this.planeGeometry.translate(0.5,0,0.5);
 
-
-        // 3Д объекты ----------------------------------------------------------------------------------------
         this.brick;
         this.gltfLoader = new GLTFLoader();
         this.gltfLoader.load("/models/brick.glb", (gltf) => {
@@ -112,8 +113,14 @@ export default class ThreeManager {
         floor1Texture.colorSpace = THREE.SRGBColorSpace;
         let floor1NormalTexture = textureLoader.load('/sprites/floor-normalMap.jpg');
 
-        let grassTexture = textureLoader.load('/sprites/grass.jpg');
-        grassTexture.colorSpace = THREE.SRGBColorSpace;
+        // Пул Травы -----
+            // Создаём материал для травы
+            let grassTexture = textureLoader.load('/sprites/grass.jpg');
+            grassTexture.colorSpace = THREE.SRGBColorSpace;
+            this.grassMaterial = new THREE.MeshLambertMaterial({map: grassTexture});
+            // Инициализируем со строгим кол-вом объектов
+            this.grassPool = new BlockPool(this.grassMaterial, this.planeGeometry, 1600);
+            this.scene.add(this.grassPool.instancedMesh);
 
         let waterTexture = textureLoader.load('/sprites/water.jpg');
         waterTexture.wrapS = THREE.RepeatWrapping;
@@ -124,15 +131,16 @@ export default class ThreeManager {
 
         this.materials = [
             new THREE.MeshLambertMaterial({ map: floor1Texture, normalMap:  floor1NormalTexture}), // пол
-            new THREE.MeshLambertMaterial({ map: floor1Texture }), // пол
-            new THREE.MeshLambertMaterial({ map: floor1Texture }), // пол
-            new THREE.MeshLambertMaterial({ map: floor1Texture }), // пол
+            null,
+            null,
+            null,
             new THREE.MeshLambertMaterial({ color: 0x3F4141	 }),  // стены окружающие воду
-            new THREE.MeshLambertMaterial({ map: waterTexture}),  // водав
-            new THREE.MeshBasicMaterial({ color: 0x1fad6d }),     // тент
-            new THREE.MeshLambertMaterial({map: grassTexture}),   // трава
-            new THREE.MeshBasicMaterial({color: 0x000, transparent: true, opacity: 0.5}),
-        ];
+            new THREE.MeshLambertMaterial({ map: waterTexture}),  // вода
+            null,                                                 // тент
+            null,                                                  // трава
+            new THREE.MeshBasicMaterial({color: 0x000, transparent: true, opacity: 0.5})
+        ];            
+
 
         let uniforms = {};
         uniforms.uBaseColor = { value: new THREE.Color(0,0,0) },
@@ -182,9 +190,6 @@ export default class ThreeManager {
         this.floors1 = []; //Массив с плоскостями пола, затем преобразовываем в единый объект
         this.floors3D = new THREE.Object3D();
 
-        this.grass = []; //Массив с плоскостями пола, затем преобразовываем в единый объект
-        this.grass3D = new THREE.Object3D();
-
         this.waters = []
         this.waters3D = new THREE.Object3D();
 
@@ -203,7 +208,6 @@ export default class ThreeManager {
         this.scene.add(this.stones3D);
         this.scene.add(this.bricks3D);
         this.scene.add(this.floors3D);
-        this.scene.add(this.grass3D);
         this.scene.add(this.borders3D);
         this.scene.add(this.abroad3D);
         this.scene.add(this.shadows3D);
@@ -292,11 +296,8 @@ export default class ThreeManager {
         this.floors1.push(p);
     }
     
-    createGrass(posX, posY, posZ){
-        let p = this.planeGeometry.clone(); // Плоскости
-        p.translate(posX, posY, posZ);
-        this.grass.push(p);
-    }
+    // Принимает массив с координатами все плоскостей травы
+    createGrasses(grassesPosition){ this.grassPool.init(grassesPosition); }
 
     createCover(posX, posY, posZ){
         let p = new THREE.Mesh(this.cover.geometry, this.cover.material);
@@ -383,9 +384,6 @@ export default class ThreeManager {
         this.floors1 = [];
         this.floors3D.add(new THREE.Mesh(floorMerge1, this.materials[0]));
 
-        let grassMerge = BufferGeometryUtils.mergeGeometries([...this.grass])
-        this.grass3D.add(new THREE.Mesh(grassMerge, this.materials[7]))
-
         let waterMerge = BufferGeometryUtils.mergeGeometries([...this.waters]);
         this.waters = [];
         this.waters3D.add(new THREE.Mesh(waterMerge, this.materials[5]))
@@ -409,7 +407,6 @@ export default class ThreeManager {
         this.stones3D.clear();
         this.bricks3D.clear();
         this.floors3D.clear();
-        this.grass3D.clear();
         this.borders3D.clear();
     }
 
