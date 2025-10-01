@@ -114,20 +114,35 @@ export default class ThreeManager {
         let floor1NormalTexture = textureLoader.load('/sprites/floor-normalMap.jpg');
 
         // Пул Травы -----
-            // Создаём материал для травы
+            // Создаём материал
             let grassTexture = textureLoader.load('/sprites/grass.jpg');
             grassTexture.colorSpace = THREE.SRGBColorSpace;
-            this.grassMaterial = new THREE.MeshLambertMaterial({map: grassTexture});
+            let grassMaterial = new THREE.MeshLambertMaterial({map: grassTexture});
             // Инициализируем со строгим кол-вом объектов
-            this.grassPool = new BlockPool(this.grassMaterial, this.planeGeometry, 1600);
+            this.grassPool = new BlockPool(grassMaterial, this.planeGeometry, 1600);
             this.scene.add(this.grassPool.instancedMesh);
 
-        let waterTexture = textureLoader.load('/sprites/water.jpg');
-        waterTexture.wrapS = THREE.RepeatWrapping;
-        waterTexture.wrapT = THREE.RepeatWrapping;
-        let waterNormalTexture = textureLoader.load("/sprites/water-normalMap.jpg");
-        waterNormalTexture.wrapS = THREE.RepeatWrapping;
-        waterNormalTexture.wrapT = THREE.RepeatWrapping;
+        // Пул Воды -----
+            // Создаём материал
+                let waterTexture = textureLoader.load('/sprites/water.jpg');
+                waterTexture.wrapS = THREE.RepeatWrapping;
+                waterTexture.wrapT = THREE.RepeatWrapping;
+                let waterNormalTexture = textureLoader.load("/sprites/water-normalMap.jpg");
+                waterNormalTexture.wrapS = THREE.RepeatWrapping;
+                waterNormalTexture.wrapT = THREE.RepeatWrapping;
+                let waterMaterial = new THREE.MeshLambertMaterial({ map: waterTexture});
+            this.watersPool = new BlockPool(waterMaterial, this.planeGeometry, 300);
+            this.scene.add(this.watersPool.instancedMesh);
+            
+        // Пул Стен для воды
+            // Создаём материал
+                let wallsForWaterMaterial = new THREE.MeshLambertMaterial({ color: 0x3F4141 })
+            // Создаём геометрию
+                let waterGeometry = this.planeGeometry.clone();
+                waterGeometry.rotateX((-270 * Math.PI) / 180);
+                waterGeometry.scale(1, 0.8, 1);
+            this.wallsForWater = new BlockPool(wallsForWaterMaterial, waterGeometry, 300);
+            this.scene.add(this.wallsForWater.instancedMesh);
 
         this.materials = [
             new THREE.MeshLambertMaterial({ map: floor1Texture, normalMap:  floor1NormalTexture}), // пол
@@ -190,20 +205,12 @@ export default class ThreeManager {
         this.floors1 = []; //Массив с плоскостями пола, затем преобразовываем в единый объект
         this.floors3D = new THREE.Object3D();
 
-        this.waters = []
-        this.waters3D = new THREE.Object3D();
-
-        this.wallsForWaters = [];
-        this.wallsForWater3D = new THREE.Object3D();
-
         this.borders3D = new THREE.Object3D();
 
         this.abroad3D = new THREE.Object3D();
 
         this.temp1 = 0;
 
-        this.scene.add(this.wallsForWater3D);
-        this.scene.add(this.waters3D);
         this.scene.add(this.covers3D);
         this.scene.add(this.stones3D);
         this.scene.add(this.bricks3D);
@@ -274,20 +281,16 @@ export default class ThreeManager {
         return new THREE.Mesh(this.npc1TankOrigin.geometry, this.npc1TankOrigin.material);
     }
 
-    createWater(posX, posY, posZ){
-        let p = this.planeGeometry.clone();
-        p.translate(posX, posY, posZ);
-        this.waters.push(p);
-    }
-
-    createWallForWater(posX, posY, posZ, left = false, right = false){
-        let p = this.planeGeometry.clone();
-        p.rotateX(-270 * Math.PI / 180);
-        if (left) p.rotateY((90 * Math.PI) / 180);
-        else if (right) p.rotateY((-90 * Math.PI) / 180);
-        p.scale(1, 0.8, 1);
-        p.translate(posX, posY, posZ);
-        this.wallsForWaters.push(p);
+    createWaters(watersMatrix){ this.watersPool.init(watersMatrix) }
+    createWallsForWater(wallsMatrix){
+        this.wallsForWater.init(wallsMatrix);
+        // let p = this.planeGeometry.clone();
+        // p.rotateX((-270 * Math.PI) / 180);
+        // if (left) p.rotateY((90 * Math.PI) / 180);
+        // else if (right) p.rotateY((-90 * Math.PI) / 180);
+        // p.scale(1, 0.8, 1);
+        // p.translate(posX, posY, posZ);
+        // this.wallsForWaters.push(p);
     }
 
     createFloor(posX, posY, posZ){
@@ -297,7 +300,7 @@ export default class ThreeManager {
     }
     
     // Принимает массив с координатами все плоскостей травы
-    createGrasses(grassesPosition){ this.grassPool.init(grassesPosition); }
+    createGrasses(grassesPosition){ this.grassPool.init(grassesPosition) }
 
     createCover(posX, posY, posZ){
         let p = new THREE.Mesh(this.cover.geometry, this.cover.material);
@@ -380,17 +383,8 @@ export default class ThreeManager {
         );
 
         let floorMerge1 = BufferGeometryUtils.mergeGeometries([...this.floors1]);
-
         this.floors1 = [];
         this.floors3D.add(new THREE.Mesh(floorMerge1, this.materials[0]));
-
-        let waterMerge = BufferGeometryUtils.mergeGeometries([...this.waters]);
-        this.waters = [];
-        this.waters3D.add(new THREE.Mesh(waterMerge, this.materials[5]))
-
-        let wallForWaterMerge = BufferGeometryUtils.mergeGeometries(this.wallsForWaters);
-        this.wallsForWaters = [];
-        this.wallsForWater3D.add(new THREE.Mesh(wallForWaterMerge, this.materials[4]));
     }
 
     removeBlock(posX, posY, width){
@@ -402,7 +396,6 @@ export default class ThreeManager {
     }
 
     reset(){
-        this.waters3D.clear();
         this.covers3D.clear();
         this.stones3D.clear();
         this.bricks3D.clear();
@@ -433,6 +426,6 @@ export default class ThreeManager {
         //this.labelRenderer.render(this.scene, this.camera);
         this.temp1 += 0.003;
         if (this.temp1 >= 2 * Math.PI) this.temp1 = 0;
-        this.waters3D.children[0].material.map.offset.set(Math.sin(this.temp1), Math.cos(this.temp1));
+        //this.waters3D.children[0].material.map.offset.set(Math.sin(this.temp1), Math.cos(this.temp1));
     }
 }

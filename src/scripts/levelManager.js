@@ -7,6 +7,7 @@ import PlayerTank from "./playerTank.js";
 //import BangPool from "./bangPool.js";
 import { VisualBlocks as VB } from "./config.js";
 import { VisualAndPhysics } from "./config.js";
+import { watch } from "vue";
 
 export default class LevelManager {
     constructor(input, config, uiFields) {
@@ -98,6 +99,8 @@ export default class LevelManager {
 
         console.log("sizeMap: " + this.config.mapSize.x + " " + this.config.mapSize.y);
         let grasses = [];
+        let waters = [];
+        let wallsForWater = [];
 
         // Поскольку Object.assign делает только поверхностную копию мы присваиваем каждую полосу отдельно
         for (let y = 0; y < this.config.mapSize.y; y++) {
@@ -117,28 +120,27 @@ export default class LevelManager {
                 let toRight = this.physicalCurrentMap[i][j + 1];
                 let above = i - 1 < 0 ? -1 : this.physicalCurrentMap[i - 1][j];
                 if (currentBlock === VB.WATER) { // Вода
-                    let waterDepth = 0.8;
-                    this.threeManager.createWater(j, -waterDepth, i);
-                    // if (this.currentMap[i + 1] === undefined || this.currentMap[i + 1][j] !== 3)    // Ниже блока воды
+                    waters.push({pX: j, pY: 0, pZ: i});
+                    // if (this.currentMap[i + 1] === undefined || this.currentMap[i + 1][j] !== 3)           // Ниже блока воды
                     // {
                     //     this.threeManager.createWallForWater(j, 0, i + this.config.grid);
                     // }
                     if ((i - 1) < 0 || above !== VB.WATER)                                                    // Выше блока воды
                     {
-                        this.threeManager.createWallForWater(j, 0, i);
+                        wallsForWater.push({pX: j, pY: 0, pZ: i, rX: 0, rY: 0, rZ: 0});
                     }
-                    if (toRight !== VB.WATER)                                                                      // Правее блока воды
+                    if (toRight !== VB.WATER)                                                                  // Правее блока воды
                     {
-                        this.threeManager.createWallForWater(j + this.config.grid, 0, i, false, true);
+                        wallsForWater.push({pX: j, pY: 0, pZ: i, rX: 0, rY: -90, rZ: 0});
                     }
-                    if (j - 1 < 0 || this.physicalCurrentMap[i][j - 1] !== VB.WATER)                                           // Левее блока воды
+                    if (j - 1 < 0 || this.physicalCurrentMap[i][j - 1] !== VB.WATER)                           // Левее блока воды
                     {
-                        this.threeManager.createWallForWater(j, 0, i + this.config.grid, true);
+                        wallsForWater.push({pX: j, pY: 0, pZ: i, rX: 0, rY: 90, rZ: 0});
                     }
                     continue;
                 }
                 else if (currentBlock === VB.GRASS){
-                    grasses.push({x: j, y: 0, z: i}); // Собираем координаты всех плоскостей с травой
+                    grasses.push({pX: j, pY: 0, pZ: i}); // Собираем координаты всех плоскостей с травой
                     continue;
                 }
                 this.threeManager.createFloor(j, 0, i);                // Пол
@@ -177,7 +179,12 @@ export default class LevelManager {
                 }
             }
         }
-        this.threeManager.createGrasses(grasses);
+        console.log("grasses: " + grasses.length);
+        console.log("waters: " + waters.length);
+        console.log("wallsForWater: " + wallsForWater.length);
+        this.threeManager.createGrasses(grasses); // TODO: переименовать create в add
+        this.threeManager.createWaters(waters);
+        this.threeManager.createWallsForWater(wallsForWater);
         this.threeManager.addToScene();
 
         this.timerStart = setTimeout(() => {

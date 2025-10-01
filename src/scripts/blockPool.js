@@ -9,11 +9,16 @@ export default class BlockPool {
     init(positionArray){
         for (let i = 0; i < positionArray.length; i++) {
             const matrix = new THREE.Matrix4();
-            matrix.setPosition(
-                positionArray[i].x,
-                positionArray[i].y,
-                positionArray[i].z
-            );
+            let position = new THREE.Vector3(positionArray[i].pX, positionArray[i].pY, positionArray[i].pZ)
+            let quaternion = new THREE.Quaternion();
+            let scale = new THREE.Vector3(1, 1, 1);
+            
+            // Применяем вращение
+            if (positionArray[i].rX !== undefined) 
+            { 
+                quaternion.setFromEuler(new THREE.Euler(positionArray[i].rX, positionArray[i].rY, positionArray[i].rZ));
+            }
+            matrix.compose(position, quaternion, scale);
             this.instancedMesh.setMatrixAt(i, matrix);
         }
     }
