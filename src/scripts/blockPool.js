@@ -16,7 +16,11 @@ export default class BlockPool {
             // Применяем вращение
             if (positionArray[i].rX !== undefined) 
             { 
-                quaternion.setFromEuler(new THREE.Euler(positionArray[i].rX, positionArray[i].rY, positionArray[i].rZ));
+                quaternion.setFromEuler(new THREE.Euler(
+                    positionArray[i].rX * Math.PI / 180, 
+                    positionArray[i].rY * Math.PI / 180, 
+                    positionArray[i].rZ * Math.PI / 180
+                    ));
             }
             matrix.compose(position, quaternion, scale);
             this.instancedMesh.setMatrixAt(i, matrix);

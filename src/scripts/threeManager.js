@@ -113,7 +113,7 @@ export default class ThreeManager {
         floor1Texture.colorSpace = THREE.SRGBColorSpace;
         let floor1NormalTexture = textureLoader.load('/sprites/floor-normalMap.jpg');
 
-        // Пул Травы -----
+// Пул Травы -----
             // Создаём материал
             let grassTexture = textureLoader.load('/sprites/grass.jpg');
             grassTexture.colorSpace = THREE.SRGBColorSpace;
@@ -122,7 +122,7 @@ export default class ThreeManager {
             this.grassPool = new BlockPool(grassMaterial, this.planeGeometry, 1600);
             this.scene.add(this.grassPool.instancedMesh);
 
-        // Пул Воды -----
+// Пул Воды -----
             // Создаём материал
                 let waterTexture = textureLoader.load('/sprites/water.jpg');
                 waterTexture.wrapS = THREE.RepeatWrapping;
@@ -134,13 +134,13 @@ export default class ThreeManager {
             this.watersPool = new BlockPool(waterMaterial, this.planeGeometry, 300);
             this.scene.add(this.watersPool.instancedMesh);
             
-        // Пул Стен для воды
+// Пул Стен для воды
             // Создаём материал
                 let wallsForWaterMaterial = new THREE.MeshLambertMaterial({ color: 0x3F4141 })
             // Создаём геометрию
-                let waterGeometry = this.planeGeometry.clone();
-                waterGeometry.rotateX((-270 * Math.PI) / 180);
-                waterGeometry.scale(1, 0.8, 1);
+            let waterGeometry = this.planeGeometry.clone();
+            waterGeometry.rotateX((-270 * Math.PI) / 180);
+            waterGeometry.scale(1, 0.8, 1);
             this.wallsForWater = new BlockPool(wallsForWaterMaterial, waterGeometry, 300);
             this.scene.add(this.wallsForWater.instancedMesh);
 

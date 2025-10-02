@@ -120,22 +120,22 @@ export default class LevelManager {
                 let toRight = this.physicalCurrentMap[i][j + 1];
                 let above = i - 1 < 0 ? -1 : this.physicalCurrentMap[i - 1][j];
                 if (currentBlock === VB.WATER) { // Вода
-                    waters.push({pX: j, pY: 0, pZ: i});
-                    // if (this.currentMap[i + 1] === undefined || this.currentMap[i + 1][j] !== 3)           // Ниже блока воды
+                    waters.push({pX: j, pY: -0.8, pZ: i});
+                    // if (this.currentMap[i + 1] === undefined || this.currentMap[i + 1][j] !== 3)  // Ниже блока воды
                     // {
                     //     this.threeManager.createWallForWater(j, 0, i + this.config.grid);
                     // }
-                    if ((i - 1) < 0 || above !== VB.WATER)                                                    // Выше блока воды
+                    if ((i - 1) < 0 || above !== VB.WATER)                                           // Выше блока воды
                     {
                         wallsForWater.push({pX: j, pY: 0, pZ: i, rX: 0, rY: 0, rZ: 0});
                     }
-                    if (toRight !== VB.WATER)                                                                  // Правее блока воды
+                    if (toRight !== VB.WATER)                                                        // Правее блока воды
                     {
-                        wallsForWater.push({pX: j, pY: 0, pZ: i, rX: 0, rY: -90, rZ: 0});
+                        wallsForWater.push({pX: j + this.config.grid, pY: 0, pZ: i, rX: 0, rY: -90, rZ: 0});
                     }
-                    if (j - 1 < 0 || this.physicalCurrentMap[i][j - 1] !== VB.WATER)                           // Левее блока воды
+                    if (j - 1 < 0 || this.physicalCurrentMap[i][j - 1] !== VB.WATER)                 // Левее блока воды
                     {
-                        wallsForWater.push({pX: j, pY: 0, pZ: i, rX: 0, rY: 90, rZ: 0});
+                        wallsForWater.push({pX: j, pY: 0, pZ: i + this.config.grid, rX: 0, rY: 90, rZ: 0});
                     }
                     continue;
                 }
