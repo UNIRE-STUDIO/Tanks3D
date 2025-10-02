@@ -101,6 +101,11 @@ export default class LevelManager {
         let grasses = [];
         let waters = [];
         let wallsForWater = [];
+        let borders1 = [];
+        let borders2 = [];
+        let covers = [];
+        let rightShadows = [];
+        let aboveShadows = [];
 
         // Поскольку Object.assign делает только поверхностную копию мы присваиваем каждую полосу отдельно
         for (let y = 0; y < this.config.mapSize.y; y++) {
@@ -144,21 +149,17 @@ export default class LevelManager {
                     continue;
                 }
                 this.threeManager.createFloor(j, 0, i);                // Пол
-                if (currentBlock === VB.COVER) {                       // Маскировка
-                    this.threeManager.createCover(j, 1.4, i);
-                } 
+
+                // Маскировка
+                if (currentBlock === VB.COVER) { covers.push({pX: j, pY: 0, pZ: i}); } 
                 else if (currentBlock === VB.BRICK) {                  // Кирпич
                     this.threeManager.createBrick(j, 0, i, this.config.mapSize.x);
                 } 
                 else if (currentBlock === VB.STONE) {                  // Камень
                     this.threeManager.createStone(j, 0, i, this.config.mapSize.x);
                 }
-                else if (currentBlock === VB.BORDER1){
-                    this.threeManager.createBorder(j, 0, i, this.config.mapSize.x, 1)
-                }
-                else if (currentBlock === VB.BORDER2){
-                    this.threeManager.createBorder(j, 0, i, this.config.mapSize.x, 2)
-                }
+                else if (currentBlock === VB.BORDER1){ borders1.push({pX: j, pY: 0, pZ: i}); }
+                else if (currentBlock === VB.BORDER2){ borders2.push({pX: j, pY: 0, pZ: i}); }
 
                 // Выставляем тени
                 switch (currentBlock) {
@@ -168,23 +169,33 @@ export default class LevelManager {
                     case VB.BORDER2:
                         // Если нет препятствий справа то ставим тень
                         if (toRight !== undefined && (toRight === VB.FLOOR || toRight === VB.WATER || toRight === VB.COVER)) {
-                            this.threeManager.createShadowRight(j, i);
+                            rightShadows.push({pX: j, pY: 0.01, pZ: i});
                         }
 
                         // Если нет препятствий сверху то ставим тень
                         if (above === VB.FLOOR || above === VB.WATER || above === VB.COVER) {
-                            this.threeManager.createShadowAbove(j, i);
+                            aboveShadows.push({pX: j, pY: 0.01, pZ: i});
                         }
                         break;
                 }
             }
         }
         console.log("grasses: " + grasses.length);
-        console.log("waters: " + waters.length);
+        console.log("waters: " +  waters.length);
         console.log("wallsForWater: " + wallsForWater.length);
+        console.log("border1: " + borders1.length);
+        console.log("border2: " + borders2.length);
+        console.log("covers: " +  covers.length);
+        console.log("rightShadows: " + rightShadows.length);
+        console.log("aboveShadows: " + aboveShadows.length);
         this.threeManager.createGrasses(grasses); // TODO: переименовать create в add
         this.threeManager.createWaters(waters);
         this.threeManager.createWallsForWater(wallsForWater);
+        this.threeManager.createBorders1(borders1);
+        this.threeManager.createBorders2(borders2);
+        this.threeManager.createCovers(covers);
+        this.threeManager.createAllShadows(rightShadows, aboveShadows, this.config.mapSize.x);
+   
         this.threeManager.addToScene();
 
         this.timerStart = setTimeout(() => {
