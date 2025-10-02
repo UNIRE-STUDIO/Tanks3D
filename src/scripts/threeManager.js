@@ -87,9 +87,13 @@ export default class ThreeManager {
         });
 
         let textureLoader = new THREE.TextureLoader();
-        let floor1Texture = textureLoader.load('/sprites/floor.jpg');
-        floor1Texture.colorSpace = THREE.SRGBColorSpace;
-        let floor1NormalTexture = textureLoader.load('/sprites/floor-normalMap.jpg');
+// Пул Floor
+        let floorTexture = textureLoader.load('/sprites/floor.jpg');
+        floorTexture.colorSpace = THREE.SRGBColorSpace;
+        let floorNormalTexture = textureLoader.load('/sprites/floor-normalMap.jpg');
+        let floorMaterial = new THREE.MeshLambertMaterial({ map: floorTexture, normalMap:  floorNormalTexture})
+        this.floorPool = new BlockPool(floorMaterial, this.planeGeometry, 1000);
+        this.scene.add(this.floorPool.instancedMesh);
 
 // Пул Травы -----------------
             // Создаём материал
@@ -152,11 +156,7 @@ export default class ThreeManager {
             cover.geometry.translate(0.5, 0, 0.5);
             this.coversPool = new BlockPool(cover.material, cover.geometry, 130);
             this.scene.add(this.coversPool.instancedMesh);
-        });
-
-        this.materials = [
-            new THREE.MeshLambertMaterial({ map: floor1Texture, normalMap:  floor1NormalTexture}), // пол
-        ];            
+        });          
 
 // ТЕНЬ -----------------------
         let gr = this.config.grid;
@@ -193,15 +193,11 @@ export default class ThreeManager {
         this.stones3D = new THREE.Object3D();
         this.bricks3D = new THREE.Object3D();
         this.bricks3D.name = 'bricks';
-        
-        this.floors1 = []; //Массив с плоскостями пола, затем преобразовываем в единый объект
-        this.floors3D = new THREE.Object3D();
 
         this.temp1 = 0;
 
         this.scene.add(this.stones3D);
         this.scene.add(this.bricks3D);
-        this.scene.add(this.floors3D);
         this.scene.add(this.shadows3D);
 
         // Для дебага
@@ -269,12 +265,7 @@ export default class ThreeManager {
     createBorders2(matrixs)      { this.borders2Pool.init(matrixs)      }
     createCovers(matrixs)        { this.coversPool.init(matrixs)        }
     createAllShadows(rightMatrix, aboveMatrix, mapWidth) { this.shadowsPool.init(rightMatrix, aboveMatrix, mapWidth) }
-
-    createFloor(posX, posY, posZ){
-        let p = this.planeGeometry.clone(); // Плоскости
-        p.translate(posX, posY, posZ);
-        this.floors1.push(p);
-    }
+    createFloors(matrixs)        { this.floorPool.init(matrixs)         }
 
     createBrick(posX, posY, posZ, length){
         let base = new THREE.Object3D();
@@ -336,10 +327,6 @@ export default class ThreeManager {
                 this.config.mapSize.y - (this.config.arenaSize.y/2) - 2
             )
         );
-
-        let floorMerge1 = BufferGeometryUtils.mergeGeometries([...this.floors1]);
-        this.floors1 = [];
-        this.floors3D.add(new THREE.Mesh(floorMerge1, this.materials[0]));
     }
 
     removeBlock(posX, posY, width){
@@ -353,7 +340,6 @@ export default class ThreeManager {
     reset(){
         this.stones3D.clear();
         this.bricks3D.clear();
-        this.floors3D.clear();
     }
 
     setCameraMove(axis){

@@ -106,6 +106,7 @@ export default class LevelManager {
         let covers = [];
         let rightShadows = [];
         let aboveShadows = [];
+        let floors = [];
 
         // Поскольку Object.assign делает только поверхностную копию мы присваиваем каждую полосу отдельно
         for (let y = 0; y < this.config.mapSize.y; y++) {
@@ -148,7 +149,7 @@ export default class LevelManager {
                     grasses.push({pX: j, pY: 0, pZ: i}); // Собираем координаты всех плоскостей с травой
                     continue;
                 }
-                this.threeManager.createFloor(j, 0, i);                // Пол
+                floors.push({pX: j, pY: 0, pZ: i});              // Пол
 
                 // Маскировка
                 if (currentBlock === VB.COVER) { covers.push({pX: j, pY: 0, pZ: i}); } 
@@ -188,6 +189,7 @@ export default class LevelManager {
         console.log("covers: " +  covers.length);
         console.log("rightShadows: " + rightShadows.length);
         console.log("aboveShadows: " + aboveShadows.length);
+        console.log("floors: " + floors.length);
         this.threeManager.createGrasses(grasses); // TODO: переименовать create в add
         this.threeManager.createWaters(waters);
         this.threeManager.createWallsForWater(wallsForWater);
@@ -195,7 +197,7 @@ export default class LevelManager {
         this.threeManager.createBorders2(borders2);
         this.threeManager.createCovers(covers);
         this.threeManager.createAllShadows(rightShadows, aboveShadows, this.config.mapSize.x);
-   
+        this.threeManager.createFloors(floors);
         this.threeManager.addToScene();
 
         this.timerStart = setTimeout(() => {
