@@ -57,36 +57,44 @@ export class ShadowPool {
         }
     }
 
-    createAbove(posX, posY = 0.001, posZ, mapWidth){
-        // if (this.usedAboveList.has(coordinatesToId(posX, posZ, mapWidth))){
-        //     return;
-        // }
-        // if (this.shadowsAbove.length === 0) {
-        //     this.shadowsAbove.push(this.modelAbove.clone());
-        //     this.shadowsAbove[0].visible = false;
-        //     this.container.add(this.shadowsAbove[0]);
-        //     console.log("Добавляем дополнительный объект в ShadowPool");
-        // }
-        // let shadow = this.shadowsAbove.splice(this.shadowsAbove.length-1, 1)[0];
-        // this.usedAboveList.set(coordinatesToId(posX, posZ, mapWidth), shadow);
-        // shadow.position.set(posX, posY, posZ);
-        // shadow.visible = true;
+    createAbove(posX, posY = 0.01, posZ, mapWidth){
+        if (this.usedAboveList.has(coordinatesToId(posX, posZ, mapWidth))){
+            return;
+        }
+        if (this.freeShadowsAbove.length === 0) {
+            console.log("Добавляем дополнительный объект в ShadowPool");
+        }
+        let shadow = this.freeShadowsAbove.splice(this.freeShadowsAbove.length-1, 1);
+        this.usedAboveList.set(coordinatesToId(posX, posZ, mapWidth), shadow);
+
+        const matrix = new THREE.Matrix4();
+        let position = new THREE.Vector3(posX, posY, posZ);
+        let quaternion = new THREE.Quaternion();
+        let scale = new THREE.Vector3(1, 1, 1);
+        matrix.compose(position, quaternion, scale);
+
+        this.instancedMeshForAbove.setMatrixAt(shadow, matrix);
+        this.instancedMeshForAbove.instanceMatrix.needsUpdate = true; // После обработки флаг сбрасывается
     }
 
-    createRight(posX, posY = 0.001, posZ, mapWidth){
-        // if (this.usedRightList.has(coordinatesToId(posX, posZ, mapWidth))){
-        //     return;
-        // }
-        // if (this.shadowsRight.length === 0) {
-        //     this.shadowsRight.push(this.modelRight.clone());
-        //     this.shadowsRight[0].visible = false;
-        //     this.container.add(this.shadowsRight[0]);
-        //     console.log("Добавляем дополнительный объект в ShadowPool");
-        // }
-        // let shadow = this.shadowsRight.splice(this.shadowsRight.length-1, 1)[0];
-        // this.usedRightList.set(coordinatesToId(posX, posZ, mapWidth), shadow);
-        // shadow.position.set(posX, posY, posZ);
-        // shadow.visible = true;
+    createRight(posX, posY = 0.01, posZ, mapWidth){
+        if (this.usedRightList.has(coordinatesToId(posX, posZ, mapWidth))){
+            return;
+        }
+        if (this.freeShadowsRight.length === 0) {
+            console.log("Добавляем дополнительный объект в ShadowPool");
+        }
+        let shadow = this.freeShadowsRight.splice(this.freeShadowsRight.length-1, 1);
+        this.usedRightList.set(coordinatesToId(posX, posZ, mapWidth), shadow);
+
+        const matrix = new THREE.Matrix4();
+        let position = new THREE.Vector3(posX, posY, posZ);
+        let quaternion = new THREE.Quaternion();
+        let scale = new THREE.Vector3(1, 1, 1);
+        matrix.compose(position, quaternion, scale);
+
+        this.instancedMeshForRight.setMatrixAt(shadow, matrix);
+        this.instancedMeshForRight.instanceMatrix.needsUpdate = true; // После обработки флаг сбрасывается
     }
 
     remove(posX, posZ, mapWidth){

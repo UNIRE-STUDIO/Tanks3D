@@ -107,6 +107,8 @@ export default class LevelManager {
         let rightShadows = [];
         let aboveShadows = [];
         let floors = [];
+        let bricks = [];
+        let stones = [];
 
         // Поскольку Object.assign делает только поверхностную копию мы присваиваем каждую полосу отдельно
         for (let y = 0; y < this.config.mapSize.y; y++) {
@@ -154,10 +156,10 @@ export default class LevelManager {
                 // Маскировка
                 if (currentBlock === VB.COVER) { covers.push({pX: j, pY: 0, pZ: i}); } 
                 else if (currentBlock === VB.BRICK) {                  // Кирпич
-                    this.threeManager.createBrick(j, 0, i, this.config.mapSize.x);
+                    bricks.push({pX: j, pY: 0, pZ: i});
                 } 
                 else if (currentBlock === VB.STONE) {                  // Камень
-                    this.threeManager.createStone(j, 0, i, this.config.mapSize.x);
+                    stones.push({pX: j, pY: 0, pZ: i});
                 }
                 else if (currentBlock === VB.BORDER1){ borders1.push({pX: j, pY: 0, pZ: i}); }
                 else if (currentBlock === VB.BORDER2){ borders2.push({pX: j, pY: 0, pZ: i}); }
@@ -190,6 +192,8 @@ export default class LevelManager {
         console.log("rightShadows: " + rightShadows.length);
         console.log("aboveShadows: " + aboveShadows.length);
         console.log("floors: " + floors.length);
+        console.log("bricks: " + bricks.length);
+        console.log("stones: " + stones.length);
         this.threeManager.createGrasses(grasses); // TODO: переименовать create в add
         this.threeManager.createWaters(waters);
         this.threeManager.createWallsForWater(wallsForWater);
@@ -198,6 +202,8 @@ export default class LevelManager {
         this.threeManager.createCovers(covers);
         this.threeManager.createAllShadows(rightShadows, aboveShadows, this.config.mapSize.x);
         this.threeManager.createFloors(floors);
+        this.threeManager.createBricks(bricks, this.config.mapSize.x);
+        this.threeManager.createStones(stones, this.config.mapSize.x);
         this.threeManager.addToScene();
 
         this.timerStart = setTimeout(() => {
