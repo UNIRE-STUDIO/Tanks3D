@@ -1,5 +1,5 @@
 class AnimatedSprite {
-    constructor(parameters) {
+    constructor() {
         
     }
 }

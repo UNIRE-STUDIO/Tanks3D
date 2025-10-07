@@ -155,7 +155,7 @@ export default class ThreeManager {
             this.borders2Pool = new StaticBlockPool(border2.material, border2.geometry, 130);
             this.scene.add(this.borders2Pool.instancedMesh);
         });
-        
+
         // Пул Covers -------------------
         let cover;
         this.gltfLoader.load('/models/cover.glb', (gltf) => {
@@ -194,6 +194,8 @@ export default class ThreeManager {
         this.scene.add(this.shadows3D);
 
         // ----------------------------------------------------------------------
+
+
 
         this.bulletOrigin;
         this.player1TankMesh;
@@ -268,7 +270,7 @@ export default class ThreeManager {
     createAllShadows(rightMatrix, aboveMatrix, mapWidth) { this.shadowsPool.init(rightMatrix, aboveMatrix, mapWidth) }
     createFloors(matrixs) { this.floorPool.init(matrixs) }
     createBricks(matrixs, mapWidth) { this.bricksPool.init(matrixs, mapWidth) }
-    createStones(matrixs, mapWidth)  { this.stonesPool.init(matrixs, mapWidth) }
+    createStones(matrixs, mapWidth) { this.stonesPool.init(matrixs, mapWidth) }
 
     createBullet() {
         return new THREE.Mesh(this.bulletOrigin.geometry, this.bulletOrigin.material);
@@ -319,7 +321,7 @@ export default class ThreeManager {
     }
 
     reset() {
-        
+
     }
 
     setCameraMove(axis) {
