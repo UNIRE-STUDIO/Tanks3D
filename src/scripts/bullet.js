@@ -3,9 +3,8 @@ import * as THREE from "three";
 import { VisualBlocks as BB } from "./config.js";
 
 export default class Bullet {
-    constructor(config, removeTile, destructionOfTheBaseEvent, id, bangCreateEvent, uiFields, threeManager, model) {
+    constructor(config, removeTile, destructionOfTheBaseEvent, id, bangCreateEvent, uiFields, model) {
         this.config = config;
-        this.threeManager = threeManager;
         this.posX = 0;
         this.posY = 0;
         this.dirY = 0;
@@ -36,7 +35,6 @@ export default class Bullet {
 
         // 3d                                                    
         this.model = model; // центром пули является её начало *|========>
-        this.threeManager.scene.add(this.model);
         this.model.visible = false;
     }
 

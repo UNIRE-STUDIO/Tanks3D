@@ -1,17 +1,17 @@
 import Bullet from './bullet.js'
 
 export default class BulletPool {
-    constructor(config, removeTile, destructionOfTheBaseEvent, bangCreateEvent, uiFields, threeManager) {
+    constructor(config, removeTile, destructionOfTheBaseEvent, bangCreateEvent, uiFields, createBullet, container) {
         this.config = config
-        this.threeManager = threeManager;
         const pool_size = 12
         this.bullets = []
 
         let model
         for (let i = 0; i < pool_size; i++) {
             // Добавить сюда создание самого 3д объекта с помощью threeManager
-            model = this.threeManager.createBullet();
-            this.bullets[i] = new Bullet(this.config, removeTile, destructionOfTheBaseEvent, i, bangCreateEvent, uiFields, threeManager, model);
+            model = createBullet();
+            container.add(model);
+            this.bullets[i] = new Bullet(this.config, removeTile, destructionOfTheBaseEvent, i, bangCreateEvent, uiFields, model);
         }
         for (let i = 0; i < pool_size; i++) {
             this.bullets[i].bullets = this.bullets;

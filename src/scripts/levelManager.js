@@ -8,6 +8,7 @@ import PlayerTank from "./playerTank.js";
 import { VisualBlocks as VB } from "./config.js";
 import { VisualAndPhysics } from "./config.js";
 import { watch } from "vue";
+import AnimatedSpritePool from "./animatedSpritePool.js";
 
 export default class LevelManager {
     constructor(input, config, uiFields) {
@@ -44,13 +45,20 @@ export default class LevelManager {
         //     this.bangPool.create.bind(this.bangPool), <--------
         //     this.uiFields
         // )
+        this.bangTankPool = new AnimatedSpritePool(
+          this.threeManager.bangTankContainer,
+          this.threeManager.createBangTankMesh.bind(this.threeManager),
+          [{x: 0, y:0.75}, {x: 0.25, y:0.75}, {x: 0.5, y:0.75}, {x: 0.75, y:0.75},
+           {x: 0, y:0.5 }, {x: 0.25, y:0.5 }, {x: 0.5, y:0.5 }, {x: 0.75, y:0.5 }]
+        );
         this.bulletPool = new BulletPool(
             this.config,
             this.removeTile.bind(this),
             this.destructionOfTheBase.bind(this),
             undefined, // <--------
             this.uiFields,
-            this.threeManager
+            this.threeManager.createBullet.bind(this.threeManager),
+            this.threeManager.bulletContainer
         );
         this.players = [];
         this.players[0] = new PlayerTank(
@@ -208,7 +216,9 @@ export default class LevelManager {
 
         this.timerStart = setTimeout(() => {
             this.delayedSpawn();
+            this.bangTankPool.create({x: 25, y: 1.3, z: 40});
         }, 1000);
+        console.log(this.threeManager.scene);
     }
 
     delayedSpawn() {

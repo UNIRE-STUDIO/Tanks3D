@@ -1,27 +1,29 @@
-import Bang from "./bang.js";
-import { getPosOnSliceImage } from "./general.js";
+import AnimatedSprite from './animatedSprite.js'
 
 export default class AnimatedSpritePool
 {
-    constructor(config, bangSize, sliceSize = 16, frames)
+    constructor(container, createAnimatedSpriteMesh, offsetsForFrames)
     {
-        this.frames = frames;
+        this.offsetsForFrames = frames;
 
         const pool_size = 6;
-        this.bangs = [];
-
+        this.animatedsprites = [];
+        this.createAnimatedSpriteMesh = createAnimatedSpriteMesh;
         for (let i = 0; i < pool_size; i++) 
         {
-            this.bangs[i] = new Bang(config, this.frames, bangSize, sliceSize);
+            let mesh = this.createAnimatedSpriteMesh();
+            mesh.visible = false;
+            container.add(mesh);
+            this.animatedsprites[i] = new AnimatedSprite(mesh);
         }
     }
 
     create(pos)
     {
-        for (let i = 0; i < this.bangs.length; i++) {
-            if (!this.bangs[i].isUse)
+        for (let i = 0; i < this.animatedsprites.length; i++) {
+            if (!this.animatedsprites[i].isUse)
             {
-                this.bangs[i].create(pos);
+                this.animatedsprites[i].create(pos);
                 return;
             }
         }
@@ -30,29 +32,16 @@ export default class AnimatedSpritePool
 
     setReset()
     {
-        for (let i = 0; i < this.bangs.length; i++) 
-        {
-            this.bangs[i].isUse = false;
-        }
+
     }
 
     update(lag)
     {
-        for (let i = 0; i < this.bangs.length; i++) {
-            if (this.bangs[i].isUse)
-            {
-                this.bangs[i].update(lag);
-            }
-        }
+
     }
 
     render()
     {
-        for (let i = 0; i < this.bangs.length; i++) {
-            if (this.bangs[i].isUse)
-            {
-                this.bangs[i].render();
-            }
-        }
+
     }
 }

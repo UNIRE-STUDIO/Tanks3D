@@ -65,11 +65,10 @@ export default class ThreeManager {
             '/models/npcTank1.glb'
         ]
 
-
         // 3Д объекты ----------------------------------------------------------------------------------------
-        let planeGeometry = new THREE.PlaneGeometry(1, 1, 1);
-        planeGeometry.rotateX((270 * Math.PI) / 180);
-        planeGeometry.translate(0.5, 0, 0.5);
+        this.planeGeometry = new THREE.PlaneGeometry(1, 1, 1);
+        this.planeGeometry.rotateX((270 * Math.PI) / 180);
+        this.planeGeometry.translate(0.5, 0, 0.5);
 
         // Пул Brick
         let brick;
@@ -101,7 +100,7 @@ export default class ThreeManager {
         floorTexture.colorSpace = THREE.SRGBColorSpace;
         let floorNormalTexture = textureLoader.load('/sprites/floor-normalMap.jpg');
         let floorMaterial = new THREE.MeshLambertMaterial({ map: floorTexture, normalMap: floorNormalTexture })
-        this.floorPool = new StaticBlockPool(floorMaterial, planeGeometry, 1000);
+        this.floorPool = new StaticBlockPool(floorMaterial, this.planeGeometry, 1000);
         this.scene.add(this.floorPool.instancedMesh);
 
         // Пул Травы -----------------
@@ -110,7 +109,7 @@ export default class ThreeManager {
         grassTexture.colorSpace = THREE.SRGBColorSpace;
         let grassMaterial = new THREE.MeshLambertMaterial({ map: grassTexture });
         // Инициализируем со строгим кол-вом объектов
-        this.grassPool = new StaticBlockPool(grassMaterial, planeGeometry, 1600);
+        this.grassPool = new StaticBlockPool(grassMaterial, this.planeGeometry, 1600);
         this.scene.add(this.grassPool.instancedMesh);
 
         // Пул Воды ------------------
@@ -122,14 +121,14 @@ export default class ThreeManager {
         waterNormalTexture.wrapS = THREE.RepeatWrapping;
         waterNormalTexture.wrapT = THREE.RepeatWrapping;
         this.waterMaterial = new THREE.MeshLambertMaterial({ map: waterTexture });
-        this.watersPool = new StaticBlockPool(this.waterMaterial, planeGeometry, 300);
+        this.watersPool = new StaticBlockPool(this.waterMaterial, this.planeGeometry, 300);
         this.scene.add(this.watersPool.instancedMesh);
 
         // Пул Стен для воды -----------
         // Создаём материал
         let wallsForWaterMaterial = new THREE.MeshLambertMaterial({ color: 0x3F4141 })
         // Создаём геометрию
-        let waterGeometry = planeGeometry.clone();
+        let waterGeometry = this.planeGeometry.clone();
         waterGeometry.rotateX((-270 * Math.PI) / 180);
         waterGeometry.scale(1, 0.8, 1);
         this.wallsForWaterPool = new StaticBlockPool(wallsForWaterMaterial, waterGeometry, 300);
@@ -188,30 +187,36 @@ export default class ThreeManager {
         let shadowAboveGeometry = new THREE.ShapeGeometry(shapeAbove);
         shadowAboveGeometry.rotateX((270 * Math.PI) / 180);
 
-        this.shadows3D = new THREE.Object3D();
-        this.shadowsPool = new ShadowPool(this.shadows3D,
+        let shadows3D = new THREE.Object3D();
+        this.shadowsPool = new ShadowPool(shadows3D,
             new THREE.Mesh(shadowRightGeometry, new THREE.MeshBasicMaterial({ color: 0x000, transparent: true, opacity: 0.5 })),
             new THREE.Mesh(shadowAboveGeometry, new THREE.MeshBasicMaterial({ color: 0x000, transparent: true, opacity: 0.5 })));
-        this.scene.add(this.shadows3D);
+        this.scene.add(shadows3D);
 
         // BangTankPool --------------------------------
         let bangTankTexture = textureLoader.load('/sprites/bang.png', (texture) => {
             bangTankTexture.wrapS = THREE.RepeatWrapping;
             bangTankTexture.wrapT = THREE.RepeatWrapping;
-            bangTankTexture.repeat.set(1 / 8, 1 / 2);
+            bangTankTexture.repeat.set(1 / 4, 1 / 4);
             bangTankTexture.needsUpdate = true;
+            bangTankTexture.offset.set(0, 0.75); // Мы перемещаем полотно Вниз и вправо
         });
-        let bangTankMaterial = new THREE.MeshBasicMaterial({
+        this.bangTankMaterial = new THREE.MeshLambertMaterial({
             map: bangTankTexture,
             transparent: true,
             side: THREE.DoubleSide,
-            alphaTest: 0.1
         });
-        let bangTankMesh = new THREE.Mesh(planeGeometry, bangTankMaterial);
-        this.bangTankPool = new AnimatedSpritePool();
+        this.bangTankGeomentry = new THREE.PlaneGeometry(2, 2, 2);
+        this.bangTankGeomentry.rotateX((270 * Math.PI) / 180);
+        this.bangTankGeomentry.translate(1, 0, 1);
 
-        
+        this.bangTankContainer = new THREE.Object3D();
+        this.bangTankContainer.name = "Bang Tank Container";
+        this.scene.add(this.bangTankContainer);
 
+        this.bulletContainer = new THREE.Object3D();
+        this.bulletContainer.name = "Bullet Container";
+        this.scene.add(this.bulletContainer);
         this.bulletOrigin;
         this.player1TankMesh;
         this.player2TankMesh;
@@ -286,18 +291,14 @@ export default class ThreeManager {
     createFloors(matrixs) { this.floorPool.init(matrixs) }
     createBricks(matrixs, mapWidth) { this.bricksPool.init(matrixs, mapWidth) }
     createStones(matrixs, mapWidth) { this.stonesPool.init(matrixs, mapWidth) }
+    createShadowAbove(posX, posZ) { this.shadowsPool.createAbove(posX, 0.01, posZ, this.config.mapSize.x) }
+    createShadowRight(posX, posZ) { this.shadowsPool.createRight(posX, 0.01, posZ, this.config.mapSize.x) }
 
     createBullet() {
         return new THREE.Mesh(this.bulletOrigin.geometry, this.bulletOrigin.material);
     }
-
-    createShadowAbove(posX, posZ) {
-        this.shadowsPool.createAbove(posX, 0.01, posZ, this.config.mapSize.x);
-    }
-
-    createShadowRight(posX, posZ) {
-        this.shadowsPool.createRight(posX, 0.01, posZ, this.config.mapSize.x);
-        // this.createLabel(posX, posZ, coordinatesToId(posX, posZ, this.config.mapSize.x));
+    createBangTankMesh(){ 
+        return new THREE.Mesh(this.bangTankGeomentry, this.bangTankMaterial);
     }
 
     createLabel(posX, posZ, id) {
