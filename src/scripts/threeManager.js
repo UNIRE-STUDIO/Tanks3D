@@ -8,6 +8,7 @@ import { ShadowPool } from "./shadowPool.js";
 import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
 import StaticBlockPool from "./staticBlockPool.js";
 import DynamicBlockPool from "./dynamicBlockPool.js";
+import AnimatedSpritePool from "./animatedSpritePool.js";
 
 export default class ThreeManager {
     constructor(uiFields, config) {
@@ -66,9 +67,9 @@ export default class ThreeManager {
 
 
         // 3Д объекты ----------------------------------------------------------------------------------------
-        this.planeGeometry = new THREE.PlaneGeometry(1, 1, 1);
-        this.planeGeometry.rotateX((270 * Math.PI) / 180);
-        this.planeGeometry.translate(0.5, 0, 0.5);
+        let planeGeometry = new THREE.PlaneGeometry(1, 1, 1);
+        planeGeometry.rotateX((270 * Math.PI) / 180);
+        planeGeometry.translate(0.5, 0, 0.5);
 
         // Пул Brick
         let brick;
@@ -100,7 +101,7 @@ export default class ThreeManager {
         floorTexture.colorSpace = THREE.SRGBColorSpace;
         let floorNormalTexture = textureLoader.load('/sprites/floor-normalMap.jpg');
         let floorMaterial = new THREE.MeshLambertMaterial({ map: floorTexture, normalMap: floorNormalTexture })
-        this.floorPool = new StaticBlockPool(floorMaterial, this.planeGeometry, 1000);
+        this.floorPool = new StaticBlockPool(floorMaterial, planeGeometry, 1000);
         this.scene.add(this.floorPool.instancedMesh);
 
         // Пул Травы -----------------
@@ -109,7 +110,7 @@ export default class ThreeManager {
         grassTexture.colorSpace = THREE.SRGBColorSpace;
         let grassMaterial = new THREE.MeshLambertMaterial({ map: grassTexture });
         // Инициализируем со строгим кол-вом объектов
-        this.grassPool = new StaticBlockPool(grassMaterial, this.planeGeometry, 1600);
+        this.grassPool = new StaticBlockPool(grassMaterial, planeGeometry, 1600);
         this.scene.add(this.grassPool.instancedMesh);
 
         // Пул Воды ------------------
@@ -121,14 +122,14 @@ export default class ThreeManager {
         waterNormalTexture.wrapS = THREE.RepeatWrapping;
         waterNormalTexture.wrapT = THREE.RepeatWrapping;
         this.waterMaterial = new THREE.MeshLambertMaterial({ map: waterTexture });
-        this.watersPool = new StaticBlockPool(this.waterMaterial, this.planeGeometry, 300);
+        this.watersPool = new StaticBlockPool(this.waterMaterial, planeGeometry, 300);
         this.scene.add(this.watersPool.instancedMesh);
 
         // Пул Стен для воды -----------
         // Создаём материал
         let wallsForWaterMaterial = new THREE.MeshLambertMaterial({ color: 0x3F4141 })
         // Создаём геометрию
-        let waterGeometry = this.planeGeometry.clone();
+        let waterGeometry = planeGeometry.clone();
         waterGeometry.rotateX((-270 * Math.PI) / 180);
         waterGeometry.scale(1, 0.8, 1);
         this.wallsForWaterPool = new StaticBlockPool(wallsForWaterMaterial, waterGeometry, 300);
@@ -193,9 +194,23 @@ export default class ThreeManager {
             new THREE.Mesh(shadowAboveGeometry, new THREE.MeshBasicMaterial({ color: 0x000, transparent: true, opacity: 0.5 })));
         this.scene.add(this.shadows3D);
 
-        // ----------------------------------------------------------------------
+        // BangTankPool --------------------------------
+        let bangTankTexture = textureLoader.load('/sprites/bang.png', (texture) => {
+            bangTankTexture.wrapS = THREE.RepeatWrapping;
+            bangTankTexture.wrapT = THREE.RepeatWrapping;
+            bangTankTexture.repeat.set(1 / 8, 1 / 2);
+            bangTankTexture.needsUpdate = true;
+        });
+        let bangTankMaterial = new THREE.MeshBasicMaterial({
+            map: bangTankTexture,
+            transparent: true,
+            side: THREE.DoubleSide,
+            alphaTest: 0.1
+        });
+        let bangTankMesh = new THREE.Mesh(planeGeometry, bangTankMaterial);
+        this.bangTankPool = new AnimatedSpritePool();
 
-
+        
 
         this.bulletOrigin;
         this.player1TankMesh;
