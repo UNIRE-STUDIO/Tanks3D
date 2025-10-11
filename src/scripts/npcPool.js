@@ -6,7 +6,7 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import * as THREE from "three";
 
 export default class NpcPool {
-    constructor(config, bulletPool, players, winEvent, uiFields, scene) {
+    constructor(config, bulletPool, players, winEvent, uiFields, scene, bangCreateEvent) {
         this.config = config;
         this.currentMap;
         this.currentLevel;
@@ -14,7 +14,7 @@ export default class NpcPool {
         this.uiFields.countReserveNpcTanks = 0;
         this.countNpcTanks = 0;
 
-        const pool_size = 1; // Одновременное кол-во нпс на карте
+        const pool_size = 5; // Одновременное кол-во нпс на карте
         this.tanks = [];
         
         let urlModels = [
@@ -33,7 +33,7 @@ export default class NpcPool {
         // })
 
         for (let i = 0; i < pool_size; i++) {
-            this.tanks[i] = new NpcTank(this.config, bulletPool, players, this.deadNpcEvent.bind(this), scene, i);
+            this.tanks[i] = new NpcTank(this.config, bulletPool, players, this.deadNpcEvent.bind(this), scene, i, bangCreateEvent);
         }
         for (let i = 0; i < pool_size; i++) {
             this.tanks[i].otherTanks.push(...this.tanks);

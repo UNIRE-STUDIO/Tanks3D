@@ -4,8 +4,9 @@ import Timer from "./timer.js";
 import { VisualBlocks as BB } from "./config.js";
 
 export default class NpcTank extends Tank {
-    constructor(config, spawnBullet, players, deadNpcEvent, id) {
-        super(config, spawnBullet, id);
+    constructor(config, spawnBullet, players, deadNpcEvent, threeManager, id, bangCreateEvent) {
+        super(config, spawnBullet, threeManager);
+        this.bangCreateEvent = bangCreateEvent;
         this.npcId = id;
         this.dirY = 1;
         this.speed = 0.003 * config.grid;
@@ -448,6 +449,7 @@ export default class NpcTank extends Tank {
         this.health = this.health - damage <= 0 ? 0 : this.health - damage;
         if (this.health === 0) {
             this.isDead = true;
+            this.bangCreateEvent({x: this.position.x, y: 1.3, z: this.position.y});
             setTimeout(() => { // Уничтожение с задержкой
                 this.setReset();
                 this.deadNpcEvent();

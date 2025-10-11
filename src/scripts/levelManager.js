@@ -77,7 +77,14 @@ export default class LevelManager {
             this.threeManager,
             this.threeManager.player2TankMesh);
 
-        this.npcPool = new NpcPool(this.config, this.bulletPool.create.bind(this.bulletPool), this.players, this.win.bind(this), this.uiFields, this.threeManager);
+        this.npcPool = new NpcPool(
+            this.config, 
+            this.bulletPool.create.bind(this.bulletPool), 
+            this.players, 
+            this.win.bind(this), 
+            this.uiFields, 
+            this.threeManager,
+            this.bangTankPool.create.bind(this.bangTankPool));
 
         this.players[0].otherTanks.push(...this.npcPool.tanks);
         this.players[1].otherTanks.push(...this.npcPool.tanks);
@@ -216,8 +223,8 @@ export default class LevelManager {
 
         this.timerStart = setTimeout(() => {
             this.delayedSpawn();
-            this.bangTankPool.create({x: 25, y: 1.3, z: 40});
         }, 1000);
+
         console.log(this.threeManager.scene);
     }
 
@@ -339,10 +346,12 @@ export default class LevelManager {
         this.bulletPool.update(lag);
         this.npcPool.update(lag);
         this.threeManager.update(lag);
+        this.bangTankPool.update(lag);
         // this.bangPool.update(lag);
     }
 
     render() {
         this.threeManager.render();
+        this.bangTankPool.render();
     }
 }

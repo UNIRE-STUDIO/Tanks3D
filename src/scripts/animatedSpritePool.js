@@ -4,8 +4,6 @@ export default class AnimatedSpritePool
 {
     constructor(container, createAnimatedSpriteMesh, offsetsForFrames)
     {
-        this.offsetsForFrames = frames;
-
         const pool_size = 6;
         this.animatedsprites = [];
         this.createAnimatedSpriteMesh = createAnimatedSpriteMesh;
@@ -14,7 +12,7 @@ export default class AnimatedSpritePool
             let mesh = this.createAnimatedSpriteMesh();
             mesh.visible = false;
             container.add(mesh);
-            this.animatedsprites[i] = new AnimatedSprite(mesh);
+            this.animatedsprites[i] = new AnimatedSprite(mesh, offsetsForFrames);
         }
     }
 
@@ -37,11 +35,21 @@ export default class AnimatedSpritePool
 
     update(lag)
     {
-
+        for (let i = 0; i < this.animatedsprites.length; i++) {
+            if (this.animatedsprites[i].isUse)
+            {
+                this.animatedsprites[i].update(lag);
+            }
+        }
     }
 
     render()
     {
-
+        for (let i = 0; i < this.animatedsprites.length; i++) {
+            if (this.animatedsprites[i].isUse)
+            {
+                this.animatedsprites[i].render();
+            }
+        }
     }
 }

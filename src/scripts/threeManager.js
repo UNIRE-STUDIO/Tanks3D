@@ -194,17 +194,12 @@ export default class ThreeManager {
         this.scene.add(shadows3D);
 
         // BangTankPool --------------------------------
-        let bangTankTexture = textureLoader.load('/sprites/bang.png', (texture) => {
-            bangTankTexture.wrapS = THREE.RepeatWrapping;
-            bangTankTexture.wrapT = THREE.RepeatWrapping;
-            bangTankTexture.repeat.set(1 / 4, 1 / 4);
-            bangTankTexture.needsUpdate = true;
-            bangTankTexture.offset.set(0, 0.75); // Мы перемещаем полотно Вниз и вправо
-        });
-        this.bangTankMaterial = new THREE.MeshLambertMaterial({
-            map: bangTankTexture,
-            transparent: true,
-            side: THREE.DoubleSide,
+        this.bangTankTexture = textureLoader.load('/sprites/bang.png', (texture) => {
+            this.bangTankTexture.wrapS = THREE.RepeatWrapping;
+            this.bangTankTexture.wrapT = THREE.RepeatWrapping;
+            this.bangTankTexture.repeat.set(1 / 4, 1 / 4);
+            this.bangTankTexture.needsUpdate = true;
+            this.bangTankTexture.offset.set(0, 0.75); // Мы перемещаем полотно Вниз и вправо
         });
         this.bangTankGeomentry = new THREE.PlaneGeometry(2, 2, 2);
         this.bangTankGeomentry.rotateX((270 * Math.PI) / 180);
@@ -297,7 +292,13 @@ export default class ThreeManager {
     createBullet() {
         return new THREE.Mesh(this.bulletOrigin.geometry, this.bulletOrigin.material);
     }
-    createBangTankMesh(){ 
+    createBangTankMesh(){
+        this.bangTankMaterial = new THREE.MeshLambertMaterial({
+            // Клонируем, чтобы изменения текстуры одного взрыва не затрагивали другой взрыв
+            map: this.bangTankTexture.clone(), 
+            transparent: true,
+            side: THREE.DoubleSide,
+        });
         return new THREE.Mesh(this.bangTankGeomentry, this.bangTankMaterial);
     }
 
