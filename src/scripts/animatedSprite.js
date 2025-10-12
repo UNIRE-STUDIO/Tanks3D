@@ -1,22 +1,21 @@
 export default class AnimatedSprite {
-    constructor(mesh, frames, config, size)
+    constructor(mesh, frames, camera)
     {
         this.mesh = mesh;
-        this.config = config;
+        this.camera = camera;
         this.posX = 0;
         this.posY = 0;
-        this.isUse = false;
+        this.isUse = true;
         this.duration = 400; // ms
         this.timeCounter = 0;
 
         this.frames = frames;
-        this.size = size;
     }
 
     create(pos)
     {
-        this.posX = pos.x - this.size/2;
-        this.posY = pos.y - this.size/2;
+        this.posX = pos.x;
+        this.posY = pos.y;
         this.isUse = true;
         this.timeCounter = 0;
         this.mesh.position.set(pos.x, pos.y, pos.z);
@@ -30,7 +29,8 @@ export default class AnimatedSprite {
         if (this.timeCounter >= this.duration){
             this.isUse = false;
             this.mesh.visible = false;
-        } 
+        }
+        this.mesh.lookAt(this.camera.position);
     }
 
     render()

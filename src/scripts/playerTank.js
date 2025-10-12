@@ -2,9 +2,9 @@ import Tank from './tank.js'
 import Timer from './timer.js'
 
 export default class PlayerTank extends Tank {
-    constructor(config, spawnBullet, deadEvent, playerId, threeManager, model) {
+    constructor(config, spawnBullet, deadEvent, playerId, threeManager, model, bangTankEvent) {
         super(config, spawnBullet, threeManager);
-
+        this.bangTankEvent = bangTankEvent;
         this.speed = 0.005 * config.grid;
 
         this.isCooldown = false;
@@ -42,6 +42,7 @@ export default class PlayerTank extends Tank {
     setDamage(damage) {
         this.health = this.health - damage <= 0 ? 0 : this.health - damage;
         if (this.health === 0) {
+            this.bangTankEvent({x:this.position.x + this.config.grid, y: 0.7, z: this.position.y + this.config.grid})
             this.isPause = true;
             setTimeout(() => { // Уничтожение с задержкой
                 this.setReset();

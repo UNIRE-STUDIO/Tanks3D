@@ -2,7 +2,7 @@ import AnimatedSprite from './animatedSprite.js'
 
 export default class AnimatedSpritePool
 {
-    constructor(container, createAnimatedSpriteMesh, offsetsForFrames)
+    constructor(container, createAnimatedSpriteMesh, offsetsForFrames, camera)
     {
         const pool_size = 6;
         this.animatedsprites = [];
@@ -12,7 +12,7 @@ export default class AnimatedSpritePool
             let mesh = this.createAnimatedSpriteMesh();
             mesh.visible = false;
             container.add(mesh);
-            this.animatedsprites[i] = new AnimatedSprite(mesh, offsetsForFrames);
+            this.animatedsprites[i] = new AnimatedSprite(mesh, offsetsForFrames, camera);
         }
     }
 

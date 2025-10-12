@@ -449,7 +449,7 @@ export default class NpcTank extends Tank {
         this.health = this.health - damage <= 0 ? 0 : this.health - damage;
         if (this.health === 0) {
             this.isDead = true;
-            this.bangCreateEvent({x: this.position.x, y: 1.3, z: this.position.y});
+            this.bangCreateEvent({x: this.position.x + this.config.grid, y: 0.7, z: this.position.y + this.config.grid});
             setTimeout(() => { // Уничтожение с задержкой
                 this.setReset();
                 this.deadNpcEvent();
@@ -474,8 +474,8 @@ export default class NpcTank extends Tank {
     shoot() {
         if (this.isPause || !this.isUse || this.isDead) return;
         let centerPos = {
-            x: this.position.x + this.config.grid + (this.config.grid) * this.dirX,
-            y: this.position.y + this.config.grid + (this.config.grid) * this.dirY
+            x: this.position.x + this.config.grid + (this.config.grid * this.dirX),
+            y: this.position.y + this.config.grid + (this.config.grid * this.dirY)
         };
         this.spawnBullet(centerPos, { x: this.dirX, y: this.dirY }, false, this.npcId);
     }

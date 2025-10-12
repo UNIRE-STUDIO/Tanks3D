@@ -201,9 +201,7 @@ export default class ThreeManager {
             this.bangTankTexture.needsUpdate = true;
             this.bangTankTexture.offset.set(0, 0.75); // Мы перемещаем полотно Вниз и вправо
         });
-        this.bangTankGeomentry = new THREE.PlaneGeometry(2, 2, 2);
-        this.bangTankGeomentry.rotateX((270 * Math.PI) / 180);
-        this.bangTankGeomentry.translate(1, 0, 1);
+        this.bangTankGeomentry = new THREE.PlaneGeometry(2.7, 2.7, 2.7);
 
         this.bangTankContainer = new THREE.Object3D();
         this.bangTankContainer.name = "Bang Tank Container";
