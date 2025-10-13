@@ -24,6 +24,7 @@ export default class DynamicBlockPool extends StaticBlockPool {
             this.usedBlocks.set(coordinatesToId(matrixs[i].pX, matrixs[i].pZ, mapWidth), i);
             this.instancedMesh.setMatrixAt(i, matrix);
         }
+        this.instancedMesh.instanceMatrix.needsUpdate = true; // После обработки флаг сбрасывается
     }
 
     remove(posX, posZ, mapWidth){

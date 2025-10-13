@@ -51,13 +51,21 @@ export default class LevelManager {
           this.threeManager.createBangTankMesh.bind(this.threeManager),
           [{x: 0, y:0.75}, {x: 0.25, y:0.75}, {x: 0.5, y:0.75}, {x: 0.75, y:0.75},
            {x: 0, y:0.5 }, {x: 0.25, y:0.5 }, {x: 0.5, y:0.5 }, {x: 0.75, y:0.5 }],
-           this.threeManager.camera
+           this.threeManager.camera,
+           400
         );
+        this.bangBulletPool = new AnimatedSpritePool(
+            this.threeManager.bangBulletContainer,
+            this.threeManager.createBangBulletMesh.bind(this.threeManager),
+            [{x: 0, y:0.375}, {x: 0.125, y:0.375}, {x: 0.25, y:0.375}, {x: 0.375, y:0.375}, {x: 0.5, y:0.375 }, {x: 0.625, y:0.375 }],
+            this.threeManager.camera,
+            300
+          );
         this.bulletPool = new BulletPool(
             this.config,
             this.removeTile.bind(this),
             this.destructionOfTheBase.bind(this),
-            undefined, // <--------
+            this.bangBulletPool.create.bind(this.bangBulletPool), // <--------
             this.uiFields,
             this.threeManager.createBullet.bind(this.threeManager),
             this.threeManager.bulletContainer
@@ -352,11 +360,13 @@ export default class LevelManager {
         this.npcPool.update(lag);
         this.threeManager.update(lag);
         this.bangTankPool.update(lag);
+        this.bangBulletPool.update(lag);
         // this.bangPool.update(lag);
     }
 
     render() {
         this.threeManager.render();
         this.bangTankPool.render();
+        this.bangBulletPool.render();
     }
 }

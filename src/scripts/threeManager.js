@@ -195,17 +195,21 @@ export default class ThreeManager {
 
         // BangTankPool --------------------------------
         this.bangTankTexture = textureLoader.load('/sprites/bang.png', (texture) => {
+            this.bangTankTexture.colorSpace = THREE.SRGBColorSpace;
             this.bangTankTexture.wrapS = THREE.RepeatWrapping;
             this.bangTankTexture.wrapT = THREE.RepeatWrapping;
             this.bangTankTexture.repeat.set(1 / 4, 1 / 4);
             this.bangTankTexture.needsUpdate = true;
             this.bangTankTexture.offset.set(0, 0.75); // Мы перемещаем полотно Вниз и вправо
         });
-        this.bangTankGeomentry = new THREE.PlaneGeometry(2.7, 2.7, 2.7);
-
         this.bangTankContainer = new THREE.Object3D();
         this.bangTankContainer.name = "Bang Tank Container";
         this.scene.add(this.bangTankContainer);
+
+        // BangBulletPool ---------------------------
+        this.bangBulletContainer = new THREE.Object3D();
+        this.bangBulletContainer.name = "Bang Bullet Container";
+        this.scene.add(this.bangBulletContainer);
 
         this.bulletContainer = new THREE.Object3D();
         this.bulletContainer.name = "Bullet Container";
@@ -291,13 +295,30 @@ export default class ThreeManager {
         return new THREE.Mesh(this.bulletOrigin.geometry, this.bulletOrigin.material);
     }
     createBangTankMesh(){
-        this.bangTankMaterial = new THREE.MeshLambertMaterial({
+        let material = new THREE.MeshLambertMaterial({
             // Клонируем, чтобы изменения текстуры одного взрыва не затрагивали другой взрыв
             map: this.bangTankTexture.clone(), 
             transparent: true,
             side: THREE.DoubleSide,
         });
-        return new THREE.Mesh(this.bangTankGeomentry, this.bangTankMaterial);
+        let geometry = new THREE.PlaneGeometry(2.7, 2.7, 2.7);
+        return new THREE.Mesh(geometry, material);
+    }
+    createBangBulletMesh(){
+        let material = new THREE.MeshLambertMaterial({
+            // Клонируем, чтобы изменения текстуры одного взрыва не затрагивали другой взрыв
+            map: this.bangTankTexture.clone(), 
+            transparent: true,
+            side: THREE.DoubleSide,
+        });
+        material.map.colorSpace = THREE.SRGBColorSpace;
+        material.map.wrapS = THREE.RepeatWrapping;
+        material.map.wrapT = THREE.RepeatWrapping;
+        material.map.repeat.set(1 / 8, 1 / 8);
+        material.map.needsUpdate = true;
+        material.map.offset.set(0, 0.25); // Мы перемещаем полотно Вниз и вправо
+        let geometry = new THREE.PlaneGeometry(1, 1, 1);
+        return new THREE.Mesh(geometry, material);
     }
 
     createLabel(posX, posZ, id) {

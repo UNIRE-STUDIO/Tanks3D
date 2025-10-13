@@ -72,7 +72,9 @@ export default class Bullet {
         let leftTile = this.currentMap[tileY][tileX - 1];
         let aboveTile = this.currentMap[tileY - 1] === undefined ? -1 : this.currentMap[tileY - 1][tileX];  // <----- Надо использовать эти переменные, что бы оптимизировать тут всё
         if (tile === BB.BRICK) {
-            this.removeTile(tileX, tileY);
+            setTimeout(() => {
+                this.removeTile(tileX, tileY);
+            }, 150);
             isCollision = true;
         }
         if (tile === BB.STONE) {
@@ -80,13 +82,20 @@ export default class Bullet {
         }
         if (this.dirY != 0 && (leftTile === BB.BRICK || leftTile === BB.STONE)) {
             // Проверяем соседний блок по горизонтале
-            if (leftTile === 1) this.removeTile(tileX - 1, tileY);
+            if (leftTile === 1) {
+                setTimeout(() => {
+                this.removeTile(tileX - 1, tileY);
+                }, 150);
+            }
             isCollision = true;
         } else if (this.dirX != 0 && (aboveTile === BB.BRICK || aboveTile === BB.STONE)) {
             
             // Проверяем соседний блок по вертикали
             if (aboveTile === BB.BRICK){
-                this.removeTile(tileX, tileY - 1);
+                setTimeout(() => {
+                    this.removeTile(tileX, tileY - 1);
+                }, 150);
+                
             }
                 
             isCollision = true;
@@ -168,13 +177,13 @@ export default class Bullet {
     update(lag) {
         this.checkerUpdatePos(); // Обновляем положения датчика
         if (this.checkCollisionWithObstacle() || this.sortTanks() || this.checkCollisionWithBullets()) {
-            this.destroy();
-
             // Спауним на середине пули // Смещаем по направлению
-            // this.bangCreateEvent({
-            //     x: this.posX + this.size / 2 + this.size * this.dirX,
-            //     y: this.posY + this.size / 2 + this.size * this.dirY                 <----------------------------
-            // })
+            this.bangCreateEvent({
+                x: this.posX + Math.abs(this.size * this.dirX),
+                y: 0.7,
+                z: this.posY + Math.abs(this.size * this.dirY)
+            });
+            this.destroy();
             return;
         }
 
@@ -187,6 +196,9 @@ export default class Bullet {
 
         this.posX += this.dirX * lag * this.speed;
         this.posY += this.dirY * lag * this.speed;
-        this.model.position.set(this.posX, 1, this.posY);
+        this.model.position.set(
+            this.posX + Math.abs(this.size * this.dirX), 
+            1, 
+            this.posY + Math.abs(this.size * this.dirY));
     }
 }

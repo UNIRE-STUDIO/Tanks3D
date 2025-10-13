@@ -1,12 +1,12 @@
 export default class AnimatedSprite {
-    constructor(mesh, frames, camera)
+    constructor(mesh, frames, camera, duration)
     {
         this.mesh = mesh;
         this.camera = camera;
         this.posX = 0;
         this.posY = 0;
         this.isUse = true;
-        this.duration = 400; // ms
+        this.duration = duration; // ms
         this.timeCounter = 0;
 
         this.frames = frames;

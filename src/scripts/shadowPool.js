@@ -55,6 +55,8 @@ export class ShadowPool {
             this.usedAboveList.set(coordinatesToId(aboveMatrixs[i].pX, aboveMatrixs[i].pZ, mapWidth), i);
             this.instancedMeshForAbove.setMatrixAt(i, matrix);
         }
+        this.instancedMeshForAbove.instanceMatrix.needsUpdate = true; // После обработки флаг сбрасывается
+        this.instancedMeshForRight.instanceMatrix.needsUpdate = true; // После обработки флаг сбрасывается
     }
 
     createAbove(posX, posY = 0.01, posZ, mapWidth){
