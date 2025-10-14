@@ -26,12 +26,14 @@ export default class LevelManager {
         this.winEvent;
         this.saveManager;
 
-        this.uiFields.currentLevel = 0;
+        this.uiFields.currentLevel = 1;
         this.physicalCurrentMap = null;
         this.visualCurrentMap = null;
         this.config = config;
         this.threeManager = new ThreeManager(uiFields, config);
         this.initAsync(input);
+
+        this.basePos = {x: 0, y: 0};
 
         this.timerStart;
     }
@@ -149,6 +151,7 @@ export default class LevelManager {
                 this.physicalCurrentMap[y].push(physicalBlock)
             }
         }
+        let isCreatedBase = false;
         for (let i = 0; i < this.config.mapSize.y; i++) {
             for (let j = 0; j < this.config.mapSize.x; j++) {
                 let currentBlock = this.visualCurrentMap[i][j];
@@ -190,6 +193,11 @@ export default class LevelManager {
                 }
                 else if (currentBlock === VB.BORDER1){ borders1.push({pX: j, pY: 0, pZ: i}); }
                 else if (currentBlock === VB.BORDER2){ borders2.push({pX: j, pY: 0, pZ: i}); }
+                else if (currentBlock === VB.BASE && !isCreatedBase){
+                    this.threeManager.createBase(j, i);
+                    this.basePos = {x: j, y: i};
+                    isCreatedBase = true;
+                }
 
                 // Выставляем тени
                 switch (currentBlock) {
@@ -242,24 +250,20 @@ export default class LevelManager {
     }
 
     delayedSpawn() {
-        let base = {
-            x: levels[this.uiFields.currentLevel].basePos.x * this.config.grid,
-            y: levels[this.uiFields.currentLevel].basePos.y * this.config.grid,
-        };
-        this.bulletPool.init(this.physicalCurrentMap, base);
+        this.bulletPool.init(this.physicalCurrentMap, this.basePos);
         this.isPause = false;
         this.players[0].create(this.physicalCurrentMap, levels[this.uiFields.currentLevel].playerSpawnsPos[0]);
 
-        this.players[0].setOtherCollisionObject(base);
+        this.players[0].setOtherCollisionObject(this.basePos);
         this.players[0].isPause = false;
         if (this.uiFields.playersMode === 1) {
             this.players[1].create(
                 this.physicalCurrentMap,
                 levels[this.uiFields.currentLevel].playerSpawnsPos[1]);
-            this.players[1].setOtherCollisionObject(base);
+            this.players[1].setOtherCollisionObject(this.basePos);
             this.players[1].isPause = false;
         }
-        this.npcPool.init(this.physicalCurrentMap, base);
+        this.npcPool.init(this.physicalCurrentMap, this.basePos);
         this.isPlay = true; // Для того что-бы коректно ставить на паузу до появления игроков
     }
 

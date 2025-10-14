@@ -100,7 +100,7 @@ export default class ThreeManager {
         floorTexture.colorSpace = THREE.SRGBColorSpace;
         let floorNormalTexture = textureLoader.load('/sprites/floor-normalMap.jpg');
         let floorMaterial = new THREE.MeshLambertMaterial({ map: floorTexture, normalMap: floorNormalTexture })
-        this.floorPool = new StaticBlockPool(floorMaterial, this.planeGeometry, 1000);
+        this.floorPool = new StaticBlockPool(floorMaterial, this.planeGeometry, 1400);
         this.scene.add(this.floorPool.instancedMesh);
 
         // Пул Травы -----------------
@@ -141,7 +141,7 @@ export default class ThreeManager {
             border1.material.map.minFilter = THREE.LinearMipMapLinearFilter;
             border1.material.map.magFilter = THREE.LinearFilter;
             border1.geometry.translate(0.5, 0, 0.5);
-            this.borders1Pool = new StaticBlockPool(border1.material, border1.geometry, 130);
+            this.borders1Pool = new StaticBlockPool(border1.material, border1.geometry, 300);
             this.scene.add(this.borders1Pool.instancedMesh);
         });
 
@@ -152,7 +152,7 @@ export default class ThreeManager {
             border2.material.map.minFilter = THREE.LinearMipMapLinearFilter;
             border2.material.map.magFilter = THREE.LinearFilter;
             border2.geometry.translate(0.5, 0, 0.5);
-            this.borders2Pool = new StaticBlockPool(border2.material, border2.geometry, 130);
+            this.borders2Pool = new StaticBlockPool(border2.material, border2.geometry, 300);
             this.scene.add(this.borders2Pool.instancedMesh);
         });
 
@@ -165,6 +165,15 @@ export default class ThreeManager {
             cover.geometry.translate(0.5, 0, 0.5);
             this.coversPool = new StaticBlockPool(cover.material, cover.geometry, 130);
             this.scene.add(this.coversPool.instancedMesh);
+        });
+
+        this.base;
+        this.gltfLoader.load('/models/base.glb', (gltf) => {
+            this.base = gltf.scene.children[0];
+            this.base.material.map.minFilter = THREE.LinearMipMapLinearFilter;
+            this.base.material.map.magFilter = THREE.LinearFilter;
+            this.base.geometry.translate(1, 0, 1);
+            this.scene.add(this.base);
         });
 
         // ТЕНЬ -----------------------
@@ -290,6 +299,7 @@ export default class ThreeManager {
     createStones(matrixs, mapWidth) { this.stonesPool.init(matrixs, mapWidth) }
     createShadowAbove(posX, posZ) { this.shadowsPool.createAbove(posX, 0.01, posZ, this.config.mapSize.x) }
     createShadowRight(posX, posZ) { this.shadowsPool.createRight(posX, 0.01, posZ, this.config.mapSize.x) }
+    createBase(posX, posZ){ this.base.position.set(posX, 0, posZ) }
 
     createBullet() {
         return new THREE.Mesh(this.bulletOrigin.geometry, this.bulletOrigin.material);

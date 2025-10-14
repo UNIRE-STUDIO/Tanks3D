@@ -6,7 +6,7 @@ export class ShadowPool {
         this.container = container;
         this.modelAbove = modelAbove;
         this.modelRight = modelRight;
-        this.pool_size = 200;
+        this.pool_size = 400;
         this.freeShadowsAbove = [];
         this.freeShadowsRight = [];
 
@@ -77,6 +77,7 @@ export class ShadowPool {
 
         this.instancedMeshForAbove.setMatrixAt(shadow, matrix);
         this.instancedMeshForAbove.instanceMatrix.needsUpdate = true; // После обработки флаг сбрасывается
+        this.instancedMeshForRight.instanceMatrix.needsUpdate = true; // После обработки флаг сбрасывается
     }
 
     createRight(posX, posY = 0.01, posZ, mapWidth){
@@ -96,6 +97,7 @@ export class ShadowPool {
         matrix.compose(position, quaternion, scale);
 
         this.instancedMeshForRight.setMatrixAt(shadow, matrix);
+        this.instancedMeshForAbove.instanceMatrix.needsUpdate = true; // После обработки флаг сбрасывается
         this.instancedMeshForRight.instanceMatrix.needsUpdate = true; // После обработки флаг сбрасывается
     }
 
