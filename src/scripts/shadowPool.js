@@ -26,6 +26,10 @@ export class ShadowPool {
     }
 
     init(rightMatrixs, aboveMatrixs, mapWidth){
+        this.freeShadowsRight = [];
+        this.freeShadowsAbove = [];
+        this.usedRightList.clear();
+        this.usedAboveList.clear();
         for (let i = 0; i < this.pool_size; i++) { 
             this.instancedMeshForRight.setMatrixAt(i, this.zeroMatrix);
             this.freeShadowsRight.push(i);
@@ -88,6 +92,7 @@ export class ShadowPool {
             console.log("Добавляем дополнительный объект в ShadowPool");
         }
         let shadow = this.freeShadowsRight.splice(this.freeShadowsRight.length-1, 1);
+        console.log(shadow);
         this.usedRightList.set(coordinatesToId(posX, posZ, mapWidth), shadow);
 
         const matrix = new THREE.Matrix4();
