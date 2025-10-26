@@ -1,4 +1,4 @@
-import AnimatedSprite from './animatedSprite.js'
+import AnimatedSprite from './animatedSprite.ts'
 
 export default class AnimatedSpritePool
 {
