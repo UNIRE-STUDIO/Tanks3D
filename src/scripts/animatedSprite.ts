@@ -4,12 +4,12 @@ export default class AnimatedSprite {
     public isUse: boolean;
 
     private mesh: THREE.Mesh;
-    private frames: Array<{x: number, y: number, z:number}>;
+    private frames: Array<{x: number, y: number}>;
     private camera: THREE.Camera;
     private duration: number = 0;
     private timeCounter: number = 0;
 
-    constructor(mesh: THREE.Mesh, frames: Array<{x: number, y: number, z: number}>, camera: THREE.Camera, duration: number){
+    constructor(mesh: THREE.Mesh, frames: Array<{x: number, y: number}>, camera: THREE.Camera, duration: number){
         this.mesh = mesh;
         this.frames = frames;
         this.camera = camera;
