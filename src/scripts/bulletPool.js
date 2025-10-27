@@ -36,8 +36,8 @@ export default class BulletPool {
 
     init(currentMap, basePos) {
         for (let i = 0; i < this.bullets.length; i++) {
-            this.bullets[i].currentMap = currentMap
-            this.bullets[i].basePos = basePos
+            this.bullets[i].setCurrentMap(currentMap);
+            this.bullets[i].setBasePos(basePos);
         }
     }
 

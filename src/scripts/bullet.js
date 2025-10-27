@@ -2,6 +2,7 @@ import { drawImage, drawRect, isInside } from "./general.js";
 import * as THREE from "three";
 import { VisualBlocks as BB } from "./config.js";
 
+
 export default class Bullet {
     constructor(config, removeTile, destructionOfTheBaseEvent, id, bangCreateEvent, uiFields, model) {
         this.config = config;
@@ -84,20 +85,20 @@ export default class Bullet {
             // Проверяем соседний блок по горизонтале
             if (leftTile === 1) {
                 setTimeout(() => {
-                this.removeTile(tileX - 1, tileY);
+                    this.removeTile(tileX - 1, tileY);
                 }, 150);
             }
             isCollision = true;
         } else if (this.dirX != 0 && (aboveTile === BB.BRICK || aboveTile === BB.STONE)) {
-            
+
             // Проверяем соседний блок по вертикали
-            if (aboveTile === BB.BRICK){
+            if (aboveTile === BB.BRICK) {
                 setTimeout(() => {
                     this.removeTile(tileX, tileY - 1);
                 }, 150);
-                
+
             }
-                
+
             isCollision = true;
         }
         return isCollision;
@@ -197,8 +198,8 @@ export default class Bullet {
         this.posX += this.dirX * lag * this.speed;
         this.posY += this.dirY * lag * this.speed;
         this.model.position.set(
-            this.posX + Math.abs(this.size * this.dirX), 
-            1, 
+            this.posX + Math.abs(this.size * this.dirX),
+            1,
             this.posY + Math.abs(this.size * this.dirY));
     }
 }

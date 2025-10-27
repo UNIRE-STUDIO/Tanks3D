@@ -8,7 +8,6 @@ import { ShadowPool } from "./shadowPool.js";
 import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
 import StaticBlockPool from "./staticBlockPool.js";
 import DynamicBlockPool from "./dynamicBlockPool.js";
-import AnimatedSpritePool from "./animatedSpritePool.js";
 
 export default class ThreeManager {
     constructor(uiFields, config) {

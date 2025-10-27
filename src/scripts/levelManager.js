@@ -8,7 +8,7 @@ import PlayerTank from "./playerTank.js";
 import { VisualBlocks as VB } from "./config.js";
 import { VisualAndPhysics } from "./config.js";
 import { watch } from "vue";
-import AnimatedSpritePool from "./animatedSpritePool.js";
+import AnimatedSpritePool from "./animatedSpritePool.ts";
 import { Camera } from "three";
 
 export default class LevelManager {
