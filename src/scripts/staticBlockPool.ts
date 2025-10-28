@@ -1,24 +1,26 @@
 import * as THREE from "three";
 
 export default class StaticBlockPool {
+    protected count: number;
+    protected instancedMesh: THREE.InstancedMesh;
+    protected zeroMatrix: THREE.Matrix4 = new THREE.Matrix4().set(
+        0, 0, 0, 0,
+        0, 0, 0, 0,
+        0, 0, 0, 0,
+        0, 0, 0, 0
+    );
+
     constructor(material, geometry, count = undefined, positionArray = undefined) {
         this.count = count;
-        this.zeroMatrix = new THREE.Matrix4().set(
-            0, 0, 0, 0,
-            0, 0, 0, 0,
-            0, 0, 0, 0,
-            0, 0, 0, 0
-        );
-
         this.instancedMesh = new THREE.InstancedMesh(geometry, material, count !== undefined ? count : positionArray.length);
     }
 
-    init(matrixs) {
+    init(matrixs: {pX: number, pY: number, pZ: number, rX: number, rY: number, rZ: number}, mapWidth: number) {
 
         // Обнуляем 
         for (let i = 0; i < this.count; i++) { this.instancedMesh.setMatrixAt(i, this.zeroMatrix); }
 
-        for (let i = 0; i < matrixs.length; i++) {
+        for (let i = 0; i < Object.keys(matrixs).length; i++) {
             const matrix = new THREE.Matrix4();
             let position = new THREE.Vector3(matrixs[i].pX, matrixs[i].pY, matrixs[i].pZ)
             let quaternion = new THREE.Quaternion();

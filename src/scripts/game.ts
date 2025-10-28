@@ -1,17 +1,19 @@
 import GameLoop from './gameLoop.js'
 import Input from './input.js'
 import LevelManager from './levelManager.js'
+import Config from './config'
+import UIFields from './uiFields'
 //import SaveManager from './saveManager.js'
 
 export let GameScreens = { MENU: 0, PLAY: 1, PAUSE: 2, WIN: 3, GAMEOVER: 4 }
 
 export default class Game {
-    constructor() {
-        this.config
-        this.uiFields
-        this.levelManager
+    private config: Config;
+    private uiFields: UIFields;
+    private levelManager: LevelManager;
+    private input: Input = new Input();
 
-        this.input = new Input()
+    constructor() {
         this.input.changeScreenEvent = this.changeScreen.bind(this)
 
         // Если теряем фокус окна то ставим паузу
@@ -22,7 +24,7 @@ export default class Game {
             }
         }
     }
-    init(config, uiFields) {
+    init(config: Config, uiFields: UIFields) {
         this.uiFields = uiFields
         this.config = config
         // this.saveManager = new SaveManager()
@@ -30,13 +32,13 @@ export default class Game {
         this.levelManager = new LevelManager(this.input, this.config, uiFields)
         this.levelManager.gameOverEvent = this.changeScreen.bind(this, GameScreens.GAMEOVER)
         this.levelManager.winEvent = this.changeScreen.bind(this, GameScreens.WIN)
-        this.levelManager.saveManager = this.saveManager
+        //this.levelManager.saveManager = this.saveManager
 
         //this.changeScreen(3); // Тут можно проверять интерфейс
     }
 
     // изменить экран игры на указанный + дополнительный параметр для уточнения поведения
-    changeScreen(screen, parameter = 0, secondParam = 0) {
+    changeScreen(screen: number, parameter: number = 0, secondParam: number = 0) {
         // Если нажата НЕ кнопка назад
         switch (screen) {
             case GameScreens.MENU:
@@ -72,7 +74,7 @@ export default class Game {
         this.changeScreen(1, 1, this.levelManager.uiFields.playersMode)
     }
 
-    update(lag) {
+    update(lag: number) {
         if (this.uiFields.currentScreen !== GameScreens.PLAY) return
         this.levelManager.update(lag)
     }

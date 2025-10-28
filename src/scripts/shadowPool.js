@@ -92,7 +92,6 @@ export class ShadowPool {
             console.log("Добавляем дополнительный объект в ShadowPool");
         }
         let shadow = this.freeShadowsRight.splice(this.freeShadowsRight.length-1, 1);
-        console.log(shadow);
         this.usedRightList.set(coordinatesToId(posX, posZ, mapWidth), shadow);
 
         const matrix = new THREE.Matrix4();

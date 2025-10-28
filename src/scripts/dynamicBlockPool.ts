@@ -3,6 +3,9 @@ import { coordinatesToId } from "./general";
 import StaticBlockPool from "./staticBlockPool";
 
 export default class DynamicBlockPool extends StaticBlockPool {
+    private freeBlocks: Array<number>
+    private usedBlocks: Map<number, number>
+
     constructor(material, geometry, count = undefined) {
         super(material, geometry, count)
         this.freeBlocks = [];        // От сюда мы берём блоки для создания на карте
@@ -10,12 +13,12 @@ export default class DynamicBlockPool extends StaticBlockPool {
     }
 
     // mapWidth нельзя сделать на уровне класса, так как размер карты может меняться
-    init(matrixs, mapWidth) {
+    override init(matrixs: {pX: number, pY: number, pZ: number, rX: number, rY: number, rZ: number}, mapWidth: number): void {
         for (let i = 0; i < this.count; i++) { 
             this.instancedMesh.setMatrixAt(i, this.zeroMatrix);
             this.instancedMesh.setMatrixAt(i, this.zeroMatrix);
         }
-        for (let i = 0; i < matrixs.length; i++) {
+        for (let i = 0; i < Object.keys(matrixs).length; i++) {
             let matrix = new THREE.Matrix4();
             let position = new THREE.Vector3(matrixs[i].pX, matrixs[i].pY, matrixs[i].pZ);
             let quaternion = new THREE.Quaternion();

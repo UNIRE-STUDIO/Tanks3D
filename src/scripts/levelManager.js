@@ -1,12 +1,12 @@
-import BulletPool from "./bulletPool.js";
+import BulletPool from "./bulletPool.ts";
 import ThreeManager from "./threeManager.js";
 //import SaveManager from "./saveManager.js";
 import levels from "./levels.json";
 import NpcPool from "./npcPool.js";
 import PlayerTank from "./playerTank.js";
 //import BangPool from "./bangPool.js";
-import { VisualBlocks as VB } from "./config.js";
-import { VisualAndPhysics } from "./config.js";
+import { VisualBlocks as VB } from "./config.ts";
+import { VisualAndPhysics } from "./config.ts";
 import { watch } from "vue";
 import AnimatedSpritePool from "./animatedSpritePool.ts";
 import { Camera } from "three";

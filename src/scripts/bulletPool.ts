@@ -1,10 +1,22 @@
-import Bullet from './bullet.js'
+import Bullet from './bullet';
+import Config from './config';
+import UIFields from './uiFields.js';
+import * as THREE from 'three';
+import Tank from './tank.js'
 
 export default class BulletPool {
-    constructor(config, removeTile, destructionOfTheBaseEvent, bangCreateEvent, uiFields, createBullet, container) {
-        this.config = config
-        const pool_size = 12
-        this.bullets = []
+    private config: Config;
+    private bullets: Array<Bullet> = [];
+
+    constructor(config: Config, 
+                removeTile: Function, 
+                destructionOfTheBaseEvent: Function, 
+                bangCreateEvent: Function, 
+                uiFields: UIFields, 
+                createBullet: Function, 
+                container: THREE.Object3D) {
+        this.config = config;
+        const pool_size = 12;
 
         let model
         for (let i = 0; i < pool_size; i++) {
@@ -18,30 +30,30 @@ export default class BulletPool {
         }
     }
 
-    setListNpcTanks(tanks) {
+    setListNpcTanks(tanks: Array<Tank>) {
         for (let i = 0; i < this.bullets.length; i++) {
             this.bullets[i].tanks.push(...tanks)
         }
     }
-    setListPlayers(tanks) {
+    setListPlayers(tanks: Array<Tank>) {
         for (let i = 0; i < this.bullets.length; i++) {
             this.bullets[i].players.push(...tanks)
         }
     }
-    setOtherCollisionObject(obj) {
+    setOtherCollisionObject(obj: {x: number, y: number}) {
         for (let i = 0; i < this.bullets.length; i++) {
             this.bullets[i].setOtherCollisionObject(obj)
         }
     }
 
-    init(currentMap, basePos) {
+    init(currentMap: Array<Array<number>>, basePos: {x: number, y: number}) {
         for (let i = 0; i < this.bullets.length; i++) {
             this.bullets[i].setCurrentMap(currentMap);
             this.bullets[i].setBasePos(basePos);
         }
     }
 
-    create(pos, dir, playersBullet, tankId) {
+    create(pos: {x: number, y: number}, dir: {x: number, y: number}, playersBullet: boolean, tankId: number) {
         for (let i = 0; i < this.bullets.length; i++) {
             if (!this.bullets[i].isUse) {
                 this.bullets[i].create(pos, dir, playersBullet, tankId)
@@ -57,7 +69,7 @@ export default class BulletPool {
         }
     }
 
-    update(lag) {
+    update(lag: number) {
         for (let i = 0; i < this.bullets.length; i++) {
             if (this.bullets[i].isUse) {
                 this.bullets[i].update(lag);

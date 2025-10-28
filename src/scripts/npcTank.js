@@ -1,7 +1,7 @@
 import { randomRange, coordinatesToId, idToCoordinates } from "./general.js";
 import Tank from "./tank.js";
 import Timer from "./timer.js";
-import { VisualBlocks as BB } from "./config.js";
+import { VisualBlocks as BB } from "./config.ts";
 
 export default class NpcTank extends Tank {
     constructor(config, spawnBullet, players, deadNpcEvent, threeManager, id, bangCreateEvent) {

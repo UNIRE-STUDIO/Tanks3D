@@ -12,6 +12,11 @@ export const VisualAndPhysics = {0: 0,
                                  7: 0,
                                  9: 9}
 export default class Config {
+    public grid: number;
+    public grid2: number;
+    public arenaSize: {x: number, y: number};
+    public mapSize: {x: number, y: number};
+
     constructor() {
         this.grid = 1
         this.grid2 = 2

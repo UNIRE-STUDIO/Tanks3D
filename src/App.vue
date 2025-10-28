@@ -1,6 +1,6 @@
 <script>
-import Game from "./scripts/game.js";
-import Config from "./scripts/config.js";
+import Game from "./scripts/game";
+import Config from "./scripts/config";
 import UIFields from "./scripts/uiFields.js";
 import MainScreen from "./components/MainScreen.vue";
 import TopPanel from "./components/TopPanel.vue";
