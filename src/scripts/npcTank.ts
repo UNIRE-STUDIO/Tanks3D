@@ -1,54 +1,63 @@
 import { randomRange, coordinatesToId, idToCoordinates } from "./general";
-import Tank from "./tank.js";
+import Tank from "./tank";
 import Timer from "./timer.js";
-import { VisualBlocks as BB } from "./config.ts";
+import Config, { VisualBlocks as BB } from "./config";
+import PlayerTank from "./playerTank";
+import ThreeManager from "./threeManager";
+import * as THREE from "three";
 
 export default class NpcTank extends Tank {
-    constructor(config, spawnBullet, players, deadNpcEvent, threeManager, id, bangCreateEvent) {
-        super(config, spawnBullet, threeManager);
+    private bangCreateEvent: Function;
+    private npcId: number;
+    private isDead: boolean = false;
+    private timeOfModeChange: number = 15; // 23 Длительность режима в секундах
+
+    private isBlockTurn: boolean = false;
+    private drivingMode: number = 0; // 0 =
+
+    private players: Array<PlayerTank> = [];
+    private deadNpcEvent: Function;
+    private playersMode: number; // npcPool -> Create / Режим игры с одним игроком или с двумя
+
+    // ПОИСК | Это всё нужно обнулять
+    private stack: Array<number> = [];
+    private visited: Array<number> = [];
+    private whereFrom = new Map();
+    private path: Array<number> = [];
+    private target: Array<number> = [];
+    private currentPosOnPath = 0; // Позиция на пути к цели
+
+    private sides = [[-2, 0], // слева
+                    [0, -2], // сверху
+                    [2, 0],  // справа
+                    [0, 2]]; // снизу
+
+    private timerDrivingMode = new Timer(this.timeOfModeChange, this.changeMode.bind(this));
+
+    private timerOfJamming = 0; // Застревание
+    private minTimeWaitOfJamming = 100;
+    private maxTimeWaitOfJamming = 800;
+    private timeWaitOfJamming = randomRange(this.minTimeWaitOfJamming, this.maxTimeWaitOfJamming);
+
+    private minCooldownTime = 1;
+    private maxCooldownTime = 5;
+    private timerShoot = new Timer(randomRange(this.minCooldownTime, this.maxCooldownTime), this.randomShoot.bind(this), 0.1);
+
+    private basePos: {x: number, y: number}; // npcPool
+    private type = 0;
+
+    constructor(config: Config, createBullet: Function, threeManager: ThreeManager, players: Array<PlayerTank>, deadNpcEvent: Function, id: number, bangCreateEvent: Function) {
+        super(config, createBullet, threeManager);
         this.bangCreateEvent = bangCreateEvent;
         this.npcId = id;
-        this.dirY = 1;
         this.speed = 0.003 * config.grid;
-        this.isDead = false;
-        this.timeOfModeChange = 15; // 23 Длительность режима в секундах
-
-        this.isBlockTurn = false;
-        this.drivingMode = 0; // 0 =
+        this.dirY = 1;
 
         this.players = players;
         this.deadNpcEvent = deadNpcEvent;
-        this.playersMode; // npcPool -> Create
-
-        // ПОИСК | Это всё нужно обнулять
-        this.stack = [];
-        this.visited = [];
-        this.whereFrom = new Map();
-        this.path = [];
-        this.target = [];
-        this.currentPosOnPath = 0; // Позиция на пути к цели
-
-        this.sides = [[-2, 0], // слева
-        [0, -2], // сверху
-        [2, 0],  // справа
-        [0, 2]]; // снизу
-
-        this.timerDrivingMode = new Timer(this.timeOfModeChange, this.changeMode.bind(this));
-
-        this.timerOfJamming = 0; // Застревание
-        this.minTimeWaitOfJamming = 100;
-        this.maxTimeWaitOfJamming = 800;
-        this.timeWaitOfJamming = randomRange(this.minTimeWaitOfJamming, this.maxTimeWaitOfJamming);
-
-        this.minCooldownTime = 1;
-        this.maxCooldownTime = 5;
-        this.timerShoot = new Timer(randomRange(this.minCooldownTime, this.maxCooldownTime), this.randomShoot.bind(this), 0.1);
-
-        this.basePos; // npcPool
-        this.type = 0;
     }
 
-    create(currentMap, pos, basePos, playersMode, type) {
+    create(currentMap: Array<Array<number>>, pos: {x: number, y: number}, basePos?: {x: number, y: number}, playersMode?: number, type?: number) {
         this.model = this.threeManager.createNpcTank();
         super.create(currentMap, pos);
         this.type = type;
@@ -237,7 +246,7 @@ export default class NpcTank extends Tank {
             || (this.playersMode === 1 && this.players[1].isUse && this.checkCollisionWithObject(this.players[1].position))
     }
 
-    randomMove(lag) {
+    randomMove(lag: number) {
         let incrementX = this.dirX * lag * this.speed;
         let incrementY = this.dirY * lag * this.speed;
 
@@ -295,7 +304,7 @@ export default class NpcTank extends Tank {
         }
     }
 
-    movingTowardsTheGoal(lag) {
+    movingTowardsTheGoal(lag: number) {
         let accuracy = this.config.grid / 2; // Точность
         let posOnPath = idToCoordinates(this.path[this.currentPosOnPath], this.currentMap[0].length);
         posOnPath.x *= this.config.grid;
@@ -305,7 +314,7 @@ export default class NpcTank extends Tank {
         let newDirX = distX > 0 ? 1 : (distX < 0 ? -1 : 0);
         let newDirY = distY > 0 ? 1 : (distY < 0 ? -1 : 0);
 
-        if (this.dirX != this.newDirX || this.dirY != this.newDirY) {
+        if (this.dirX != newDirX || this.dirY != newDirY) {
             this.setDirection(newDirX, newDirY);
         }
 
@@ -354,7 +363,7 @@ export default class NpcTank extends Tank {
         }
     }
 
-    search(target) {
+    search(target: Array<number>) {
         this.target = target; // Обнуление
         this.path = [];
         this.stack = [];
@@ -386,13 +395,13 @@ export default class NpcTank extends Tank {
         }
     }
 
-    saveWhereFrom(currentId, neighboringId) {
+    saveWhereFrom(currentId: number, neighboringId: number) {
         // Запоминаем откуда мы нашли эту клетку
         if (!this.whereFrom.has(neighboringId))
             this.whereFrom.set(neighboringId, currentId);
     }
 
-    depthFirstSearch(pos) {
+    depthFirstSearch(pos: {x: number, y: number}) {
         let l = this.currentMap[0].length;
         this.visited.push(coordinatesToId(pos.x, pos.y, l));
         if (pos.x == this.target[0] && pos.y == this.target[1]
@@ -445,7 +454,7 @@ export default class NpcTank extends Tank {
         this.depthFirstSearch(idToCoordinates(this.stack.pop(), l));
     }
 
-    setDamage(damage) {
+    setDamage(damage: number) {
         this.health = this.health - damage <= 0 ? 0 : this.health - damage;
         if (this.health === 0) {
             this.isDead = true;
@@ -477,7 +486,7 @@ export default class NpcTank extends Tank {
             x: this.position.x + this.config.grid + (this.config.grid * this.dirX),
             y: this.position.y + this.config.grid + (this.config.grid * this.dirY)
         };
-        this.spawnBullet(centerPos, { x: this.dirX, y: this.dirY }, false, this.npcId);
+        this.createBullet(centerPos, { x: this.dirX, y: this.dirY }, false, this.npcId);
     }
 
     searchForFreeSpaceNearTheBase() {
@@ -506,7 +515,7 @@ export default class NpcTank extends Tank {
         return dirs[randomRange(0, dirs.length)];
     }
 
-    update(lag) {
+    update(lag: number) {
         if (!this.isUse || this.isDead) return;
         this.moveX = this.dirX;
         this.moveY = this.dirY;

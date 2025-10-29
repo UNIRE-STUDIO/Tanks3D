@@ -1,6 +1,6 @@
 import GameLoop from './gameLoop'
 import Input from './input'
-import LevelManager from './levelManager.js'
+import LevelManager from './levelManager'
 import Config from './config'
 import UIFields from './uiFields'
 //import SaveManager from './saveManager.js'
@@ -71,7 +71,7 @@ export default class Game {
 
     nextLevel() {
         this.levelManager.nextLevel()
-        this.changeScreen(1, 1, this.levelManager.uiFields.playersMode)
+        this.changeScreen(1, 1, this.uiFields.playersMode)
     }
 
     update(lag: number) {

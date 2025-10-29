@@ -1,14 +1,14 @@
-import BulletPool from "./bulletPool.js";
+import BulletPool from "./bulletPool";
 import ThreeManager from "./threeManager.js";
 //import SaveManager from "./saveManager.js";
 import levels from "./levels.json";
 import NpcPool from "./npcPool.js";
 import PlayerTank from "./playerTank.js";
 //import BangPool from "./bangPool.js";
-import { VisualBlocks as VB } from "./config.js";
-import { VisualAndPhysics } from "./config.js";
+import { VisualBlocks as VB } from "./config";
+import { VisualAndPhysics } from "./config";
 import { watch } from "vue";
-import AnimatedSpritePool from "./animatedSpritePool.js";
+import AnimatedSpritePool from "./animatedSpritePool";
 import { Camera } from "three";
 import Input from "./input";
 import Config from "./config";
@@ -26,13 +26,20 @@ export default class LevelManager {
     private isPause: boolean = false;
     private isPlay: boolean = false; // Для того что-бы коректно ставить на паузу до появления игроков
 
-    private physicalCurrentMap: Array<Array<Number>>;
-    private visualCurrentMap: Array<Array<Number>>;
+    private physicalCurrentMap: Array<Array<number>>;
+    private visualCurrentMap: Array<Array<number>>;
     private config: Config;
     private threeManager: ThreeManager;
 
     private basePos = {x: 0, y: 0};
     private timerStart: number;
+
+    private bangTankPool: AnimatedSpritePool;
+    private bangBulletPool: AnimatedSpritePool;
+    private bulletPool: BulletPool;
+
+    private players: Array<PlayerTank> = [];
+    private npcPool: NpcPool;
 
     constructor(input: Input, config: Config, uiFields: UIFields) {
         this.uiFields = uiFields;
@@ -78,22 +85,22 @@ export default class LevelManager {
             this.threeManager.createBullet.bind(this.threeManager),
             this.threeManager.bulletContainer
         );
-        this.players = [];
+
         this.players[0] = new PlayerTank(
             this.config,
             this.bulletPool.create.bind(this.bulletPool),
+            this.threeManager,
             this.playerDead.bind(this),
             0,
-            this.threeManager,
             this.threeManager.player1TankMesh,
             this.bangTankPool.create.bind(this.bangTankPool));
 
         this.players[1] = new PlayerTank(
             this.config,
             this.bulletPool.create.bind(this.bulletPool),
+            this.threeManager,
             this.playerDead.bind(this),
             1,
-            this.threeManager,
             this.threeManager.player2TankMesh, 
             this.bangTankPool.create.bind(this.bangTankPool));
 
@@ -123,7 +130,7 @@ export default class LevelManager {
         input.moveCameraEvent = this.threeManager.setCameraMove.bind(this.threeManager);
     }
 
-    start(playersMode = 0) {
+    start(playersMode: number = 0) {
         this.uiFields.playersMode = playersMode;
         this.uiFields.reset();
         this.reset();
@@ -273,7 +280,7 @@ export default class LevelManager {
         this.isPlay = true; // Для того что-бы коректно ставить на паузу до появления игроков
     }
 
-    removeTile(posX, posY) {
+    removeTile(posX: number, posY: number) {
         this.physicalCurrentMap[posY][posX] = VB.FLOOR;
         this.threeManager.removeBlock(posX, posY, this.physicalCurrentMap[0].length)
 
@@ -339,7 +346,7 @@ export default class LevelManager {
     }
 
     // Принимаем от танка игрока
-    playerDead(playerId) {
+    playerDead(playerId: number) {
         this.uiFields.playersHealth[playerId]--;
         if (this.uiFields.playersHealth[0] === 0
             && (this.uiFields.playersHealth[1] === 0 || this.uiFields.playersMode === 0)) {
@@ -362,7 +369,7 @@ export default class LevelManager {
         }, 200);
     }
 
-    update(lag) {
+    update(lag: number) {
         if (this.isPause) return;
         this.players[0].update(lag);
         if (this.uiFields.playersMode === 1) this.players[1].update(lag);

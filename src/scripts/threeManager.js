@@ -2,8 +2,6 @@ import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import * as BufferGeometryUtils from "three/examples/jsm/utils/BufferGeometryUtils.js";
 import { idToCoordinates, coordinatesToId } from "./general";
-import { shadowShader } from './shaders.js';
-import { MyMaterial } from "./myMaterial.js";
 import { ShadowPool } from "./shadowPool.js";
 import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
 import StaticBlockPool from "./staticBlockPool";

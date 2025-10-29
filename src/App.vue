@@ -1,7 +1,7 @@
 <script>
 import Game from "./scripts/game";
 import Config from "./scripts/config";
-import UIFields from "./scripts/uiFields.js";
+import UIFields from "./scripts/uiFields";
 import MainScreen from "./components/MainScreen.vue";
 import TopPanel from "./components/TopPanel.vue";
 import PauseSceen from "./components/PauseSceen.vue";

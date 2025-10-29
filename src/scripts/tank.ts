@@ -1,37 +1,42 @@
 import * as THREE from 'three'
-import { VisualBlocks as BB } from './config';
+import Config, { VisualBlocks as BB } from './config';
+import ThreeManager from  "./threeManager";
 
 export default class Tank {
-    constructor(config, spawnBullet, threeManager) {
+    protected config: Config
+    protected threeManager: ThreeManager;
+    protected createBullet: Function;
+
+    protected position = {
+        x: 0,
+        y: 0
+    }
+    protected moveY = 0;
+    protected moveX = 0;
+    protected dirY = -1;
+    protected dirX = 0;
+
+    protected isPause = false;
+    protected currentMap: Array<Array<number>>;
+    public isUse = false;
+
+    protected speed = 0;
+    protected speedRotation = 0.03;
+    protected health = 1;
+
+    public otherTanks: Array<Tank> = []; // Присваивает Level Manager или npcPool
+    private otherCollisionObject = [];
+
+    // 3d, присваивается в дочерних классах
+    protected model: THREE.Mesh;
+
+    constructor(config: Config, createBullet: Function, threeManager: ThreeManager) {
         this.config = config
         this.threeManager = threeManager;
-        this.spawnBullet = spawnBullet
-
-        this.position = {
-            x: 0,
-            y: 0
-        }
-        this.moveY = 0
-        this.moveX = 0
-        this.dirY = -1
-        this.dirX = 0
-
-        this.isPause = false
-        this.currentMap
-        this.isUse = false
-
-        this.speed = 0
-        this.speedRotation = 0.03
-        this.health = 1
-
-        this.otherTanks = [] // Присваивает Level Manager или npcPool
-        this.otherCollisionObject = []
-
-        // 3d, присваивается в дочерних классах
-        this.model
+        this.createBullet = createBullet
     }
 
-    create(currentMap, pos) {
+    create(currentMap: Array<Array<number>>, pos: {x: number, y: number}) {
         this.currentMap = currentMap
         this.position.x = pos.x
         this.position.y = pos.y
@@ -41,11 +46,11 @@ export default class Tank {
         this.model.visible = true;
     }
 
-    setOtherCollisionObject(obj) {
+    setOtherCollisionObject(obj: {x: number, y: number}) {
         this.otherCollisionObject.push(obj)
     }
 
-    setDirection(dirX, dirY) {
+    setDirection(dirX: number, dirY: number) {
         if (this.isPause || !this.isUse) return
 
         // Если поворачиваем
@@ -97,7 +102,7 @@ export default class Tank {
         return check > 0
     }
 
-    checkCollisionWithObject(objPos) {
+    checkCollisionWithObject(objPos: {x: number, y: number}) {
         let tX = Math.round((this.position.x + this.config.grid / 2 * this.moveX) / this.config.grid)
         let tY = Math.round((this.position.y + this.config.grid / 2 * this.moveY) / this.config.grid)
 
@@ -132,7 +137,7 @@ export default class Tank {
         return false
     }
 
-    update(lag) {
+    update(lag: number) {
         let halfAngle
         if (this.dirY != 0)
             halfAngle = this.dirY > 0 ? Math.PI / 2 : 0 // Вниз или вверх
