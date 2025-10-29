@@ -1,4 +1,4 @@
-import { drawImage, drawRect, isInside } from "./general.js";
+import { drawImage, drawRect, isInside } from "./general";
 import * as THREE from "three";
 import { VisualBlocks as BB, Config } from "./config";
 import UIFields from "./uiFields.js";

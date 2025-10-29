@@ -14,12 +14,15 @@ export let requestAnimFrame = (function () {
 import Stats from 'stats.js'
 
 export default class GameLoop {
-    constructor(update, render) {
-        this.ms_per_update = 17 // Интервал между вычислениями
-        this.elapsed = 0 // Счетчик времени между кадрами
-        this.currentTime = 0
-        this.pervious = Date.now()
-        this.lag = 0.0
+    private ms_per_update: number = 17; // Интервал между вычислениями
+    private elapsed: number = 0;        // Счетчик времени между кадрами
+    private currentTime: number = 0;
+    private pervious = Date.now();
+    private lag: number = 0.0;
+    private update: Function;
+    private render: Function;
+    private stats: Stats;
+    constructor(update: Function, render: Function) {
         this.update = update
         this.render = render
 

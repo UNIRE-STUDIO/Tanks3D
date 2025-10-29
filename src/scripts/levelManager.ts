@@ -1,44 +1,50 @@
-import BulletPool from "./bulletPool.ts";
+import BulletPool from "./bulletPool.js";
 import ThreeManager from "./threeManager.js";
 //import SaveManager from "./saveManager.js";
 import levels from "./levels.json";
 import NpcPool from "./npcPool.js";
 import PlayerTank from "./playerTank.js";
 //import BangPool from "./bangPool.js";
-import { VisualBlocks as VB } from "./config.ts";
-import { VisualAndPhysics } from "./config.ts";
+import { VisualBlocks as VB } from "./config.js";
+import { VisualAndPhysics } from "./config.js";
 import { watch } from "vue";
-import AnimatedSpritePool from "./animatedSpritePool.ts";
+import AnimatedSpritePool from "./animatedSpritePool.js";
 import { Camera } from "three";
+import Input from "./input";
+import Config from "./config";
+import UIFields from "./uiFields"
 
 export default class LevelManager {
-    constructor(input, config, uiFields) {
-        this.uiFields = uiFields;
+    // Писваивает класс Game
+    public gameOverEvent: Function;
+    public winEvent: Function;
+    public saveManager: Function;
 
-        this.timeUpdate = 0;
+    private uiFields: UIFields;
+
+    private timeUpdate: number = 0;
+    private isPause: boolean = false;
+    private isPlay: boolean = false; // Для того что-бы коректно ставить на паузу до появления игроков
+
+    private physicalCurrentMap: Array<Array<Number>>;
+    private visualCurrentMap: Array<Array<Number>>;
+    private config: Config;
+    private threeManager: ThreeManager;
+
+    private basePos = {x: 0, y: 0};
+    private timerStart: number;
+
+    constructor(input: Input, config: Config, uiFields: UIFields) {
+        this.uiFields = uiFields;
         this.uiFields.playersHealth[0] = 3;
         this.uiFields.playersHealth[1] = 3;
-        this.isPause = false;
-        this.isPlay = false; // Для того что-бы коректно ставить на паузу до появления игроков
-
-        // Присваивает класс Game
-        this.gameOverEvent;
-        this.winEvent;
-        this.saveManager;
-
         this.uiFields.currentLevel = 1;
-        this.physicalCurrentMap = null;
-        this.visualCurrentMap = null;
         this.config = config;
         this.threeManager = new ThreeManager(uiFields, config);
         this.initAsync(input);
-
-        this.basePos = {x: 0, y: 0};
-
-        this.timerStart;
     }
 
-    async initAsync(input) {
+    async initAsync(input: Input) {
         await this.threeManager.initAsync();
         //this.bangPool = new BangPool(this.config)
         // this.bulletPool = new BulletPool(

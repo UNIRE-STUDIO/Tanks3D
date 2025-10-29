@@ -1,4 +1,34 @@
 export default class Input {
+    public changeScreenEvent: Function;
+
+    public movePlayer1Event: Function;
+    public shootPlayer1Event: Function;
+    public shootPlayer2Event: Function;
+    public movePlayer2Event: Function;
+
+    public moveCameraEvent: Function;
+
+    private dirX1: number = 0
+    private dirY1: number = 0
+
+    private dirX2: number = 0
+    private dirY2: number = 0
+
+    private isUp1: boolean = false
+    private isDown1: boolean = false
+    private isRight1: boolean = false
+    private isLeft1: boolean = false
+
+    private isUp2: boolean = false
+    private isDown2: boolean = false
+    private isRight2: boolean = false
+    private isLeft2: boolean = false
+
+    private cameraMoveAxis: number = 0;
+
+    private isForward: boolean = false;
+    private isBack: boolean = false;
+
     constructor() {
         // На весь экран
         window.addEventListener("dblclick", () => {
@@ -11,35 +41,6 @@ export default class Input {
 
         document.addEventListener('keydown', (e) => this.setKeydown(e));
         document.addEventListener('keyup', (e) => this.setKeyup(e));
-
-        this.changeScreenEvent;
-
-        this.movePlayer1Event;
-        this.shootPlayer1Event;
-
-        this.moveCameraEvent;
-
-        this.dirX1 = 0
-        this.dirY1 = 0
-
-        this.dirX2 = 0
-        this.dirY2 = 0
-
-        this.isUp1 = false
-        this.isDown1 = false
-        this.isRight1 = false
-        this.isLeft1 = false
-
-        this.isUp2 = false
-        this.isDown2 = false
-        this.isRight2 = false
-        this.isLeft2 = false
-
-        this.cameraMoveAxis = 0;
-
-        this.isForward = false;
-        this.isBack = false;
-
     }
 
     backButton_click() {

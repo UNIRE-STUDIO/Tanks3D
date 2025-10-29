@@ -1,4 +1,4 @@
-import { randomRange } from "./general.js";
+import { randomRange } from "./general";
 import levels from "./levels.json";
 import NpcTank from "./npcTank.js";
 import Timer from "./timer.js";

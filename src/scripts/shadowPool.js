@@ -1,4 +1,4 @@
-import {coordinatesToId, idToCoordinates} from "./general.js";
+import {coordinatesToId, idToCoordinates} from "./general";
 import * as THREE from "three";
 
 export class ShadowPool {

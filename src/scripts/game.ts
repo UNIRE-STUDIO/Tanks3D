@@ -1,5 +1,5 @@
-import GameLoop from './gameLoop.js'
-import Input from './input.js'
+import GameLoop from './gameLoop'
+import Input from './input'
 import LevelManager from './levelManager.js'
 import Config from './config'
 import UIFields from './uiFields'
@@ -25,13 +25,13 @@ export default class Game {
         }
     }
     init(config: Config, uiFields: UIFields) {
-        this.uiFields = uiFields
-        this.config = config
+        this.uiFields = uiFields;
+        this.config = config;
         // this.saveManager = new SaveManager()
-        new GameLoop(this.update.bind(this), this.render.bind(this))
-        this.levelManager = new LevelManager(this.input, this.config, uiFields)
-        this.levelManager.gameOverEvent = this.changeScreen.bind(this, GameScreens.GAMEOVER)
-        this.levelManager.winEvent = this.changeScreen.bind(this, GameScreens.WIN)
+        new GameLoop(this.update.bind(this), this.render.bind(this));
+        this.levelManager = new LevelManager(this.input, this.config, uiFields);
+        this.levelManager.gameOverEvent = this.changeScreen.bind(this, GameScreens.GAMEOVER);
+        this.levelManager.winEvent = this.changeScreen.bind(this, GameScreens.WIN);
         //this.levelManager.saveManager = this.saveManager
 
         //this.changeScreen(3); // Тут можно проверять интерфейс

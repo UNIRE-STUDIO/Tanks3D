@@ -1,4 +1,4 @@
-import { randomRange, coordinatesToId, idToCoordinates } from "./general.js";
+import { randomRange, coordinatesToId, idToCoordinates } from "./general";
 import Tank from "./tank.js";
 import Timer from "./timer.js";
 import { VisualBlocks as BB } from "./config.ts";
