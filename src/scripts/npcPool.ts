@@ -22,7 +22,7 @@ export default class NpcPool {
     private basePos: {x: number, y: number};
     private winEvent: Function;
 
-    constructor(config: Config, createBullet: Function, players: PlayerTank, winEvent: Function, uiFields: UIFields, threeManager: ThreeManager, bangCreateEvent: Function) {
+    constructor(config: Config, createBullet: Function, players: Array<PlayerTank>, winEvent: Function, uiFields: UIFields, threeManager: ThreeManager, bangCreateEvent: Function) {
         this.config = config;
         this.uiFields = uiFields;
         this.uiFields.countReserveNpcTanks = 0;

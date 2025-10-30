@@ -1,8 +1,9 @@
 import * as THREE from "three";
 
 export default class StaticBlockPool {
+    public instancedMesh: THREE.InstancedMesh;
+
     protected count: number;
-    protected instancedMesh: THREE.InstancedMesh;
     protected zeroMatrix: THREE.Matrix4 = new THREE.Matrix4().set(
         0, 0, 0, 0,
         0, 0, 0, 0,
@@ -15,7 +16,7 @@ export default class StaticBlockPool {
         this.instancedMesh = new THREE.InstancedMesh(geometry, material, count !== undefined ? count : positionArray.length);
     }
 
-    init(matrixs: {pX: number, pY: number, pZ: number, rX: number, rY: number, rZ: number}, mapWidth: number) {
+    init(matrixs: {pX: number, pY: number, pZ: number, rX: number, rY: number, rZ: number}, mapWidth?: number) {
 
         // Обнуляем 
         for (let i = 0; i < this.count; i++) { this.instancedMesh.setMatrixAt(i, this.zeroMatrix); }

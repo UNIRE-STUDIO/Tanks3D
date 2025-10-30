@@ -2,30 +2,39 @@ import {coordinatesToId, idToCoordinates} from "./general";
 import * as THREE from "three";
 
 export class ShadowPool {
-    constructor(container, modelRight, modelAbove) {
+    private container: THREE.Object3D;
+    private modelAbove: THREE.Mesh;
+    private modelRight: THREE.Mesh;
+    private pool_size = 400;
+    private freeShadowsAbove: Array<number> = [];
+    private freeShadowsRight: Array<number> = [];
+
+    private usedAboveList = new Map();
+    private usedRightList = new Map();
+
+    private zeroMatrix = new THREE.Matrix4().set(
+        0, 0, 0, 0,
+        0, 0, 0, 0,
+        0, 0, 0, 0, 
+        0, 0, 0, 0
+    );
+    private instancedMeshForRight: THREE.InstancedMesh;
+    private instancedMeshForAbove: THREE.InstancedMesh;
+
+    constructor(container: THREE.Object3D, modelRight: THREE.Mesh, modelAbove: THREE.Mesh) {
         this.container = container;
         this.modelAbove = modelAbove;
         this.modelRight = modelRight;
-        this.pool_size = 400;
-        this.freeShadowsAbove = [];
-        this.freeShadowsRight = [];
 
-        this.usedAboveList = new Map();
-        this.usedRightList = new Map();
-
-        this.zeroMatrix = new THREE.Matrix4().set(
-            0, 0, 0, 0,
-            0, 0, 0, 0,
-            0, 0, 0, 0, 
-            0, 0, 0, 0
-        );
         this.instancedMeshForRight = new THREE.InstancedMesh(modelRight.geometry, modelRight.material, this.pool_size);
         this.instancedMeshForAbove = new THREE.InstancedMesh(modelAbove.geometry, modelAbove.material, this.pool_size);
         this.container.add(this.instancedMeshForRight);
         this.container.add(this.instancedMeshForAbove);
     }
 
-    init(rightMatrixs, aboveMatrixs, mapWidth){
+    init(rightMatrixs: {pX: number, pY: number, pZ: number, rX: number, rY: number, rZ: number}, 
+        aboveMatrixs: {pX: number, pY: number, pZ: number, rX: number, rY: number, rZ: number}, 
+        mapWidth: number){
         this.freeShadowsRight = [];
         this.freeShadowsAbove = [];
         this.usedRightList.clear();
@@ -37,7 +46,7 @@ export class ShadowPool {
             this.instancedMeshForAbove.setMatrixAt(i, this.zeroMatrix);
             this.freeShadowsAbove.push(i);
         }
-        for (let i = 0; i < rightMatrixs.length; i++) {
+        for (let i = 0; i < Object.keys(rightMatrixs).length; i++) {
             const matrix = new THREE.Matrix4();
             let position = new THREE.Vector3(rightMatrixs[i].pX, rightMatrixs[i].pY, rightMatrixs[i].pZ);
             let quaternion = new THREE.Quaternion();
@@ -48,7 +57,7 @@ export class ShadowPool {
             this.usedRightList.set(coordinatesToId(rightMatrixs[i].pX, rightMatrixs[i].pZ, mapWidth), i);
             this.instancedMeshForRight.setMatrixAt(i, matrix);
         }
-        for (let i = 0; i < aboveMatrixs.length; i++) {
+        for (let i = 0; i < Object.keys(aboveMatrixs).length; i++) {
             const matrix = new THREE.Matrix4();
             let position = new THREE.Vector3(aboveMatrixs[i].pX, aboveMatrixs[i].pY, aboveMatrixs[i].pZ);
             let quaternion = new THREE.Quaternion();
@@ -63,14 +72,14 @@ export class ShadowPool {
         this.instancedMeshForRight.instanceMatrix.needsUpdate = true; // После обработки флаг сбрасывается
     }
 
-    createAbove(posX, posY = 0.01, posZ, mapWidth){
+    createAbove(posX: number, posY = 0.01, posZ: number, mapWidth: number){
         if (this.usedAboveList.has(coordinatesToId(posX, posZ, mapWidth))){
             return;
         }
         if (this.freeShadowsAbove.length === 0) {
             console.log("Добавляем дополнительный объект в ShadowPool");
         }
-        let shadow = this.freeShadowsAbove.splice(this.freeShadowsAbove.length-1, 1);
+        let shadow = this.freeShadowsAbove.splice(this.freeShadowsAbove.length-1, 1)[0];
         this.usedAboveList.set(coordinatesToId(posX, posZ, mapWidth), shadow);
 
         const matrix = new THREE.Matrix4();
@@ -84,14 +93,14 @@ export class ShadowPool {
         this.instancedMeshForRight.instanceMatrix.needsUpdate = true; // После обработки флаг сбрасывается
     }
 
-    createRight(posX, posY = 0.01, posZ, mapWidth){
+    createRight(posX: number, posY: number = 0.01, posZ: number, mapWidth: number){
         if (this.usedRightList.has(coordinatesToId(posX, posZ, mapWidth))){
             return;
         }
         if (this.freeShadowsRight.length === 0) {
             console.log("Добавляем дополнительный объект в ShadowPool");
         }
-        let shadow = this.freeShadowsRight.splice(this.freeShadowsRight.length-1, 1);
+        let shadow = this.freeShadowsRight.splice(this.freeShadowsRight.length-1, 1)[0];
         this.usedRightList.set(coordinatesToId(posX, posZ, mapWidth), shadow);
 
         const matrix = new THREE.Matrix4();
@@ -105,7 +114,7 @@ export class ShadowPool {
         this.instancedMeshForRight.instanceMatrix.needsUpdate = true; // После обработки флаг сбрасывается
     }
 
-    remove(posX, posZ, mapWidth){
+    remove(posX: number, posZ: number, mapWidth: number){
         let idRight = this.usedRightList.get(coordinatesToId(posX, posZ, mapWidth));
         let idAbove = this.usedAboveList.get(coordinatesToId(posX, posZ, mapWidth));
         if (idRight) {

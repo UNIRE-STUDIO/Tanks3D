@@ -1,9 +1,9 @@
 import BulletPool from "./bulletPool";
-import ThreeManager from "./threeManager.js";
+import ThreeManager from "./threeManager";
 //import SaveManager from "./saveManager.js";
 import levels from "./levels.json";
-import NpcPool from "./npcPool.js";
-import PlayerTank from "./playerTank.js";
+import NpcPool from "./npcPool";
+import PlayerTank from "./playerTank";
 //import BangPool from "./bangPool.js";
 import { VisualBlocks as VB } from "./config";
 import { VisualAndPhysics } from "./config";

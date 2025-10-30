@@ -1,14 +1,17 @@
 export default class Timer
 {
-    constructor(seconds, endEvent, decrement = 1)
+    private seconds: number;
+    private endEvent: Function;
+    private decrement: number;
+    private timer: number;
+    private elapsed: number = 0;
+    private interval = null;
+    constructor(seconds: number, endEvent: Function, decrement = 1)
     {
         this.seconds = seconds;
         this.endEvent = endEvent;
-        this.timer = seconds;
         this.decrement = decrement;
-        this.elapsed = 0;
-
-        this.interval = null;
+        this.timer = seconds;
     }
 
     reset()
