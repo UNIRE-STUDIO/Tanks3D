@@ -49,12 +49,12 @@ export default class ThreeManager {
     private base: THREE.Mesh;
     private shadowsPool: ShadowPool;
     private bangTankTexture: THREE.Texture;
-    private bangTankContainer: THREE.Object3D;
-    private bangBulletContainer: THREE.Object3D;
-    private bulletContainer: THREE.Object3D;
+    public  bangTankContainer: THREE.Object3D;
+    public  bangBulletContainer: THREE.Object3D;
+    public  bulletContainer: THREE.Object3D;
     private bulletOrigin: THREE.Mesh;
-    private player1TankMesh: THREE.Mesh;
-    private player2TankMesh: THREE.Mesh;
+    public  player1TankMesh: THREE.Mesh;
+    public  player2TankMesh: THREE.Mesh;
     private npc1TankOrigin: THREE.Mesh;
 
     private offsetWatter: number = 0;
@@ -200,7 +200,6 @@ export default class ThreeManager {
             this.base = gltf.scene.children[0] as THREE.Mesh;
             this.base.material.map.minFilter = THREE.LinearMipMapLinearFilter;
             this.base.material.map.magFilter = THREE.LinearFilter;
-            this.base.geometry.translate(1, 0, 1);
             this.scene.add(this.base);
         });
 

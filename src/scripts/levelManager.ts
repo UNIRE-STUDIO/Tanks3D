@@ -218,6 +218,7 @@ export default class LevelManager {
                     case VB.STONE:
                     case VB.BORDER1:
                     case VB.BORDER2:
+                    case VB.BASE:
                         // Если нет препятствий справа то ставим тень
                         if (toRight !== undefined && (toRight === VB.FLOOR || toRight === VB.WATER || toRight === VB.COVER)) {
                             rightShadows.push({pX: j, pY: 0.01, pZ: i});
@@ -287,14 +288,14 @@ export default class LevelManager {
         let toLeft = this.physicalCurrentMap[posY][posX - 1];
 
         // Если слева есть блок то создаём от него тень
-        if (toLeft === VB.BRICK || toLeft === VB.STONE) {
+        if (toLeft === VB.BRICK || toLeft === VB.STONE || toLeft === VB.BORDER1 || toLeft === VB.BORDER2 || toLeft === VB.BASE) {
             this.threeManager.createShadowRight(posX - 1, posY);
         }
 
         let below = this.physicalCurrentMap[posY + 1] === undefined ? undefined : this.physicalCurrentMap[posY + 1][posX];
 
         // Если снизу есть блок то создаём от него тень  остановился тут <-------------------
-        if (below === VB.BRICK || below === VB.STONE) {
+        if (below === VB.BRICK || below === VB.STONE || below === VB.BORDER1 || below === VB.BORDER2 || below === VB.BASE) {
             this.threeManager.createShadowAbove(posX, posY + 1);
         }
     }
@@ -364,6 +365,7 @@ export default class LevelManager {
     }
 
     destructionOfTheBase() {
+        this.bangTankPool.create({x: this.basePos.x + this.config.grid, y: 1.6,  z: this.basePos.y + this.config.grid});
         setTimeout(() => { // Уничтожение с задержкой
             this.gameOver();
         }, 200);
