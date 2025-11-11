@@ -71,6 +71,7 @@ export default {
 	background-size: cover;
 	background-repeat: no-repeat;
 	background-image: url('/sprites/bg.jpg');
+	background-position: center;
 }
 
 .ui {
