@@ -17,7 +17,7 @@ button {
     font-weight: 400;
     font-style: normal;
     border-style: none;
-    background-color: rgba(0, 0, 0, 0.1);
+    background-color: transparent;
     color: aliceblue;
     -moz-user-select: none;
     -o-user-select: none;

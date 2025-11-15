@@ -36,9 +36,11 @@ export default {
 
 <template>
 	<canvas class="canvas"></canvas>
-	<div v-if="uiFields.currentScreen === 0" id="background"></div>
+	<div v-if="uiFields.currentScreen === 0" id="background">
+		<div id="left-dark-panel"></div>
+	</div>
 	<div class="ui">
-		<div id="top">
+		<!-- <div id="top">
 			<div id="top-left">
 				<button class="btn-mini" v-if="uiFields.currentScreen === 1" @click="gameLink.changeScreen(2)">❚❚</button>
 				<button class="btn-mini" v-if="uiFields.currentScreen === 2" @click="gameLink.changeScreen(-1)">
@@ -49,7 +51,7 @@ export default {
 			</div>
 			<div id="top-center"></div>
 			<div id="top-right"></div>
-		</div>
+		</div> -->
 		<MainScreen v-if="uiFields.currentScreen === 0" :game="gameLink" />
 		<PauseSceen v-if="uiFields.currentScreen === 2" :game="gameLink" />
 		<WinScreen 	v-if="uiFields.currentScreen === 3" :game="gameLink" :uiFields="uiFields"/>
@@ -68,10 +70,45 @@ export default {
 	position: absolute;
 	height: 100%;
 	width: 100%;
-	background-size: cover;
+	background-size: auto;
 	background-repeat: no-repeat;
 	background-image: url('/sprites/bg.jpg');
-	background-position: center;
+	background-position: bottom -30px right 0px;
+
+	animation: pulse 15s ease-in-out infinite;
+}
+
+@keyframes pulse {
+	0% {
+		transform: scale(1);
+		background-position: bottom -30px right 0px;
+	}
+	20% {
+		background-position: bottom -130px right 0px;
+		transform: scale(1);
+	}
+	40%{
+		background-position: bottom -130px right 0px;
+		transform: scale(1.05);
+	}
+	60%{
+		background-position: bottom -130px right 0px;
+		transform: scale(1);
+	}
+	80%{
+		background-position: bottom -30px right 0px;
+		transform: scale(1);
+	}
+	100%{
+		transform: scale(1);
+		background-position: bottom -30px right 0px;
+	}
+}
+
+#left-dark-panel{
+	width: 27%;
+	height: 100%;
+	background: linear-gradient(to right, rgba(0, 0, 0, 0.63), rgba(0, 0, 0, 0));
 }
 
 .ui {
