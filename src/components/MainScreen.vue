@@ -43,9 +43,12 @@ export default {
     color: aliceblue;
     text-shadow: 4px 4px 5px #161618;
     margin: 0;
-    padding-top: 8px;
+    padding-top: 12px;
+    padding-bottom: 10px;
+    display: flex;
+    justify-content: center;
     background: 
-        linear-gradient(to bottom, rgba(0, 0, 0, 0.726), rgba(0, 0, 0, 0.158));
+        linear-gradient(to bottom, rgba(0, 0, 0, 0.829), rgba(0, 0, 0, 0.37));
 }
 #text-title:hover {
     animation: smoothMove 0.5s ease;

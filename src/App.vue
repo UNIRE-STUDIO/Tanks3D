@@ -40,23 +40,20 @@ export default {
 		<div id="left-dark-panel"></div>
 	</div>
 	<div class="ui">
-		<!-- <div id="top">
-			<div id="top-left">
-				<button class="btn-mini" v-if="uiFields.currentScreen === 1" @click="gameLink.changeScreen(2)">❚❚</button>
-				<button class="btn-mini" v-if="uiFields.currentScreen === 2" @click="gameLink.changeScreen(-1)">
-					<svg width="35" height="50" viewBox="4 0 50 50" fill="161618" xmlns="http://www.w3.org/2000/svg">
-						<path d="M35 50L11 25L35 0L40 4L20 25L40 45L35 50Z" />
-					</svg>
-				</button>
-			</div>
-			<div id="top-center"></div>
-			<div id="top-right"></div>
-		</div> -->
+		<div id="top-left">
+			<button class="btn-mini" v-if="uiFields.currentScreen === 1" @click="gameLink.changeScreen(2)">❚❚</button>
+			<button class="btn-mini" v-if="uiFields.currentScreen === 2" @click="gameLink.changeScreen(-1)">
+				<svg width="35" height="50" viewBox="4 0 50 50" fill="161618" xmlns="http://www.w3.org/2000/svg">
+					<path d="M35 50L11 25L35 0L40 4L20 25L40 45L35 50Z" />
+				</svg>
+			</button>
+		</div>
+		<div id="top-center"></div>
+		<div id="top-right"></div>
 		<MainScreen v-if="uiFields.currentScreen === 0" :game="gameLink" />
 		<PauseSceen v-if="uiFields.currentScreen === 2" :game="gameLink" />
 		<WinScreen 	v-if="uiFields.currentScreen === 3" :game="gameLink" :uiFields="uiFields"/>
 		<GameoverScreen v-if="uiFields.currentScreen === 4" :game="gameLink"/>
-
 		<TopPanel v-if="uiFields.currentScreen >= 1" :game="gameLink" :uiFields="uiFields"/>
 	</div>
 </template>
