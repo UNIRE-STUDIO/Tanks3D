@@ -70,7 +70,7 @@ export default {
 	background-size: auto;
 	background-repeat: no-repeat;
 	background-image: url('/sprites/bg.jpg');
-	background-position: bottom -30px right 0px;
+	background-position: bottom -100px left 50%;
 
 	animation: pulse 15s ease-in-out infinite;
 }
@@ -78,27 +78,27 @@ export default {
 @keyframes pulse {
 	0% {
 		transform: scale(1);
-		background-position: bottom -30px right 0px;
+		background-position: bottom -100px left 50%;
 	}
 	20% {
-		background-position: bottom -130px right 0px;
+		background-position: bottom -150px left 50%;
 		transform: scale(1);
 	}
 	40%{
-		background-position: bottom -130px right 0px;
-		transform: scale(1.05);
+		background-position: bottom -150px left 50%;
+		transform: scale(1.1);
 	}
 	60%{
-		background-position: bottom -130px right 0px;
+		background-position: bottom -150px left 50%;
 		transform: scale(1);
 	}
 	80%{
-		background-position: bottom -30px right 0px;
+		background-position: bottom -100px left 50%;
 		transform: scale(1);
 	}
 	100%{
 		transform: scale(1);
-		background-position: bottom -30px right 0px;
+		background-position: bottom -100px left 50%;
 	}
 }
 
