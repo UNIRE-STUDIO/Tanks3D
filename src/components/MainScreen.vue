@@ -36,43 +36,6 @@ export default {
 </template>
 
 <style scoped>
-#title {
-    font-size: 40px;
-    color: aliceblue;
-    text-shadow: 4px 4px 5px #161618;
-    margin: 0;
-    padding-top: 12px;
-    padding-bottom: 10px;
-    display: flex;
-    justify-content: center;
-    background: 
-        linear-gradient(to bottom, rgba(0, 0, 0, 0.829), rgba(0, 0, 0, 0.37));
-}
-#text-title:hover {
-    animation: smoothMove 0.5s ease;
-    cursor: pointer;
-}
-
-@keyframes smoothMove {
-    0% {
-        transform: translateX(0);
-    }
-    33%{
-        transform: translateX(6px);
-    }
-    66%{
-        transform: translateX(-6px);
-    }
-    100%{
-        transform: translateX(0);
-    }
-}
-
-#line {
-    height: 1px;
-    background: 
-        linear-gradient(to right, rgba(255, 255, 255, 0.178), rgba(255, 255, 255, 0.61), rgba(255, 255, 255, 0.178))
-}
 
 #container {
     display: flex;

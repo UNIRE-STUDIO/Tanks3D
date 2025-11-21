@@ -44,13 +44,13 @@ export default {
 			<div id="top-left">
 				<button class="btn-mini" v-if="uiFields.currentScreen === 1" @click="gameLink.changeScreen(2)">❚❚</button>
 				<button class="btn-mini" v-if="uiFields.currentScreen === 2" @click="gameLink.changeScreen(-1)">
-					<svg width="35" height="50" viewBox="4 0 50 50" fill="161618" xmlns="http://www.w3.org/2000/svg">
+					<svg width="35" height="50" viewBox="4 0 50 50" fill="#F0F8FF" xmlns="http://www.w3.org/2000/svg">
 						<path d="M35 50L11 25L35 0L40 4L20 25L40 45L35 50Z" />
 					</svg>
 				</button>
 			</div>
 			<div id="top-center">
-				<div id="text-title">ТАНКИ 3D</div>
+				<div id="text-title" v-if="uiFields.currentScreen === 0">ТАНКИ 3D</div>
 			</div>
 			<div id="top-right"></div>
 		</div>
@@ -106,6 +106,55 @@ export default {
 		transform: scale(1);
 		background-position: bottom -100px left 50%;
 	}
+}
+
+#top {
+    margin: 0;
+    padding-top: 12px;
+    padding-bottom: 10px;
+    background: 
+        linear-gradient(to bottom, rgba(0, 0, 0, 0.829), rgba(0, 0, 0, 0.37));
+	display: flex;
+    justify-content: space-between;
+}
+#top-left{
+	width: 33%;
+	padding: 0px 15px;
+}
+#top-center{
+	width: 33%;
+	font-size: 40px;
+    color: aliceblue;
+    text-shadow: 4px 4px 5px #161618;
+}
+#text-title:hover {
+    animation: smoothMove 0.5s ease;
+    cursor: pointer;
+}
+#top-right{
+	width: 33%;
+}
+
+@keyframes smoothMove {
+    0% {
+        transform: translateX(0);
+    }
+    33%{
+        transform: translateX(6px);
+    }
+    66%{
+        transform: translateX(-6px);
+    }
+    100%{
+        transform: translateX(0);
+    }
+}
+
+
+#line {
+    height: 1px;
+    background: 
+        linear-gradient(to right, rgba(255, 255, 255, 0.178), rgba(255, 255, 255, 0.61), rgba(255, 255, 255, 0.178))
 }
 
 #left-dark-panel{
