@@ -16,8 +16,6 @@ export default {
 </script>
 
 <template>
-    <h1 id="title"><div id="text-title">ТАНКИ 3D</div></h1>
-    <div id="line"></div>
     <div id="container">
         <div class="panel">
             <button class="btn" @click="game.changeScreen(1, 1, 0)">
